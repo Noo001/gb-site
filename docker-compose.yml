@@ -1,0 +1,180 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "80:80"
+      - "8000:8000"
+      - "3000:3000"
+    volumes:
+      - ./api/public:/var/www/api/public:ro
+      - ./frontend:/var/www/frontend:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+      - frontend
+    networks:
+      - gb-network
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - ./api:/var/www/api
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini:ro
+    working_dir: /var/www/api
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: gadget_bar
+      DB_USERNAME: gadget_bar
+      DB_PASSWORD: secret
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MEILISEARCH_HOST: http://meilisearch:7700
+      MEILISEARCH_KEY: secret
+      FILESYSTEM_DISK: s3
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: minio123
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_BUCKET: gadget-bar
+      AWS_ENDPOINT: http://minio:9000
+      AWS_USE_PATH_STYLE_ENDPOINT: "true"
+    command: ["php-fpm", "-R"]
+    depends_on:
+      - db
+      - redis
+      - meilisearch
+      - minio
+    networks:
+      - gb-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    volumes:
+      - ./frontend:/var/www/frontend
+    working_dir: /var/www/frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+      API_URL: http://api:8000/api
+      NODE_ENV: development
+    depends_on:
+      - api
+    networks:
+      - gb-network
+    command: ["npm", "run", "dev"]
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: gadget_bar
+      POSTGRES_USER: gadget_bar
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - gb-network
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redisdata:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - gb-network
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.9
+    environment:
+      MEILI_MASTER_KEY: secret
+    volumes:
+      - meilisearchdata:/meili_data
+    ports:
+      - "7700:7700"
+    networks:
+      - gb-network
+
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - miniodata:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    networks:
+      - gb-network
+
+  # Очереди Laravel
+  queue:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - ./api:/var/www/api
+    working_dir: /var/www/api
+    environment:
+      APP_ENV: local
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: gadget_bar
+      DB_USERNAME: gadget_bar
+      DB_PASSWORD: secret
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - db
+      - redis
+    networks:
+      - gb-network
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3"]
+
+  # Планировщик Laravel
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - ./api:/var/www/api
+    working_dir: /var/www/api
+    environment:
+      APP_ENV: local
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: gadget_bar
+      DB_USERNAME: gadget_bar
+      DB_PASSWORD: secret
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - db
+      - redis
+    networks:
+      - gb-network
+    command: ["sh", "-c", "while true; do php artisan schedule:run; sleep 60; done"]
+
+volumes:
+  pgdata:
+  redisdata:
+  meilisearchdata:
+  miniodata:
+
+networks:
+  gb-network:
+    driver: bridge

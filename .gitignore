@@ -1,0 +1,60 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker volumes
+.docker/data/
+docker-compose.override.yml
+
+# Backend
+/api/vendor/
+/api/node_modules/
+/api/public/storage
+/api/storage/*.key
+/api/storage/app/public/*
+!/api/storage/app/public/.gitkeep
+/api/storage/framework/cache/data/*
+!/api/storage/framework/cache/data/.gitkeep
+/api/storage/framework/sessions/*
+!/api/storage/framework/sessions/.gitkeep
+/api/storage/framework/testing/*
+!/api/storage/framework/testing/.gitkeep
+/api/storage/framework/views/*
+!/api/storage/framework/views/.gitkeep
+/api/storage/logs/*
+!/api/storage/logs/.gitkeep
+/api/bootstrap/cache/*.php
+
+# Frontend
+/frontend/node_modules/
+/frontend/.next/
+/frontend/out/
+/frontend/build/
+/frontend/*.tsbuildinfo
+/frontend/next-env.d.ts
+
+# Misc
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Temporary parser artifacts
+/node_modules/
+/tmp/
+/tools/
+/parse-*.js
+/package.json
