@@ -19,6 +19,7 @@ Thumbs.db
 docker-compose.override.yml
 
 # Backend
+/api/storage/testdir/
 /api/vendor/
 /api/node_modules/
 /api/public/storage

@@ -23,6 +23,7 @@ class Product extends Model implements HasMedia
         'brand',
         'description',
         'content',
+        'url',
         'warranty_months',
         'is_active',
     ];

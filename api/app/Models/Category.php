@@ -21,6 +21,7 @@ class Category extends Model implements HasMedia
         'slug',
         'full_path',
         'description',
+        'url',
         'sort',
         'is_active',
         'seo_title',
