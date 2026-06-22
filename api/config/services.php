@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'yandex' => [
+        'client_id' => env('YANDEX_CLIENT_ID'),
+        'client_secret' => env('YANDEX_CLIENT_SECRET'),
+        'redirect' => env('YANDEX_REDIRECT_URL', 'http://localhost:8000/api/auth/yandex/callback'),
+    ],
+
+    'vkontakte' => [
+        'client_id' => env('VKONTAKTE_CLIENT_ID'),
+        'client_secret' => env('VKONTAKTE_CLIENT_SECRET'),
+        'redirect' => env('VKONTAKTE_REDIRECT_URL', 'http://localhost:8000/api/auth/vk/callback'),
+    ],
+
 ];

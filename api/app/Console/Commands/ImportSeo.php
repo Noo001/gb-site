@@ -14,7 +14,9 @@ class ImportSeo extends Command
     protected $signature = 'import:seo
                             {--type=all : Entity types to parse: categories,products,pages,all}
                             {--limit=0 : Max pages per type (0 = unlimited)}
-                            {--delay=500 : Delay between requests in milliseconds}';
+                            {--delay=500 : Delay between requests in milliseconds}
+                            {--min-id=0 : Minimum entity ID to process}
+                            {--max-id=0 : Maximum entity ID to process (0 = unlimited)}';
 
     protected $description = 'Parse SEO metadata from old site pages';
 
@@ -46,7 +48,7 @@ class ImportSeo extends Command
 
     private function processCategories(int $limit, int $delay): void
     {
-        $query = Category::query()->whereNotNull('url')->orderBy('id');
+        $query = $this->buildQuery(Category::query()->whereNotNull('url'));
         if ($limit > 0) {
             $query->limit($limit);
         }
@@ -64,17 +66,21 @@ class ImportSeo extends Command
 
     private function processProducts(int $limit, int $delay): void
     {
-        $query = Product::query()->whereNotNull('url')->orderBy('id');
+        $query = $this->buildQuery(Product::query()->whereNotNull('url'));
         if ($limit > 0) {
             $query->limit($limit);
         }
 
-        $items = $query->get();
-        $bar = $this->output->createProgressBar($items->count());
-        foreach ($items as $product) {
+        $processed = 0;
+        $bar = $this->output->createProgressBar($query->count());
+        foreach ($query->cursor() as $product) {
             $this->parseAndSave($product, $product->url);
             usleep($delay * 1000);
             $bar->advance();
+
+            if (++$processed % 50 === 0) {
+                gc_collect_cycles();
+            }
         }
         $bar->finish();
         $this->newLine();
@@ -82,7 +88,7 @@ class ImportSeo extends Command
 
     private function processPages(int $limit, int $delay): void
     {
-        $query = Page::query()->whereNotNull('url')->orderBy('id');
+        $query = $this->buildQuery(Page::query()->whereNotNull('url'));
         if ($limit > 0) {
             $query->limit($limit);
         }
@@ -96,6 +102,21 @@ class ImportSeo extends Command
         }
         $bar->finish();
         $this->newLine();
+    }
+
+    private function buildQuery($query)
+    {
+        $minId = (int) $this->option('min-id');
+        $maxId = (int) $this->option('max-id');
+
+        if ($minId > 0) {
+            $query->where('id', '>=', $minId);
+        }
+        if ($maxId > 0) {
+            $query->where('id', '<=', $maxId);
+        }
+
+        return $query->orderBy('id');
     }
 
     private function parseAndSave(Category|Product|Page $entity, string $path): void
@@ -142,6 +163,8 @@ class ImportSeo extends Command
                 $entity->update(['name' => $meta['h1']]);
             }
         }
+
+        unset($html, $meta);
     }
 
     private function extractMeta(string $html, string $url): array

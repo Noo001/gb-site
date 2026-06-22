@@ -40,11 +40,13 @@ services:
       MEILISEARCH_HOST: http://meilisearch:7700
       MEILISEARCH_KEY: secret
       FILESYSTEM_DISK: s3
+      MEDIA_DISK: s3
       AWS_ACCESS_KEY_ID: minio
       AWS_SECRET_ACCESS_KEY: minio123
       AWS_DEFAULT_REGION: us-east-1
       AWS_BUCKET: gadget-bar
       AWS_ENDPOINT: http://minio:9000
+      AWS_URL: http://localhost:9000/gadget-bar
       AWS_USE_PATH_STYLE_ENDPOINT: "true"
     command: ["php-fpm", "-R"]
     depends_on:
@@ -64,7 +66,7 @@ services:
     working_dir: /var/www/frontend
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000/api
-      API_URL: http://api:8000/api
+      API_URL: http://nginx:8000
       NODE_ENV: development
     depends_on:
       - api
