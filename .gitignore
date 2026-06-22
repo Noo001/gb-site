@@ -53,6 +53,15 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Production environment files
+.env.prod
+.env.prod.local
+
+# Generated Filament assets (run `php artisan filament:assets` after deploy)
+/api/public/css/filament/
+/api/public/js/filament/
+/api/public/fonts/filament/
+
 # Temporary parser artifacts
 /node_modules/
 /tmp/
