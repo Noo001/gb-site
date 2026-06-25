@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Auto-deploy webhook for Gadget Bar
 import os
 import sys
 import json
