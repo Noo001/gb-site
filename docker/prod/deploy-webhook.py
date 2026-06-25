@@ -20,7 +20,7 @@ STATUS_FILE = os.environ.get("STATUS_FILE", "/var/lib/deploy/status.json")
 LOG_FILE = os.environ.get("LOG_FILE", "/var/lib/deploy/deploy.log")
 PROJECT_NAME = os.environ.get("PROJECT_NAME", "gb-site")
 BRANCH = os.environ.get("BRANCH", "main")
-POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "60"))  # seconds
+POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "60"))  # seconds (check interval)
 
 os.makedirs(os.path.dirname(STATUS_FILE), exist_ok=True)
 
