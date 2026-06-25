@@ -20,11 +20,10 @@ STATUS_FILE = os.environ.get("STATUS_FILE", "/var/lib/deploy/status.json")
 LOG_FILE = os.environ.get("LOG_FILE", "/var/lib/deploy/deploy.log")
 PROJECT_NAME = os.environ.get("PROJECT_NAME", "gb-site")
 BRANCH = os.environ.get("BRANCH", "main")
-POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "60"))  # seconds (check interval)
+POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "60"))
 
 os.makedirs(os.path.dirname(STATUS_FILE), exist_ok=True)
 
-# Mark repo as safe for git inside container
 subprocess.run(
     ["git", "config", "--global", "--add", "safe.directory", REPO_DIR],
     stdout=subprocess.DEVNULL,
@@ -104,6 +103,33 @@ def remote_commit():
         return None
 
 
+def services_to_build(previous, current):
+    """Decide which services need rebuild based on changed files."""
+    try:
+        changed = subprocess.run(
+            ["git", "-C", REPO_DIR, "diff", "--name-only", f"{previous}..{current}"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=30,
+        ).stdout.strip().splitlines()
+    except Exception as e:
+        log(f"Could not get changed files: {e}")
+        return ["frontend", "api", "deploy-webhook"]  # fallback: rebuild all
+
+    log(f"Changed files: {changed}")
+    services = set()
+    for path in changed:
+        if path.startswith("docker/php/") or path == "docker/prod/api-entrypoint.sh":
+            services.add("api")
+        if path.startswith("frontend/") or path == "docker/prod/frontend.Dockerfile":
+            services.add("frontend")
+        if path.startswith("docker/prod/deploy-webhook") or path == "docker-compose.caddy.yml":
+            services.add("deploy-webhook")
+
+    return sorted(services)
+
+
 def run_deploy(reason=""):
     if not deploy_lock.acquire(blocking=False):
         log("Deploy already running, skipping")
@@ -112,8 +138,7 @@ def run_deploy(reason=""):
         write_status("running", f"Deploy started ({reason})")
         log(f"=== Deploy started ({reason}) ===")
         try:
-            log("Configuring git safe directory")
-            run_cmd(["git", "config", "--global", "--add", "safe.directory", REPO_DIR])
+            previous = local_commit()
 
             log("Stashing local changes")
             subprocess.run(
@@ -134,14 +159,22 @@ def run_deploy(reason=""):
                 text=True,
             )
 
-            log("Building and restarting services")
-            run_cmd([
+            current = local_commit()
+            build_services = services_to_build(previous, current)
+
+            base_cmd = [
                 "docker", "compose",
                 "-p", PROJECT_NAME,
                 "-f", COMPOSE_FILE,
                 "--env-file", ENV_FILE,
-                "up", "-d", "--build",
-            ])
+            ]
+
+            if build_services:
+                log(f"Building services: {build_services}")
+                run_cmd(base_cmd + ["up", "-d", "--build"] + build_services)
+            else:
+                log("No image rebuild needed, restarting services")
+                run_cmd(base_cmd + ["up", "-d"])
 
             msg = "Deploy finished successfully"
             log(msg)
@@ -201,7 +234,6 @@ class Handler(BaseHTTPRequestHandler):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
 
-        # Token via query string (generic trigger)
         query = self.path.split("?", 1)[1] if "?" in self.path else ""
         params = {}
         for part in query.split("&"):
@@ -213,7 +245,6 @@ class Handler(BaseHTTPRequestHandler):
             self._json(403, {"error": "Invalid token"})
             return
 
-        # GitHub signature verification (only if header present)
         sig_header = self.headers.get("X-Hub-Signature-256", "")
         if WEBHOOK_SECRET and sig_header:
             expected = "sha256=" + hmac.new(
