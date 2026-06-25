@@ -156,7 +156,7 @@ def run_deploy(reason=""):
 
 def poll_loop():
     log("Starting poll loop")
-    last_remote = None
+    last_remote = local_commit()
     while True:
         time.sleep(POLL_INTERVAL)
         try:
@@ -164,11 +164,11 @@ def poll_loop():
             remote = remote_commit()
             if not local or not remote:
                 continue
-            if last_remote is None:
-                last_remote = remote
             if remote != local and remote != last_remote:
                 last_remote = remote
                 threading.Thread(target=run_deploy, args=("new commit detected",), daemon=True).start()
+            elif remote == local:
+                last_remote = remote
         except Exception as e:
             log(f"Poll error: {e}")
 
