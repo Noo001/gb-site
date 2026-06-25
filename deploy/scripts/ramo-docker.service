@@ -1,0 +1,13 @@
+[Unit]
+Description=Gadget Bar Docker Compose stack
+After=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/ramo-docker-start-bg.sh
+ExecStop=/usr/bin/docker compose -f /mnt/c/up/server/proxy/docker-compose.yml down
+ExecStopPost=-/usr/bin/docker compose -f /mnt/c/up/server/projects/gb-site/docker-compose.caddy.yml --env-file /mnt/c/up/server/projects/gb-site/.env.prod down
+
+[Install]
+WantedBy=default.target

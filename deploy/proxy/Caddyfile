@@ -1,0 +1,38 @@
+{$DOMAIN} {
+    handle /api/* {
+        reverse_proxy gb-nginx-api:80
+    }
+    handle /admin/* {
+        reverse_proxy gb-nginx-api:80
+    }
+    handle /admin {
+        reverse_proxy gb-nginx-api:80
+    }
+    handle /storage/* {
+        reverse_proxy gb-nginx-api:80
+    }
+    handle /livewire* {
+        reverse_proxy gb-nginx-api:80
+    }
+    handle /css/filament/* {
+        reverse_proxy gb-nginx-api:80
+    }
+    handle /js/filament/* {
+        reverse_proxy gb-nginx-api:80
+    }
+    handle /fonts/filament/* {
+        reverse_proxy gb-nginx-api:80
+    }
+    handle /adminer* {
+        reverse_proxy gb-adminer:8080
+    }
+    handle /deploy-hook* {
+        reverse_proxy host.docker.internal:9000
+    }
+    handle /deploy-status* {
+        reverse_proxy host.docker.internal:9000
+    }
+    handle {
+        reverse_proxy gb-frontend:3000
+    }
+}
