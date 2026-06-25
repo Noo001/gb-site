@@ -24,6 +24,13 @@ POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "60"))
 
 os.makedirs(os.path.dirname(STATUS_FILE), exist_ok=True)
 
+# Mark repo as safe for git inside container
+subprocess.run(
+    ["git", "config", "--global", "--add", "safe.directory", REPO_DIR],
+    stdout=subprocess.DEVNULL,
+    stderr=subprocess.DEVNULL,
+)
+
 deploy_lock = threading.Lock()
 
 
@@ -64,14 +71,21 @@ def run_cmd(cmd, cwd=None, timeout=600):
 
 def local_commit():
     try:
+        subprocess.run(
+            ["git", "config", "--global", "--add", "safe.directory", REPO_DIR],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=10,
+        )
         return subprocess.run(
             ["git", "-C", REPO_DIR, "rev-parse", "HEAD"],
             stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
             text=True,
             timeout=10,
         ).stdout.strip()
-    except Exception:
+    except Exception as e:
+        log(f"local_commit error: {e}")
         return None
 
 
@@ -85,7 +99,8 @@ def remote_commit():
             timeout=30,
         ).stdout.strip()
         return out.split()[0] if out else None
-    except Exception:
+    except Exception as e:
+        log(f"remote_commit error: {e}")
         return None
 
 
