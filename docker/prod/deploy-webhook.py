@@ -124,9 +124,6 @@ def services_to_build(previous, current):
             services.add("api")
         if path.startswith("frontend/") or path == "docker/prod/frontend.Dockerfile":
             services.add("frontend")
-        if path.startswith("docker/prod/deploy-webhook") or path == "docker-compose.caddy.yml":
-            services.add("deploy-webhook")
-
     return sorted(services)
 
 

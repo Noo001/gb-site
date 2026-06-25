@@ -90,26 +90,6 @@ services:
       - shared-network
       - gb-network
 
-  deploy-webhook:
-    build:
-      context: ./docker/prod
-      dockerfile: deploy-webhook.Dockerfile
-    container_name: gb-deploy-webhook
-    restart: unless-stopped
-    env_file:
-      - .env.prod
-    environment:
-      COMPOSE_PARALLEL_LIMIT: 1
-    expose:
-      - "9000"
-    volumes:
-      - .:/repo
-      - deploy_status:/var/lib/deploy
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - shared-network
-      - gb-network
-
   nginx-api:
     image: nginx:alpine
     container_name: gb-nginx-api
@@ -158,8 +138,6 @@ volumes:
   pgdata:
   meilisearchdata:
   miniodata:
-  deploy_src:
-  deploy_status:
 
 networks:
   gb-network:
