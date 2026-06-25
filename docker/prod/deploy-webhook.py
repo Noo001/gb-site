@@ -6,9 +6,11 @@ import hmac
 import hashlib
 import subprocess
 import threading
+import time
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+REPO_URL = os.environ.get("REPO_URL", "https://github.com/Noo001/gb-site.git")
 REPO_DIR = os.environ.get("REPO_DIR", "/repo")
 ENV_FILE = os.environ.get("ENV_FILE", "/repo/.env.prod")
 COMPOSE_FILE = os.environ.get("COMPOSE_FILE", "/repo/docker-compose.caddy.yml")
@@ -18,8 +20,11 @@ STATUS_FILE = os.environ.get("STATUS_FILE", "/var/lib/deploy/status.json")
 LOG_FILE = os.environ.get("LOG_FILE", "/var/lib/deploy/deploy.log")
 PROJECT_NAME = os.environ.get("PROJECT_NAME", "gb-site")
 BRANCH = os.environ.get("BRANCH", "main")
+POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "60"))
 
 os.makedirs(os.path.dirname(STATUS_FILE), exist_ok=True)
+
+deploy_lock = threading.Lock()
 
 
 def now():
@@ -57,48 +62,100 @@ def run_cmd(cmd, cwd=None, timeout=600):
     return result.stdout
 
 
-def run_deploy():
-    write_status("running", "Deploy started")
-    log("=== Deploy started ===")
+def local_commit():
     try:
-        log("Configuring git safe directory")
-        run_cmd(["git", "config", "--global", "--add", "safe.directory", REPO_DIR])
-
-        log("Stashing local changes")
-        subprocess.run(
-            ["git", "-C", REPO_DIR, "stash", "push", "-u", "-m", "autodeploy-stash"],
+        return subprocess.run(
+            ["git", "-C", REPO_DIR, "rev-parse", "HEAD"],
             stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+            stderr=subprocess.DEVNULL,
             text=True,
-        )
+            timeout=10,
+        ).stdout.strip()
+    except Exception:
+        return None
 
-        log("Pulling latest code")
-        run_cmd(["git", "-C", REPO_DIR, "pull", "origin", BRANCH])
 
-        log("Restoring stashed local changes")
-        subprocess.run(
-            ["git", "-C", REPO_DIR, "stash", "pop"],
+def remote_commit():
+    try:
+        out = subprocess.run(
+            ["git", "ls-remote", REPO_URL, f"refs/heads/{BRANCH}"],
             stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+            stderr=subprocess.PIPE,
             text=True,
-        )
+            timeout=30,
+        ).stdout.strip()
+        return out.split()[0] if out else None
+    except Exception:
+        return None
 
-        log("Building and restarting services")
-        run_cmd([
-            "docker", "compose",
-            "-p", PROJECT_NAME,
-            "-f", COMPOSE_FILE,
-            "--env-file", ENV_FILE,
-            "up", "-d", "--build",
-        ])
 
-        msg = "Deploy finished successfully"
-        log(msg)
-        write_status("success", msg)
-    except Exception as e:
-        msg = f"Deploy failed: {e}"
-        log(msg)
-        write_status("failed", msg)
+def run_deploy(reason=""):
+    if not deploy_lock.acquire(blocking=False):
+        log("Deploy already running, skipping")
+        return
+    try:
+        write_status("running", f"Deploy started ({reason})")
+        log(f"=== Deploy started ({reason}) ===")
+        try:
+            log("Configuring git safe directory")
+            run_cmd(["git", "config", "--global", "--add", "safe.directory", REPO_DIR])
+
+            log("Stashing local changes")
+            subprocess.run(
+                ["git", "-C", REPO_DIR, "stash", "push", "-u", "-m", "autodeploy-stash"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+            )
+
+            log("Pulling latest code")
+            run_cmd(["git", "-C", REPO_DIR, "pull", "origin", BRANCH])
+
+            log("Restoring stashed local changes")
+            subprocess.run(
+                ["git", "-C", REPO_DIR, "stash", "pop"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+            )
+
+            log("Building and restarting services")
+            run_cmd([
+                "docker", "compose",
+                "-p", PROJECT_NAME,
+                "-f", COMPOSE_FILE,
+                "--env-file", ENV_FILE,
+                "up", "-d", "--build",
+            ])
+
+            msg = "Deploy finished successfully"
+            log(msg)
+            write_status("success", msg)
+        except Exception as e:
+            msg = f"Deploy failed: {e}"
+            log(msg)
+            write_status("failed", msg)
+    finally:
+        deploy_lock.release()
+
+
+def poll_loop():
+    log("Starting poll loop")
+    last_remote = None
+    while True:
+        time.sleep(POLL_INTERVAL)
+        try:
+            local = local_commit()
+            remote = remote_commit()
+            if not local or not remote:
+                continue
+            if last_remote is None:
+                last_remote = remote
+            if remote != local and remote != last_remote:
+                last_remote = remote
+                threading.Thread(target=run_deploy, args=("new commit detected",), daemon=True).start()
+        except Exception as e:
+            log(f"Poll error: {e}")
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -151,7 +208,7 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(403, {"error": "Invalid signature"})
                 return
 
-        threading.Thread(target=run_deploy, daemon=True).start()
+        threading.Thread(target=run_deploy, args=("webhook",), daemon=True).start()
         self._json(202, {"status": "accepted", "check": "/deploy-status"})
 
 
@@ -159,6 +216,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "9000"))
     server = HTTPServer(("0.0.0.0", port), Handler)
     log(f"Webhook server listening on port {port}")
+    threading.Thread(target=poll_loop, daemon=True).start()
     try:
         server.serve_forever()
     except KeyboardInterrupt:
