@@ -120,7 +120,9 @@ export async function fetchJson<T>(url: string): Promise<T> {
 }
 
 export async function getCategories(): Promise<Category[]> {
-  const data = await fetchJson<{ data: Category[] }>(`${API_BASE}/api/categories`);
+  const data = await fetchJson<{ data: Category[] }>(`${API_BASE}/api/categories`).catch(
+    () => ({ data: [] as Category[] })
+  );
   return data.data;
 }
 
@@ -139,14 +141,16 @@ export async function getCategoryProducts(
   const encoded = encodeURIComponent(path);
   return fetchJson<Paginated<Product>>(
     `${API_BASE}/api/categories/${encoded}/products?page=${page}`
-  );
+  ).catch(() => ({ data: [], current_page: 1, last_page: 1, total: 0 } as unknown as Paginated<Product>));
 }
 
 export async function getProducts(
   searchParams?: Record<string, string>
 ): Promise<Paginated<Product>> {
   const qs = searchParams ? new URLSearchParams(searchParams).toString() : "";
-  return fetchJson<Paginated<Product>>(`${API_BASE}/api/products?${qs}`);
+  return fetchJson<Paginated<Product>>(`${API_BASE}/api/products?${qs}`).catch(
+    () => ({ data: [], current_page: 1, last_page: 1, total: 0 } as unknown as Paginated<Product>)
+  );
 }
 
 export async function getProduct(slug: string): Promise<Product | null> {

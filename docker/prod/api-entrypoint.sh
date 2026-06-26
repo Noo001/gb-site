@@ -22,4 +22,4 @@ php artisan filament:assets --no-interaction || true
 
 php artisan migrate --force
 
-exec php-fpm
+exec php-fpm -R
