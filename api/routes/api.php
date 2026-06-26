@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CityController;
+use App\Http\Controllers\Api\OneCController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Api\ProductController;
@@ -59,4 +60,15 @@ Route::middleware(EnsureCartSession::class)->group(function () {
     Route::delete('/cart', [CartController::class, 'clear']);
 
     Route::post('/orders', [OrderController::class, 'store']);
+});
+
+// 1C integration
+Route::middleware(['onec.api', 'onec.log'])->prefix('1c')->group(function () {
+    Route::post('/products/sync', [OneCController::class, 'syncProducts']);
+    Route::put('/products/sync', [OneCController::class, 'syncProducts']);
+    Route::post('/prices/sync', [OneCController::class, 'syncPrices']);
+    Route::put('/prices/sync', [OneCController::class, 'syncPrices']);
+    Route::get('/products', [OneCController::class, 'listProducts']);
+    Route::get('/products/{uuid_1c}', [OneCController::class, 'showProduct']);
+    Route::post('/notify/price-changed', [OneCController::class, 'notifyPriceChanged']);
 });

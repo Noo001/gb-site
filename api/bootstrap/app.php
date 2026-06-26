@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: ['*']);
         $middleware->web(\App\Http\Middleware\RedirectMiddleware::class);
+        $middleware->alias([
+            'onec.api' => \App\Http\Middleware\OneCApiKey::class,
+            'onec.log' => \App\Http\Middleware\LogOneCRequest::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->renderable(function (AuthenticationException $e, Request $request) {

@@ -47,4 +47,10 @@ return [
         'redirect' => env('VKONTAKTE_REDIRECT_URL', 'http://localhost:8000/api/auth/vk/callback'),
     ],
 
+    '1c' => [
+        'api_key' => env('IMPORT_1C_API_KEY'),
+        'webhook_url' => env('EXPORT_1C_WEBHOOK_URL'),
+        'timeout' => env('EXPORT_1C_TIMEOUT', 10),
+    ],
+
 ];

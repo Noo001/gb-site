@@ -16,6 +16,7 @@ class Product extends Model implements HasMedia
 
     protected $fillable = [
         'external_id',
+        'uuid_1c',
         'category_id',
         'name',
         'slug',
@@ -51,5 +52,22 @@ class Product extends Model implements HasMedia
     public function seoMetadata()
     {
         return $this->morphOne(SeoMetadata::class, 'entity');
+    }
+
+    public function defaultOffer(): ?Offer
+    {
+        return $this->offers()->first();
+    }
+
+    public function currentPrice(): ?Price
+    {
+        $offer = $this->defaultOffer();
+        return $offer ? $offer->prices()->first() : null;
+    }
+
+    public function currentStock(): ?Stock
+    {
+        $offer = $this->defaultOffer();
+        return $offer ? $offer->stocks()->first() : null;
     }
 }
