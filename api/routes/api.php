@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CityController;
+use App\Http\Controllers\Api\BotController;
 use App\Http\Controllers\Api\OneCController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OfferController;
@@ -71,4 +72,16 @@ Route::middleware(['onec.api', 'onec.log'])->prefix('1c')->group(function () {
     Route::get('/products', [OneCController::class, 'listProducts']);
     Route::get('/products/{uuid_1c}', [OneCController::class, 'showProduct']);
     Route::post('/notify/price-changed', [OneCController::class, 'notifyPriceChanged']);
+});
+
+// First-line bot (read-only data endpoints + logging)
+Route::middleware('bot.api')->prefix('bot')->group(function () {
+    Route::post('/products/search', [BotController::class, 'searchProducts']);
+    Route::post('/alternatives', [BotController::class, 'findAlternatives']);
+    Route::post('/services', [BotController::class, 'searchServices']);
+    Route::post('/triggers/check', [BotController::class, 'checkTrigger']);
+    Route::post('/config', [BotController::class, 'getConfig']);
+    Route::post('/stores', [BotController::class, 'getStores']);
+    Route::post('/tradein', [BotController::class, 'getTradeInPrice']);
+    Route::post('/log', [BotController::class, 'logAction']);
 });

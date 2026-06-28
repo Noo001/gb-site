@@ -53,4 +53,8 @@ return [
         'timeout' => env('EXPORT_1C_TIMEOUT', 10),
     ],
 
+    'bot' => [
+        'api_key' => env('BOT_API_KEY'),
+    ],
+
 ];

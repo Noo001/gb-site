@@ -4,13 +4,12 @@ namespace App\Http\Middleware;
 
 use App\Models\IntegrationLog;
 use Closure;
-use Illuminate\Contracts\Routing\TerminableMiddleware;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class LogOneCRequest implements TerminableMiddleware
+class LogOneCRequest
 {
-    private float $startedAt;
+    private float $startedAt = 0.0;
 
     public function handle(Request $request, Closure $next): Response
     {

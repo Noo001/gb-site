@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'onec.api' => \App\Http\Middleware\OneCApiKey::class,
             'onec.log' => \App\Http\Middleware\LogOneCRequest::class,
+            'bot.api' => \App\Http\Middleware\BotApiKey::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

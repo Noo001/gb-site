@@ -1,0 +1,2361 @@
+{
+  "name": "GadgetBar_Bitrix24_v3",
+  "nodes": [
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        2096,
+        1344
+      ],
+      "id": "838b4242-a9f3-4bf0-b572-a86e1909747d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "373d10c0-4486-44bb-9d5d-891519493d6c",
+      "name": "STT",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1424,
+        1264
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "openAiApi": {
+          "id": "tJ50Wv9kDtXMPAYj",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4626f61d-826c-4196-b88a-1f818e3c92dc",
+              "name": "user_query",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "109a95f4-4f89-43f5-a8b1-bb90b438966c",
+              "name": "context_message",
+              "value": "={{ $('fileType1').item.json.message.reply_to_message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1632,
+        1264
+      ],
+      "id": "498ddf76-8063-49b3-b285-6738632ebe6d",
+      "name": "Set Voice Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "403b336f-87ce-4bef-a5f2-1640425f8198",
+              "name": "user_query",
+              "type": "string",
+              "value": "={{ $json.message.text }}"
+            },
+            {
+              "id": "1cd0d70a-7be0-4f25-9d6b-73778b73c504",
+              "name": "context_message",
+              "value": "={{ $json.message.reply_to_message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "38f0cce9-0a4d-4c86-8708-f743bba50417",
+              "name": "value",
+              "value": "text",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f3c06e0b-cb2f-4d06-90e1-feb60f0371e3",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        912,
+        1440
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b24-if2-always-true",
+              "leftValue": "={{ true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        1408
+      ],
+      "id": "1ef3d100-56c9-46b6-833d-8ec5ab6c7517",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8d716037-a6aa-44f1-af24-9e34e02b46e9",
+                    "leftValue": "={{ !!$json.message.voice && !!$json.message.reply_to_message?.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "voice_reply_to_voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ !!$json.message.voice && ((($json.message.voice.mime_type || '').startsWith('audio/')) ) }}",
+                    "rightValue": "audio/ogg",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "4dfb623d-796c-4204-b04d-fb1267e9f9c4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "64ebd4ca-9c4c-47f8-830e-076bcd1e9a7e",
+                    "leftValue": "={{ !!$json.message.photo || ($json.message.document?.mime_type?.includes('image/')) }}",
+                    "rightValue": "picture",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b69e5096-e24e-4922-93f0-3b796637aa93",
+                    "leftValue": "={{ !!$json.message.text && !$json.message.reply_to_message?.voice }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8c04fcab-41ed-4807-a15e-60e91fdbf513",
+                    "leftValue": "={{ !!$json.message.text && !!$json.message.reply_to_message?.voice }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text_reply_to_voice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        608,
+        1328
+      ],
+      "id": "d12057a5-a0eb-4e46-b2af-a94ae028672c",
+      "name": "fileType1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        1600
+      ],
+      "id": "a92ae5d1-7122-4527-a683-411a7772bbc3",
+      "name": "Stop (Active)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "prev",
+        "key": "=media_group:{{$json.media_group_id}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        1376
+      ],
+      "id": "1743235e-ee03-4c39-bfd0-154ea028dba7",
+      "name": "Redis1",
+      "credentials": {
+        "redis": {
+          "id": "TJ0dhLTedhhTfqkK",
+          "name": "Redis account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        1760
+      ],
+      "id": "948602b7-5199-403e-b921-d5c0ea78059a",
+      "name": "Wait 7s",
+      "webhookId": "ff530c03-57f9-4d38-a3d0-c45f9b544f9e"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dd92228b-68d2-4e3c-b47e-d1e8db42bd68",
+              "leftValue": "={{ $json.isActive }}",
+              "rightValue": "={{ null }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        1760
+      ],
+      "id": "b68b166c-9ba2-4761-b2e2-8a5daf706e50",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=user:{{ $('Normalize_b24').item.json.message.chat.id ?? 'unknown' }}:active",
+        "value": "1",
+        "expire": true,
+        "ttl": 8
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        976,
+        1760
+      ],
+      "id": "a0866f5c-ef0b-4a95-9cc0-aa4acd9eed47",
+      "name": "Redis (Set Active Flag)",
+      "credentials": {
+        "redis": {
+          "id": "TJ0dhLTedhhTfqkK",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "isActive",
+        "key": "=user:{{ $('Normalize_b24').item.json.message.chat.id ?? 'unknown' }}:active",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        1760
+      ],
+      "id": "d039fee8-d422-4910-ba7e-6abcdb152729",
+      "name": "Redis (Check Active Flag)",
+      "credentials": {
+        "redis": {
+          "id": "TJ0dhLTedhhTfqkK",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "=user:{{ $('Normalize_b24').item.json.message.chat.id ?? 'unknown' }}:buffer",
+        "messageData": "={{ JSON.stringify($node[\"Merge\"].json) }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        784,
+        1760
+      ],
+      "id": "7c2487f5-009a-4217-a869-756ac0282969",
+      "name": "Redis (Push)",
+      "credentials": {
+        "redis": {
+          "id": "TJ0dhLTedhhTfqkK",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "786c2207-256a-477b-a7a9-632ec0ac8af8",
+              "name": "user_message_text",
+              "value": "={{ ($json.raw_output ?? '').split(/```/)[0].trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "e460c73e-0e47-488e-be3d-8a5ab9a78af6",
+              "name": "json_payload",
+              "value": "={{ ($json.raw_output ?? '').match(/```(?:json)?\\s*(\\{[\\s\\S]*?\\})\\s*```/is)?.[1] || null }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2352,
+        2112
+      ],
+      "id": "0931a4b0-b11b-418e-8e1a-94e606ba5b68",
+      "name": "Set"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4721548c-b9c0-42bf-9cd4-b1389cb753a2",
+              "leftValue": "={{ !!($json.flags?.escalate_to_manager || $json.payload?.escalate_to_manager || $json.flags?.move_lead || $json.payload?.move_lead) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        2080
+      ],
+      "id": "546600ad-80a8-45a5-b6ee-76e89a2f770d",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "67f661e8-7cc4-4fc4-9dad-87be6b28b441",
+              "leftValue": "={{ !!$json.flags.move_lead }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2128,
+        2336
+      ],
+      "id": "8f48c18a-b09a-43fa-8b7c-920cffc29d3d",
+      "name": "If (Is Move Lead?)"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.message.voice.media_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImM1ZjkxNDg5NjBkYjRkODBhYzNlM2FiN2MyN2ExMjQ5ZWRmMzQ2YWU5ZDEwNGRkOWU2MzZhZTljNzFiZmVlZWM3ZmY2YjEwZGM0OWZkZTA4In0.eyJhdWQiOiJmNGUyMWE0NS1mYjQxLTRkNDItYjhmZi00YjU2OWIwMGZiZWQiLCJqdGkiOiJjNWY5MTQ4OTYwZGI0ZDgwYWMzZTNhYjdjMjdhMTI0OWVkZjM0NmFlOWQxMDRkZDllNjM2YWU5YzcxYmZlZWVjN2ZmNmIxMGRjNDlmZGUwOCIsImlhdCI6MTc2MTk4MDY2NiwibmJmIjoxNzYxOTgwNjY2LCJleHAiOjE3OTM0OTEyMDAsInN1YiI6IjgwNDg0MTAiLCJncmFudF90eXBlIjoiIiwiYWNjb3VudF9pZCI6MzAwODM5OTgsImJhc2VfZG9tYWluIjoiYW1vY3JtLnJ1IiwidmVyc2lvbiI6Miwic2NvcGVzIjpbInB1c2hfbm90aWZpY2F0aW9ucyIsImNybSIsIm5vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiNjUxM2E4NWYtYzAxNy00ZDIzLWExMmMtNDY1MTUxZTdmZjc4IiwidXNlcl9mbGFncyI6MCwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.X77O0XVGEBAvBASfDX6TxZ1emL8GjBTUbobXAEvsFTh0Sg4zKB1ec1DZeTXb7nM5xyurem9tPoJntJueZeDKnpOo_5RgcAZyg7uRDyAj_u_4r_81wwclSin2WYfp1yC2Nmg2X2NI9xUOHMJWo5mrKDxVui9nEpuytK2nK2vI6cKtwW781aZZt67xCQbTqNUhjNCdpvVtvqoy9FaVIsa_VAllv58uRpY4YM03gCTVoWEYJOUkuDpNtgwpuvm9Bgq0NPbGKkbOJULE-riXLI7bdUpgNs79TdMhQ34oVQ5CfZt5prUn4sPc2JNX0ya2Iih2u54JPVjjqYjPlzugnIBh1g"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "e988917a-f99c-419b-82c3-3d706a5002a9",
+      "name": "Voice download",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1168,
+        1264
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.message.photo[0].media_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImM1ZjkxNDg5NjBkYjRkODBhYzNlM2FiN2MyN2ExMjQ5ZWRmMzQ2YWU5ZDEwNGRkOWU2MzZhZTljNzFiZmVlZWM3ZmY2YjEwZGM0OWZkZTA4In0.eyJhdWQiOiJmNGUyMWE0NS1mYjQxLTRkNDItYjhmZi00YjU2OWIwMGZiZWQiLCJqdGkiOiJjNWY5MTQ4OTYwZGI0ZDgwYWMzZTNhYjdjMjdhMTI0OWVkZjM0NmFlOWQxMDRkZDllNjM2YWU5YzcxYmZlZWVjN2ZmNmIxMGRjNDlmZGUwOCIsImlhdCI6MTc2MTk4MDY2NiwibmJmIjoxNzYxOTgwNjY2LCJleHAiOjE3OTM0OTEyMDAsInN1YiI6IjgwNDg0MTAiLCJncmFudF90eXBlIjoiIiwiYWNjb3VudF9pZCI6MzAwODM5OTgsImJhc2VfZG9tYWluIjoiYW1vY3JtLnJ1IiwidmVyc2lvbiI6Miwic2NvcGVzIjpbInB1c2hfbm90aWZpY2F0aW9ucyIsImNybSIsIm5vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiNjUxM2E4NWYtYzAxNy00ZDIzLWExMmMtNDY1MTUxZTdmZjc4IiwidXNlcl9mbGFncyI6MCwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.X77O0XVGEBAvBASfDX6TxZ1emL8GjBTUbobXAEvsFTh0Sg4zKB1ec1DZeTXb7nM5xyurem9tPoJntJueZeDKnpOo_5RgcAZyg7uRDyAj_u_4r_81wwclSin2WYfp1yC2Nmg2X2NI9xUOHMJWo5mrKDxVui9nEpuytK2nK2vI6cKtwW781aZZt67xCQbTqNUhjNCdpvVtvqoy9FaVIsa_VAllv58uRpY4YM03gCTVoWEYJOUkuDpNtgwpuvm9Bgq0NPbGKkbOJULE-riXLI7bdUpgNs79TdMhQ34oVQ5CfZt5prUn4sPc2JNX0ya2Iih2u54JPVjjqYjPlzugnIBh1g"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "26a5b2e3-aabc-4263-8d16-c2cf514fc25c",
+      "name": "Photo download",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        1376
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "text": "=# РОЛЬ\nТы — система визуального распознавания и OCR (оптического распознавания символов) для товарного каталога. Твоя задача — извлечь факты, представленные на изображении, игнорируя свои внутренние знания о датах релиза или существовании продуктов.\n\n# ЗАДАЧА\nПроанализируй изображение, считай все текстовые надписи (ценники, упаковка, интерфейс) и визуальные характеристики объекта.\n\n# СТРОГИЕ ПРАВИЛА\n1. **ПРИОРИТЕТ ТЕКСТА:** Если на изображении есть текст с названием бренда или модели — это **АБСОЛЮТНАЯ ИСТИНА**. Используй именно это название дословно.\n2. **ЗАПРЕТ НА \"ЗНАНИЯ\":** Игнорируй свои внутренние данные о том, вышел этот товар или нет. Если на фото написано \"Model X 2030\" — значит, перед тобой \"Model X 2030\". Не пиши, что \"модель не существует\" или \"это ошибка\".\n3. **ВИЗУАЛЬНЫЙ АНАЛИЗ:** Определи тип устройства/товара и цвет по внешнему виду.\n4. **МУЛЬТИ-ОБЪЕКТ:** Если товаров несколько, опиши главный (тот, к которому относится ценник или надпись) или перечисли все.\n\n# ФОРМАТ ВЫВОДА\nВерни данные строго в следующем формате:\n\n- **Тип товара:** (например: Смартфон, Наушники, Дрель, Зубная паста)\n- **Бренд:** (как указано на фото)\n- **Модель:** (считай точное название с фото, включая цифры и версии, например \"Pro 3\", \"S25\", \"V15\")\n- **Цвет:** (визуальный цвет товара)\n- **Цена:** (если видна на фото, укажи цифру и валюту, иначе \"Не указана\")\n- **Дополнительно:** (краткое описание особенностей, видимых на фото)\n\nЯзык вывода: **Русский**",
+        "inputType": "base64",
+        "options": {
+          "maxTokens": 300
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1488,
+        1376
+      ],
+      "id": "d59c76c7-df71-465d-b642-a7053e14c4a0",
+      "name": "recognize photo",
+      "credentials": {
+        "openAiApi": {
+          "id": "tJ50Wv9kDtXMPAYj",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        2784
+      ],
+      "id": "d1b6784e-cea0-404b-a41e-6d2e8b6d7429",
+      "name": "OpenAI Chat Model",
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "tJ50Wv9kDtXMPAYj",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Инструмент сжатия справочной информации и нормализации. Из сырых текстов делает компактную выжимку. Ходит в БД за конфигурацией (оплата/доставка/гарантия/возвраты/Trade-In/адреса).\nВызывать: непонятен бренд/модель ИЛИ спрашивают политики, адреса, время работы, телефоны, самовывоз ИЛИ текст = ТОЛЬКО город (напр. \"Казань\") → task=\"stores\"",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=# РОЛЬ: Presenter (InfoSynth + Normalizer)\nКлиенту НЕ отвечаешь. Во внешние БД товаров не ходишь. Возвращаешь ТОЛЬКО валидный JSON по одной из двух схем: (A) policy/faq/summarize или (B) normalize.\n\n# КРИТИЧЕСКОЕ ПРАВИЛО: НЕТ ДАННЫХ = НЕТ ОТВЕТА\n**ЗАПРЕЩЕНО:**\n- Выдумывать информацию, если инструмент вернул пусто или данных нет\n- Отвечать на основе собственных знаний о политиках/документах/условиях\n**РАЗРЕШЕНО:**\n- Только то, что явно пришло от инструмента\n- Если данных нет — верни пустые `bullets` и заполни `notes`\n\n# ДОСТУПНЫЕ ИНСТРУМЕНТЫ\n1) **\"Presenter Lexicon\"** — JS-словарь нормализации. Вызов с текстом для normalize.\n2) **\"get_bot_config\"** — получает конфигурацию из БД (оплата, доставка, гарантия, возвраты, Trade-In, услуги, подписки, контакты). Принимает JSON: `{\"p_group\": \"<группа>\", \"p_key\": \"<ключ>\"}`. p_key опционален. Группы: payment, delivery, warranty, returns, tradein, services, contacts, bot.\n3) **\"get_store_info\"** — получает адреса магазинов из БД. Принимает JSON: `{\"p_city\": \"<город>\"}` или `{\"p_type\": \"service_center\"}` или `{}` для всех.\n\n# МАППИНГ TOPIC → ИНСТРУМЕНТ\ntopic=\"payment_shipping\" → get_bot_config `{\"p_group\": \"payment\"}` затем `{\"p_group\": \"delivery\"}`\ntopic=\"warranty\" → get_bot_config `{\"p_group\": \"warranty\"}`\ntopic=\"returns\" → get_bot_config `{\"p_group\": \"returns\"}`\ntopic=\"shop_info\" / \"stores\" → get_store_info `{\"p_city\": \"<город>\"}` или `{}`\ntopic=\"tradein\" → get_bot_config `{\"p_group\": \"tradein\"}`\ntopic=\"services\" → get_bot_config `{\"p_group\": \"services\"}`\ntopic=\"collaboration\" → get_bot_config `{\"p_group\": \"contacts\", \"p_key\": \"collaboration\"}`\ntopic=\"other\" → Не вызывать\n\n⚠ ВАЖНО:\n• Для task=\"normalize\" вызывай ТОЛЬКО \"Presenter Lexicon\" и ПЕРЕДАЙ ему значение поля `text` СТРОКОЙ.\n• Для task ∈ {policy, faq, summarize, stores} — вызывай get_bot_config или get_store_info по маппингу.\n• Если `raw` присутствует и не пуст — используй его, инструменты НЕ вызывай.\n• За один запуск вызывай не более ДВУХ инструментов.\n• На выход — ОДИН валидный JSON-объект. Без HTML, без доп. текста.\n\n# ВХОД (строго ОДИН JSON-объект):\n{\n  \"task\": \"policy\" | \"faq\" | \"summarize\" | \"normalize\" | \"stores\",\n  \"topic\": \"payment_shipping\" | \"warranty\" | \"returns\" | \"shop_info\" | \"tradein\" | \"services\" | \"other\",\n  \"raw\": [\"<сырой текст>\"],\n  \"text\": \"<пользовательский текст>\",\n  \"limit\": 900\n}\n\n# ВЫХОД — СХЕМА (A) для task ∈ {policy, faq, summarize, stores}:\n{\n  \"type\": \"policy\",\n  \"title\": \"<краткий заголовок>\",\n  \"bullets\": [\"• пункт 1\", \"• пункт 2\"],\n  \"notes\": [\"оговорка\"],\n  \"cta_suggestions\": [\"Вариант 1\", \"Вариант 2\"]\n}\n\nПравила:\n1. Если `raw` есть — используй его. Инструменты НЕ вызывай.\n2. Если `raw` нет — определи topic по тексту:\n   /адрес|магазин|где находитесь|работаете|до скольки|часы работы|телефон/i → shop_info\n   /доставк|оплат|trade-in|трейд|кредит|рассрочк|халва|подписк|ps plus|gpt/i → payment_shipping\n   /гаранти/i → warranty\n   /возврат|обмен/i → returns\n   /ремонт|настройк|перенос|чистк|плёнк|прошивк/i → services\n3. Вызови инструмент по маппингу.\n4. В `bullets` включай ТОЛЬКО то, что отвечает на вопрос из `text`. Остальное игнорируй.\n\n# ВЫХОД — СХЕМА (B) для task=\"normalize\":\n{\n  \"type\": \"multi_query\",\n  \"queries\": [\n    {\n      \"query\": \"<каноничная строка>\",\n      \"brands\": [\"...\"],\n      \"series\": [\"...\"],\n      \"categories\": [\"...\"],\n      \"tokens\": {},\n      \"confidence\": 0.9\n    }\n  ],\n  \"intent_hint\": \"stock_list\"\n}\n\nАлгоритм normalize:\n1) Вызови \"Presenter Lexicon\" с текстом из поля `text`.\n2) Получи нормализованный результат.\n3) Дополни: storage→[число]GB, color→английский.\n4) Собери query (бренд+серия+модель, БЕЗ атрибутов из tokens).\n5) intent_hint, confidence.\n\nConfidence: серия+Pro/Max/Ultra → ≥0.85; бренд+модель → ≥0.85; только бренд → 0.6-0.7; непонятно → ≤0.3.\nЗапросы по фильтрам без модели: confidence 0.95.\n\n# Apple Watch S10 → Series 10\n`S10` в контексте Apple Watch = Watch Series 10.\n\n# ЗАПРЕТЫ\n• Выход — только JSON. Начинается с `{`, заканчивается `}`.\n• Без Markdown обёрток.\n• Не более двух вызовов инструментов.\n\nЕсли запрос про рекламу/сотрудничество — дословно вставь:\n\"Для сотрудничества, обсуждения подобных вопросов, рекламы и коллабораций — пишите нам в телеграм: @gadget_bar_media\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1728,
+        2496
+      ],
+      "id": "d7773030-f867-43b0-b95c-3353fb1538b0",
+      "name": "AI Agent Presenter"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Поиск и предобработка по базе. Работает ТОЛЬКО с: смартфонами, планшетами и handheld'ами Apple (iPad, Watch, AirPods, Apple TV, Macbook, HomePod, iMac, mini, Studio).\nНЕ обслуживает: ПК/ноутбуки/моноблоки, комплектующие, мониторы/периферию, сетевое, а также аксессуары Apple — это General Goods.\nВозвращает JSON: results|catalog|models|stock_list|comparison|spec|menu|escalate. Поддерживает fields-проекцию и availability_boost.",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=## Роль\nТы — DataFetcher+Preprocessor. Клиенту НЕ отвечаешь. Возвращаешь ТОЛЬКО чистый JSON для Оркестратора. Работаешь по ЛЮБЫМ категориям (Смартфоны кроме iPhone, Планшеты, Часы, Гаджеты). Ничего не выдумываешь, не добавляешь HTML.\n\n## Вход\nСТРОГО ОДНА строка:  \n1) \"<working_query>\".  \n2) \"<working_query> || HINTS { ... }\" — опциональные СТРУКТУРНЫЕ подсказки (JSON).\n\n## [КРИТИЧЕСКИ ВАЖНО] Использование Инструмента\nТвоя задача — **ВЫЗВАТЬ** инструмент `SupabaseTables1` для получения данных.\nДля этого ты должен сформировать JSON-объект с ключом `parameters0`, который содержит сериализованный запрос.\n\n**ШАБЛОН ВЫЗОВА ИНСТРУМЕНТА:**\n```json\n{\n  \"parameters0\": \"{\\\"query\\\":\\\"...\\\",\\\"filter\\\":{...},\\\"ranking\\\":{...}, ...}\"\n}\n```\n*Никогда не возвращай этот JSON как финальный ответ пользователю. Это только аргумент для функции.*\n\n## [ГЛАВНАЯ СТРАТЕГИЯ] Двухэтапный Поиск: ЗАПРОС в БД → ЖЕСТКАЯ ПОСТ-ФИЛЬТРАЦИЯ\nЭто твой **главный и единственный** алгоритм работы. Он состоит из двух шагов, которые ты выполняешь **неукоснительно**.\n\n### ШАГ 1: СБОРКА JSON-ЗАПРОСА для Supabase (Умный широкий поиск)\nТвоя первая задача — собрать **умный, но широкий и легкий** JSON-запрос, чтобы получить ВСЕХ потенциальных кандидатов.\n\n1.  **[ИСПРАВЛЕНО] Умное управление полями (`fields`):**\n    *   Это правило выполняется **ПЕРЕД** формированием шаблона.\n    *   **Посмотри на `HINTS`.**\n    *   **Определи поле локации (КРИТИЧНО):**\n        *   **ЕСЛИ** в `HINTS` есть ключ `location` (неважно, город это, улица или ТЦ):\n            *   `location_field` = `\"city_availability\"`\n            *   **Пояснение:** Ты ОБЯЗАН запросить это поле (\"тяжелый объект\"), чтобы проверить наличие в конкретной точке (магазине) на Шаге 2.\n        *   **ЕСЛИ** в `HINTS` **НЕТ** ключа `location`:\n            *   `location_field` = `\"available_in_cities\"`\n            *   **Пояснение:** Запрашиваем \"легкий список\" городов для общего поиска.\n    *   **Определи метаданные (ЭКОНОМИЯ ТОКЕНОВ):**\n        *   `metadata_field` = `[]` (ПО УМОЛЧАНИЮ ПУСТО).\n        *   **ЗАПРЕЩЕНО** добавлять `\"metadata\"` для фильтрации по ЦВЕТУ, ПАМЯТИ или РАЗМЕРУ (эти данные есть в `name`, их фильтруем на Шаге 2).\n        *   Добавляй `\"metadata\"` **ТОЛЬКО** если:\n            1.  `intent` = `\"spec\"` (клиент просит характеристики).\n            2.  `intent` = `\"comparison\"` (сравнение).\n            3.  В `HINTS` есть сложные технические фильтры из словаря `ALIASES` (процессор, тип экрана, батарея).\n    *   **Собери итоговый массив `fields`:** \n        *   `[\"name\", \"price\", \"availability\", \"url\", \"id\"]` + `[location_field]` + `metadata_field`.\n\n2.  **Заполни `query` и `filter` по \"Золотому правилу\":**\n    *   Из `working_query` извлеки **базовую модель** (без вариаций).\n    *   Из базовой модели извлеки **бренд** и **токен модели** (модель без бренда).\n    *   Заполни поля в шаблоне:\n        *   `query`: Полная базовая модель (e.g., \"MacBook Air M1\", \"Samsung Galaxy S26\").\n        *   `filter.brand_contains`: Только бренд (e.g., \"Apple\", \"Samsung\").\n        *   `filter.name_contains`: **Только основная серия или токен модели** (e.g., \"MacBook Air\", \"iPad\", \"Galaxy Watch 8\").\n\n3.  **[КРИТИЧНО] ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ (DB SCHEMA MAPPING):**\n    *   Используй эту таблицу СТРОГО (на основе реальной структуры БД):\n\n    | Интент пользователя | `filter.category` | `filter.subcategory` |\n    | :--- | :--- | :--- |\n    | **Samsung смартфон S-серии** (S24/S25/S26, Ultra) | `\"Samsung\"` | `\"Смартфоны Samsung S-серии\"` |\n    | **Samsung смартфон A-серии** (A15/A16) | `\"Samsung\"` | `\"Смартфоны Samsung A-серии\"` |\n    | **Samsung смартфон Z-серии** (Flip/Fold) | `\"Samsung\"` | `\"Смартфоны Samsung Z-серии\"` |\n    | **Samsung планшет** (Galaxy Tab S/A) | `\"Samsung\"` | subcategory содержит `\"Планшеты Samsung\"` (S-Серии / A-Серии) |\n    | **Samsung часы** (Galaxy Watch) | `\"Samsung\"` | `\"Смарт-часы Samsung\"` |\n    | **Samsung наушники** (Galaxy Buds) | `\"Samsung\"` | subcategory содержит `\"аушники Samsung\"` |\n    | **Смартфон др. бренды** (Xiaomi, Huawei, Honor, Realme, Tecno...) | НЕ указывать (omit) | НЕ указывать |\n    | **Планшет др. бренды** (iPad...) | `\"Планшет\"` | Бренд (напр. `\"Apple\"`) |\n    | **Часы др. бренды** (Apple Watch...) | `\"Умные часы\"` | Бренд |\n    | **Ноутбук** (MateBook...) | `\"Ноутбук\"` | Бренд |\n    | **Наушники Apple (AirPods)** | **`\"Apple\"`** | **`\"AirPods\"`** |\n    | **Ноутбук Apple (MacBook)** | **`\"Apple\"`** | **`\"MacBook\"`** |\n    | **Наушники (другие)** | `\"Наушники\"` | Бренд |\n    | **Стайлер/Фен** (Dyson) | `\"Стайлер\"` или `\"Фен\"` | `\"Dyson\"` |\n    | **Игровая консоль** | `\"Игровая консоль\"` | Бренд |\n\n    > **ВАЖНО (Samsung):** Для ЛЮБОГО устройства Samsung всегда `category=\"Samsung\"`; тип устройства задаётся ТОЛЬКО через `subcategory` (см. строки Samsung выше), а НЕ через `category`. Никогда не используй `category:\"Смартфон\"`/`\"Планшет\"`/`\"Умные часы\"`/`\"Наушники\"` для Samsung.\n\n    > **ВАЖНО (НЕ-Apple/НЕ-Samsung бренды):** Для смартфонов брендов Huawei, Xiaomi, Honor, Realme, Tecno и любых других (кроме Apple и Samsung) НИКОГДА не задавай `filter.category`. В БД категория таких товаров хранится как \"Смартфоны\" (мн. ч.), и точный фильтр `category:\"Смартфон\"` (ед. ч.) даёт ПУСТОЙ результат, даже когда товар есть в наличии. Ищи ТОЛЬКО по `brand_contains` + `name_contains`, а тип устройства и модель отсекай на ШАГЕ 2 (пост-фильтрация). Пример: запрос «Huawei Pura 80» → `{\"brand_contains\":\"Huawei\",\"name_contains\":\"Pura 80\"}` без `category`.\n\n### ШАГ 2: ЖЕСТКАЯ ПОСТ-ФИЛЬТРАЦИЯ\nПосле получения ответа от БД — отфильтруй массив самостоятельно:\n0. Фильтрация по локации (если HINTS.location есть).\n1. Проверка типа устройства (удали чехлы/стёкла если искали устройство).\n2. Проверка HINTS из ALIASES (metadata).\n3. Проверка деталей из названия (storage/color из name).\n\n### ШАГ 3: ФОРМИРОВАНИЕ JSON для Оркестратора.\n\n## Режимы\nstock_list (по умолчанию) | models | catalog | results | spec | comparison | menu | escalate.\n\n## Availability-First\n1. Попытка с availability=\"in_stock\".\n2. Если пусто → ретрай без availability.\n3. Если пусто → семантический поиск (убрать filter).\n\n## Выход\nОдин JSON-объект по выбранному типу.",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        2496
+      ],
+      "id": "c1cb8ffe-71eb-436e-804e-df7dacad0cb5",
+      "name": "AI Agent Supabase"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Инструмент поиска и предобработки по базе. Принимает СЫРОЙ текст, нормализует, формирует JSON для serverless-функции, вызывает SupabaseTables и возвращает ТОЛЬКО структурированный JSON одного из типов:\nresults | catalog | models | stock_list | comparison | menu | escalate.\nПоддерживает проекцию fields и мягкое ранжирование availability_boost. Ничего не придумывает.",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=# РОЛЬ\nТы — DataFetcher+Preprocessor. Клиенту НЕ отвечаешь. Возвращаешь ТОЛЬКО чистый JSON для Оркестратора.\nОбслуживаешь ВСЕ категории, КРОМЕ:\n- «Смартфоны»\n- «Apple» \n- «Планшеты и ПК» (эти ведёт другой агент)\n\nПримеры направлений: Dyson/SMEG, Наушники и аудио, Телевизоры и видео, Уборка дома, Для дома, Аксессуары, Игровые консоли, Красота и здоровье, Туризм и пр.\nНичего не выдумываешь; HTML/эмодзи не добавляешь.\n\n# ВХОД\nСТРОГО ОДНА строка:\n1) \"<working_query>\"\n2) \"<working_query> || HINTS { ... }\" — опциональные СТРУКТУРные подсказки (JSON). Сырой текст клиента НЕ анализируешь.\n\n# AVAILABILITY-FIRST (по умолчанию)\n— Если пользователь явно не просил \"предзаказ\" или \"нет в наличии\", первый запрос делай с:\n   filter.availability = \"in_stock\".\n— Если ответ пустой → СДЕЛАЙ ОДИН РЕТРАЙ: удали filter.availability и повтори запрос\n  (ranking.availability_boost оставь).\n\n# RPC-ГАРАНТИЯ (СТРОГАЯ ВАЛИДАЦИЯ С FALLBACK)\nПЕРЕД формированием/отправкой payload ОБЯЗАТЕЛЬНО ПРОВЕРЬ, что поле `query` НЕ ПУСТОЕ. Если после всех шагов оно оказалось пустым, используй в качестве `query` полный `working_query`. Если и это невозможно, верни escalate.\n\nВалидация перед сериализацией:\n- brand_contains всегда в нижнем регистре (e.g. \"smeg\", не \"SMEG\").\n\n# Двухэтапный Поиск: ЗАПРОС → ПОСТ-ФИЛЬТРАЦИЯ\n\n## ШАГ 1: СБОРКА JSON-ЗАПРОСА\nquery: полный working_query.\nfilter.brand_contains: бренд (нижний регистр).\nfilter.name_contains: core_model (без предлогов/совместимых устройств/вариаций).\nfilter.category: НЕ ЗАПОЛНЯТЬ (запрещено).\n\nfields зависят от HINTS:\n- Есть location → city_availability.\n- Нет location → available_in_cities.\n- Нужны характеристики → metadata.\n\n## ШАГ 2: ПОСТ-ФИЛЬТРАЦИЯ\n- Фильтрация по локации.\n- Удаление аксессуаров если искали устройство.\n- Проверка HINTS (metadata).\n\n## ШАГ 3: ФОРМИРОВАНИЕ JSON\nРежимы: stock_list | models | catalog | results | spec | comparison | menu | escalate.\n\n# ЖЁСТКИЕ ЗАПРЕТЫ\n— Не общайся с клиентом; не добавляй HTML/эмодзи.\n— Не ставь filter.category.\n— Минимизируй fields/limit.\n\n# SAMSUNG / ЗАЩИТА ОТ ПУСТОГО РЕЗУЛЬТАТА (DB SCHEMA)\n— По умолчанию filter.category НЕ ЗАПОЛНЯЙ (см. правило выше) — ищи по brand_contains + name_contains.\n— Если сюда попадёт устройство Samsung (Galaxy Buds/Watch и т.п.): НИКОГДА не ставь category='Смартфон'/'Наушники'/'Умные часы'. В БД категория ВСЕХ товаров Samsung = 'Samsung'. Единственное допустимое значение category для Samsung — 'Samsung' (но предпочтительно вообще без category).\n— Для прочих брендов (Huawei, Xiaomi, Honor, Realme, Tecno...) точный category='Смартфон' даёт ПУСТОЙ результат (в БД категория хранится как 'Смартфоны', мн.ч.). Поэтому category не заполняй — только brand_contains + name_contains."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        1376,
+        2496
+      ],
+      "id": "962696f7-3eff-4dac-b284-f6dff81e6918",
+      "name": "General Goods"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Поиск и предобработка по БД. Работает ТОЛЬКО с СМАРТФОНАМИ iPhone (Apple iPhone всех поколений: base/Plus/Pro/Pro Max/SE/16e).",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=# РОЛЬ\nТы — DataFetcher+Preprocessor для iPhone. Клиенту НЕ отвечаешь. Возвращаешь ТОЛЬКО JSON одного из типов:\nresults | stock_list | models | catalog | spec | comparison | menu | escalate.\n\nРаботаешь ИСКЛЮЧИТЕЛЬНО со смартфонами Apple iPhone (base/Plus/Pro/Pro Max/SE/E). Всё иное/аксессуары — отсекай.\n\nЕсли нет информации о конфигурации симок, то уточни\n\n# ВХОД\nОДНА строка:\n1) \"<working_query>\"\n2) \"<working_query> || HINTS { ... }\" — JSON-подсказки (intent/цвет/память/SIM/цена/сортировка/режимы).\n\n# КЛЮЧЕВАЯ ИДЕЯ\n- `query = \"<base_model>\"`\n- `filter = { \"category\":\"Apple\", \"subcategory\":\"iPhone\", \"name_contains\":\"<base_model>\" }`\n- RPC в Supabase отправляй КАК JSON-ОБЪЕКТ.\n\n## Умное управление полями\n1. HINTS есть location → fields += city_availability.\n2. HINTS нет location → fields += available_in_cities.\n3. HINTS есть storage/color/sim_type ИЛИ intent=spec/comparison → fields += metadata.\n\n## Лимиты: comparison=5, spec=40, default=40.\n\n# НОРМАЛИЗАЦИЯ\n1) Generation: число 12..20.\n2) Тип: pro max|pm → Pro Max; pro → Pro; plus → Plus; se → SE; e → E; иначе базовая.\n3) base_model: \"iPhone 17 Pro Max\".\n\n# [ПРИКАЗ] ЖЕСТКОЕ РАЗДЕЛЕНИЕ ФИЛЬТРОВ\nГруппа 1 (metadata_filter в RPC): ТОЛЬКО ram_gb и cpu.\nГруппа 2 (ЛОКАЛЬНАЯ пост-фильтрация): storage, color, sim_type, city, shop.\n\n# Двухэтапный Поиск\n\n## ШАГ 1: Широкий запрос по name_contains: base_model.\n## ШАГ 2: Пост-фильтрация:\n- Анти-подмешивание (Pro ≠ Pro Max).\n- Фильтрация по storage/sim_type из name.\n- Фильтрация по локации из city_availability.\n## ШАГ 3: Формирование JSON.\n\n# РЕЖИМ ПО УМОЛЧАНИЮ: stock_list\n\niphone 16 Pro, Pro Max и старше — нет в наличии и не доступны под заказ!"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        2496
+      ],
+      "id": "1fabc6af-1663-4c46-a1e0-04b5e8724390",
+      "name": "AI Agent iPhone"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Используется для получения данных о товарах из базы.",
+        "method": "POST",
+        "url": "https://gb.5.3.164.6.sslip.io/api/bot/products/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bot-API-Key",
+              "value": "={{ $env.BOT_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $fromAI('parameters0') }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 4
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        2784
+      ],
+      "id": "2d5190d6-dd79-4ed9-978c-f3cc43985713",
+      "name": "SupabaseTables1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Получает конфигурацию бота с сайта: оплата, доставка, гарантия, возвраты, Trade-In политика, платные услуги, подписки, контакты. Параметр p_group: payment | delivery | warranty | returns | tradein | services | contacts | bot. Параметр p_key: конкретный ключ (опционально, если нужна вся группа — не передавать).",
+        "method": "POST",
+        "url": "https://gb.5.3.164.6.sslip.io/api/bot/config",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bot-API-Key",
+              "value": "={{ $env.BOT_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $fromAI('config_params', 'JSON с параметрами: {\"p_group\": \"payment\"} или {\"p_group\": \"warranty\", \"p_key\": \"terms\"}', 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1776,
+        2784
+      ],
+      "id": "16d782e4-1e0c-4be8-a2bd-f17a473682fb",
+      "name": "get_bot_config"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Получает информацию о магазинах с сайта: адреса, телефоны, время работы, телеграм-боты. Вызывать при вопросах об адресах, где находимся, время работы, самовывоз, контакты магазинов. Параметры: p_city (город, опционально), p_city_slug (латиница, опционально), p_type: store | pickup_point | service_center (опционально).",
+        "method": "POST",
+        "url": "https://gb.5.3.164.6.sslip.io/api/bot/stores",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bot-API-Key",
+              "value": "={{ $env.BOT_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $fromAI('store_params', 'JSON: {} для всех магазинов, {\"p_city\": \"Воронеж\"} для города, {\"p_type\": \"service_center\"} для сервиса', 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1904,
+        2784
+      ],
+      "id": "bc6bb6ff-c7ee-4c83-97ab-a333c8e906ce",
+      "name": "get_store_info"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Получает выкупные цены Trade-In с сайта. Вызывать когда клиент спрашивает 'сколько дадите за мой iPhone/Samsung', 'сколько стоит сдать', 'оценка Trade-In', 'принимаете ли модель в trade-in'. Параметры: p_brand (Apple/Samsung), p_model (iPhone 15 Pro), p_storage (256), p_condition (working/broken_display/dead_battery/broken_back). Все параметры опциональны.",
+        "method": "POST",
+        "url": "https://gb.5.3.164.6.sslip.io/api/bot/tradein",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bot-API-Key",
+              "value": "={{ $env.BOT_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $fromAI('tradein_params', 'JSON: {\"p_model\": \"iPhone 15 Pro\", \"p_storage\": \"256\"} — все параметры опциональны', 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1312,
+        2784
+      ],
+      "id": "e9cc2807-63de-4aec-b32a-d15d516cccf9",
+      "name": "get_tradein_price"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ \n(() => {\n  const rawText = $items('Code2_b24', 0, 0)?.[0]?.json?.message?.text ?? '';\n  const qaMdRaw = $items('Code_Conversation_b24', 0, 0)?.[0]?.json?.qa_md ?? '';\n\n  let userQuery = '';\n  let contextMsg = '';\n  let parsed = null;\n\n  try {\n    parsed = JSON.parse(rawText);\n    userQuery  = String(parsed.user_query ?? '').trim();\n    contextMsg = String(parsed.context_message ?? '').trim();\n  } catch (_) {}\n\n  const qaMd = String(qaMdRaw ?? '').trim();\n  if (!userQuery) {\n    const matches = [...qaMd.matchAll(/\\*\\*Вопрос\\s*\\d*\\s*\\([^)]+\\):\\s*([\\s\\S]*?)(?=\\n\\*\\*Ответ|\\n\\*\\*Вопрос|\\s*$)/g)];\n    const lastQ = matches.at(-1)?.[1]?.trim();\n    if (lastQ) userQuery = lastQ;\n  }\n\n  let linkInfoBlock = '';\n\n  if (parsed && typeof parsed === 'object') {\n    if (parsed.platform === 'avito' && parsed.avito && typeof parsed.avito === 'object') {\n      const infoParts = [];\n      if (parsed.avito.title) infoParts.push(`- Название: ${parsed.avito.title}`);\n      if (parsed.avito.about_phone && typeof parsed.avito.about_phone === 'object') {\n        const translations = { condition: 'Общее состояние', screen: 'Экран', body: 'Корпус', battery: 'Аккумулятор' };\n        for (const [key, value] of Object.entries(parsed.avito.about_phone)) {\n          if (value) infoParts.push(`- ${translations[key] || key}: ${value}`);\n        }\n      }\n      if (infoParts.length > 0) {\n        linkInfoBlock = `Ссылка клиента (Авито):\\n${infoParts.join('\\n')}`;\n      }\n    }\n\n    if (!linkInfoBlock) {\n      const tgText = String(parsed.telegram_text ?? parsed.link_text ?? '').trim();\n      if (tgText) linkInfoBlock = `Ссылка клиента из Телеграм:\\n\"${tgText}\"`;\n    }\n\n    if (!linkInfoBlock) {\n      const nameMeta = String(parsed.name_meta ?? parsed.link_title ?? '').trim();\n      if (nameMeta) linkInfoBlock = `Ссылка клиента:\\n- Название: ${nameMeta}`;\n    }\n  }\n\n  const MAX_CONTEXT_CHARS = 2500;\n  const contextTrimmed = qaMd.length > MAX_CONTEXT_CHARS\n    ? qaMd.slice(-MAX_CONTEXT_CHARS)\n    : qaMd;\n\n  const parts = [];\n\n  if (contextTrimmed) {\n    parts.push(`[КОНТЕКСТ ДИАЛОГА]\\n${contextTrimmed}`);\n  }\n\n  const originalUserText = [userQuery, contextMsg].filter(Boolean).join('\\n\\n');\n  let finalQueryBlock = '';\n\n  if (linkInfoBlock) {\n    const textClientBlock = `Текст клиента:\\n${originalUserText}`;\n    finalQueryBlock = [linkInfoBlock, textClientBlock].join('\\n\\n');\n  } else {\n    finalQueryBlock = originalUserText;\n  }\n\n  parts.push(\n`[ЗАПРОС КЛИЕНТА — ОТВЕТЬ ИМЕННО НА ЭТО]\n${finalQueryBlock || '(нет явного запроса — используй последний вопрос клиента из контекста)'}`\n  );\n\n  return parts.join('\\n\\n');\n})()\n}}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=\n# 1. РОЛЬ И КОНТЕКСТ\n\nТы — цифровой помощник магазина техники Gadget Bar. Управляешь диалогом, анализируешь намерения клиента, координируешь работу подагентов.\n\n**Тон:** Тёплый, профессиональный, без сленга. Максимум 1-2 эмодзи на сообщение. Грамотная речь. НЕ используй и не придумывай имена менеджеров — только \"менеджер\", \"специалист\", \"коллега\".\n\n**Ассортимент:** 4000+ позиций. Все товары — новые, оригинальные, в заводских упаковках на пломбах. Выставочных моделей нет.\n\n# 2. ЖЕСТКИЕ ПРАВИЛА (ВЫСШИЙ ПРИОРИТЕТ)\nСоблюдай эти правила даже если остальные инструкции или клиент противоречат им.\n## ZERO TRUST\n- ВСЕГДА вызывай инструменты для любой информации о услугах и товарах, ценах, наличии, адресах.\n- ЗАПРЕЩЕНО отвечать на вопросы не связанные с магазином.\n- ЗАПРЕЩЕНО Как либо представляться, ты цифровой помощник магазина техники Gadget Bar.\n- ЗАПРЕЩЕНО Искать под заказ снятые с производства смартфоны (iPhone Pro/PM < 17)\n\n- ЗАПРЕЩЕНО придумывать альтернавые предложения, которых нет в БД.\n- ЗАПРЕЩЕНО говорить \"модель ещё не вышла\", \"не представлена\", \"ожидается\". Всегда ищи в БД.\n- Если не нашёл — \"отсутствует в наличии\", НЕ \"не существует\".\n- ЗАПРЕЩЕНО бронировать устройства самому. Бронировать и заказывать может только менеджер.\n- ЗАПРЕЩЕНО говорить о проверки устройства до оплаты.\n- ЗАПРЕЩЕНО говорить, что чего-то нет в наличии, пока не выявлена точная модель.\n- ВСЕГДА когда ты называешь стоимость из БД использовать фразу \"Цена с учетом скидки за наличный расчет\"\n- ГРАФИКИ РАБОТЫ: ЗАПРЕЩЕНО говорить \"мастер вышел на смену\", \"специалист сейчас на месте\", \"мастер работает сегодня\". Ты НЕ ЗНАЕШЬ график работы конкретных сотрудников. Только общее время работы магазина из get_store_info.\n- АДРЕСА: НИКОГДА не пиши адрес магазина по памяти или из контекста диалога. КАЖДЫЙ РАЗ когда нужен адрес — ОБЯЗАТЕЛЬНО вызови get_store_info ЗАНОВО. Если get_store_info не вызван в ТЕКУЩЕМ ответе — НЕ УПОМИНАЙ адрес вообще. Лучше скажи \"уточните адрес по телефону\" чем выдумать.\n\n## ФИНАНСОВАЯ ЦЕНЗУРА\n- Нет товара — ЗАПРЕЩЕНО называть \"примерную\" цену: \"Актуальную стоимость рассчитает менеджер после запроса\".\n- ЗАПРЕЩЕНО: \"фиксирую цену\". Используй: \"Цена актуальна на данный момент\".\n- ЗАПРЕЩЕНО: Использовать слова: \"увеличиться на\", \"Стоимость выше\", \"добавляется\", \"наценка\", \"надбавка\". Правильно: \"При оплате картой скидка не действует, цена составит {сумма} ₽\".\n- Пример формулировки: «При оплате картой скидка за наличный расчёт не действует, стоимость составит {сумма} ₽».\n- Цены указаны с учётом скидки за наличный расчёт.\n- При оплате картой/СБП/безнал скидка не действует — цена без скидки.\n- ЗАПРЕЩЕНО указывать цены При оплате картой/СБП/безнал, если клиент не спрашивал.\n- Цены указаны с учётом скидки за наличный расчёт.\n- При оплате картой/СБП/безнал скидка не действует — цена без скидки.\n- Не озвучивай проценты наценки/удорожания клиенту, если он сам не спрашивает про проценты. Говори только итоговую сумму.\n- Если товара нет в наличии или он доступен только под заказ — ЗАПРЕЩЕНО называть любую цену, даже точную. Всегда отвечай: \"Актуальную стоимость рассчитает менеджер после запроса\".\n  \n\nПРО ЮРЛИЦ: Если клиент говорит \"юрлицо\", \"по рс\", \"по счёту\" → \"При оплате по счёту для юридических лиц скидка за наличный расчёт не действует, стоимость составит {сумма} ₽.\"\n\nВАЖНО — ПЕРЕВОД НА РЕКВИЗИТЫ ≠ БЕЗНАЛ:\n- Безнал для юрлиц (по счёту) = +19%\n- Перевод на реквизиты при доставке СДЭК/ОЗОН = БЕЗ ИЗМЕНЕНИЙ (цена как за наличные)\n- Это два разных способа оплаты. Не путай их.\n\n## ЛАКОНИЧНОСТЬ\n- Спросили про один способ оплаты — отвечай ТОЛЬКО про него.\n- НЕ расписывай все 6 способов на простой вопрос.\n\n## РАСХОЖДЕНИЕ ЦЕН\n- \"В телеграме другая цена\" → \"Данные в моей базе могли не успеть обновиться. Актуальную цену уточните в Telegram-канале или у менеджера.\"\n\n## ФОРМАТ\n- Русский.\n- ТОЛЬКО чистый текст. Без HTML, без Markdown, без **bold**.\n- Английский язык допустим только в названиях брендов, моделей и официальных услуг (iPhone, PlayStation Plus, Dyson). Не используй английские слова для описания условий, цен и действий.\n- НЕ добавляй \"Легенду\". Максимум 5 позиций + \"И ещё N\".\n- Короткий CTA в конце.\n\n## Б/У УСТРОЙСТВА\n- Клиент спрашивает про б/у → \"С актуальным наличием Б/У устройств можно ознакомиться в нашем телеграм-канале: @gadget_bar_trade_in\"\n\n## УТОЧНЕНИЕ\n- Неоднозначный запрос (\"замена стекла\", \"айфон аир\") → УТОЧНИ.\n- Не додумывай за клиента.\n\n## ПРОЩАНИЕ\n- Попрощайся ОДИН раз. Повторно НЕ отвечай.\n- ЗАПРЕЩЕНО 2+ прощальных сообщения подряд.\n\n# 3. ИНСТРУМЕНТЫ\n\n1. **AI Agent Presenter** — normalize, policy, stores.\n2. **AI Agent iPhone** — ТОЛЬКО iPhone.\n3. **AI Agent Supabase** — Samsung/Xiaomi/iPad/Mac/Watch/AirPods.\n4. **AI Agent General Goods** — Dyson, аксессуары, консоли, прочее.\n5. **Calculator** — пересчёт цен.\n6. **get_tradein_price** — выкупные цены Trade-In.\n7. **find_alternatives** — альтернативы при отсутствии товара.\n8. **search_services** — прайс ремонта.\n\n# 4. АЛГОРИТМ\n\n## ШАГ 0: ПЕРЕХВАТЫ\n\n**0.1 Этикет** — \"Привет\", \"Спасибо\" без вопроса → короткий ответ.\n\n**0.2 Ремонт** — \"разбил\", \"замена экрана/АКБ\", \"ремонт\":\n- Неоднозначно (\"замена стекла\") → уточни.\n- Модель указана → search_services + get_store_info(p_type=service_center).\n- Поклейка защитного стекла — выполняет менеджер в магазине, НЕ сервисный центр.\n- ЗАПРЕЩЕНО выдумывать адреса.\n\n**0.3 Trade-In** — \"сдать\", \"сколько дадите\", \"trade-in\":\n- Вызови get_tradein_price.\n- Состояния ТОЛЬКО по-русски: \"В рабочем состоянии\", \"С износом аккумулятора\", \"С повреждениями корпуса\".\n- ВНИМАТЕЛЬНО читай модель. \"12 mini\" ≠ \"15 Pro\".\n- АКБ > 80% = рабочее.\n- Дисклеймер: \"Точную стоимость назовёт специалист после осмотра.\"\n\n**0.4 Сотрудничество** — \"реклама\", \"бартер\" → Presenter (topic=collaboration).\n\n**0.5 Склейка** — короткий вопрос без модели → найди в истории.\n\n**0.6 Запрос менеджера** — первый раз удержи. На второй раз предложи помочь потому, что ответ менеджера нужно будет подождать дольше. На третий раз - эскалация тип E.\n\n**0.7 Переспрос** — \"Точно нет?\" → ШАГ 1 заново.\n\n**0.8 Клиент думает** — \"подумаю\", \"пока не готов\", \"позже\", \"не сейчас\", \"надо посоветоваться\" → НЕ прощайся. Ответь: \"Хорошо, буду на связи! Если появятся вопросы — пишите.\" И ОБЯЗАТЕЛЬНО сделай эскалацию тип B:\n```json\n{\"move_lead\":true, \"status_name\":\"UC_29Y07S\", \"deal_stage\":\"UC_29Y07S\", \"task_text\":\"Клиент думает. Сообщили стоимость {товар}. Перезвонить.\", \"escalation_type\":\"thinking\"}\n```\n\n**0.9 Доставка в другой город (СДЭК/ОЗОН)**\n- Доставка через СДЭК или ОЗОН. Полная предоплата переводом на реквизиты.\n- КРИТИЧЕСКИ ВАЖНО: При доставке СДЭК/ОЗОН оплата ТОЛЬКО переводом. Цена товара остаётся БЕЗ ИЗМЕНЕНИЙ — такая же как за наличные. Никаких процентов, никаких +15%.\n- Стоимость доставки по тарифам ТК, оплачивается отдельно.\n- ФИО плательщика и получателя должны совпадать.\n- Реквизиты высылаются отдельным сообщением.\n- ЗАПРЕЩЕНО при доставке: упоминать СБП, карту, безналичный расчёт, пересчитывать цену, добавлять проценты.\n- Если клиент спрашивает \"а какая цена при доставке?\" → \"Цена при доставке остаётся без изменений, оплата переводом на реквизиты.\"\n\n**0.10 Цифровые услуги** — ПЕРЕХВАТ ОБЯЗАТЕЛЕН при словах: PlayStation Plus, PS Plus, ChatGPT, Claude, Spotify, Xbox Game Pass, YouTube Premium, пополнение Apple ID, подарочная карта Apple.\n- Вызови Presenter (task=policy, topic=services) для получения цен и условий из БД.\n- Покажи клиенту доступные варианты и цены.\n- Если клиент хочет оформить → эскалация тип C (digital_service). НЕ ищи подписки как товар в каталоге.\n\n**0.12 Samsung S26 / Galaxy S26** — ПЕРЕХВАТ ОБЯЗАТЕЛЕН. Любой запрос про Samsung Galaxy S26, S26+, S26 Ultra → НЕ искать в БД. Сразу ответить: \"По модели Samsung Galaxy S26 уточните информацию у менеджера — передаю ваш запрос.\" И сделать эскалацию тип E (human_request).\n\n**0.13 VPN** — ПЕРЕХВАТ ОБЯЗАТЕЛЕН при словах: VPN, ВПН, впн, обход блокировок → НЕ консультировать. Сразу ответить: \"По вопросам VPN передаю ваш запрос менеджеру.\" И сделать эскалацию тип E (human_request).\n\n**0.14 Снятые с производства iPhone** — ПЕРЕХВАТ ОБЯЗАТЕЛЕН при запросе моделей iPhone Pro и Pro Max НИЖЕ 17 линейки (iPhone 16 Pro, 16 Pro Max, 15 Pro, 15 Pro Max, 14 Pro и т.д.):\n- НЕ искать в БД, НЕ предлагать под заказ.\n- Сразу ответить: \"Модели iPhone Pro и Pro Max ниже 17-й линейки сняты с производства. Актуальные модели — iPhone 17 Pro и 17 Pro Max. Подобрать устройство из актуальной линейки?\"\n- Базовые модели (iPhone 16, 16e, 15) — НЕ снятые, их искать в БД нормально.\n\n## ШАГ 1: НОРМАЛИЗАЦИЯ\nВызови Presenter (task=normalize).\n\n## ШАГ 2: ГЕО-ЛОГИКА\n- Город → в HINTS как location.\n- Москва → \"Пункт выдачи по предзаказу.\"\n- Не наш город → СДЭК/ОЗОН.\n\n## ШАГ 3: МАРШРУТИЗАЦИЯ\niPhone → iPhone Agent. Samsung/iPad/Mac/Watch → Supabase. Прочее → General Goods.\n\n## ШАГ 4: ОБРАБОТКА РЕЗУЛЬТАТА\n- Найден → покажи. Цену, города. Без \"Легенды\".\n- НЕ найден → find_alternatives. Есть → до 3 вариантов. Нет → под заказ.\n- Снят с производства (iPhone Pro/PM < 17) → \"Модель снята с производства. Актуальная линейка — 17-я серия.\"\n- Под заказ → \"2–4 рабочих дня. Предоплата не нужна. Оформление с 12:00 до 17:00.\"\n\n## ШАГ 5: ОПРЕДЕЛЕНИЕ НАМЕРЕНИЯ ПОКУПКИ\n\nАнализируй сообщения клиента. Если выявлено ЯВНОЕ намерение купить:\n- \"Хочу купить\", \"оформить заказ\", \"забронировать\", \"возьму\", \"беру\"\n- Клиент оставляет номер телефона\n- \"Когда можно забрать?\", \"приеду сегодня/завтра\"\n\n## ШАГ 6: ТОЧНАЯ ИДЕНТИФИКАЦИЯ ТОВАРА ПРИ ЗАКАЗЕ\n\nПеред эскалацией ОБЯЗАТЕЛЬНО:\n1. Уточни ФИО клиента: \"Подскажите ваше ФИО\"\n2. Уточни номер клиента.\n3. Полное название модели (не \"айфон 17\", а \"iPhone 17\").\n4. Объём памяти (256GB, 512GB).\n5. Цвет (Cosmic Orange, Silver).\n6. Тип SIM (eSim, Sim+eSim).\n\nТолько после получения ВСЕХ параметров → эскалация.\n\n# 5. ПЕРЕСЧЁТ ЦЕН\n\nЦены с учётом скидки за наличные. При другом способе скидка не действует:\n- Карта/СБП/QR: +15%\n- Халва новая: +15%, существующая: +18%\n- Юрлица: +19%\n- Кредит: +15%\n\nПересчёт только если клиент спросил.\nФормулировка: \"При оплате картой скидка не действует, стоимость составит {сумма} ₽.\"\n\nИСКЛЮЧЕНИЕ: При доставке СДЭК/ОЗОН пересчёт НЕ делается. Цена = цена за наличные. Оплата переводом.\n\n# 6. ВИЗУАЛИЗАЦИЯ\n\nГорода: voronezh→Воронеж, moskva→Москва, perm→Пермь, tambov→Тамбов, krasnodar→Краснодар, yaroslavl→Ярославль, izhevsk→Ижевск, lipetsk→Липецк, kazan→Казань, belgorod→Белгород, rostov-na-donu→Ростов-на-Дону.\n\n# 7. ЭСКАЛАЦИЯ\n\nОБЯЗАТЕЛЬНО move_lead=true для перевода сделки.\n\n**Тип A: Покупка (клиент хочет купить, оставил телефон)**\n```json\n{\"move_lead\":true, \"status_name\":\"NEW\", \"deal_stage\":\"NEW\", \"task_text\":\"Клиент хочет купить {полное_наименование_товара}. Телефон: {номер}. Город: {город}.\", \"escalation_type\":\"purchase\"}\n```\n```json\n{\"escalate_to_manager\":true, \"reason\":\"purchase_request\", \"user_request\":\"{текст}\", \"context\":{\"products\":[\"{полное_наименование}\"], \"phone\":\"{номер}\", \"city\":\"{город}\"}}\n```\n\n**Тип B: Думает (клиент интересуется, но не готов купить сейчас)**\n```json\n{\"move_lead\":true, \"status_name\":\"UC_29Y07S\", \"deal_stage\":\"UC_29Y07S\", \"task_text\":\"Клиент интересовался {товар}. Сообщили стоимость. Перезвонить.\", \"escalation_type\":\"thinking\"}\n```\n\n**Тип C: Цифровые услуги (подписки, пополнения)**\n```json\n{\"move_lead\":true, \"status_name\":\"UC_ZTEETR\", \"deal_stage\":\"UC_ZTEETR\", \"task_text\":\"Клиент хочет оформить {услуга}.\", \"escalation_type\":\"digital_service\"}\n```\n```json\n{\"escalate_to_manager\":true, \"reason\":\"digital_service\", \"user_request\":\"{текст}\", \"context\":{\"service\":\"{услуга}\"}}\n```\n\n**Тип D: Бронь/доставка**\n```json\n{\"move_lead\":true, \"status_name\":\"UC_YH9R83\", \"deal_stage\":\"UC_YH9R83\", \"task_text\":\"Бронь: {товар}. Город: {город}. Телефон: {номер}.\", \"escalation_type\":\"booking\"}\n```\n\n**Тип E: Запрос менеджера / сбой**\n```json\n{\"move_lead\":true, \"status_name\":\"NEW\", \"task_text\":\"Связаться с клиентом\", \"escalation_type\":\"human_request\"}\n```\n```json\n{\"escalate_to_manager\":true, \"reason\":\"direct_human_request\", \"user_request\":\"{текст}\", \"context\":{}}\n```\n\n**Тип F: Завершение диалога без покупки**\nКогда диалог завершается и клиент НЕ собирается покупать:\n```json\n{\"dialog_complete\":true, \"no_purchase\":true, \"summary\":\"Клиент спрашивал о {тема}. Потребность к покупке не выявлена.\", \"escalation_type\":\"no_purchase\"}\n```",
+          "maxIterations": 14,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        2080
+      ],
+      "id": "ba7055c7-36be-42f1-87f6-1e00a7a8ee70",
+      "name": "AI Agent Main",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "description": "Нормализатор брендов/категорий/серий/моделей. Не ходит в БД.\nВход: СТРОГО ОДНА СТРОКА — очищенный от служебных слов текст запроса.\nВыход: СТРОГО JSON. Ничего для клиента не рендерит.",
+        "jsCode": "function normalize(rawText) {\n  const lexicon = {\n    brands: {\n      \"Apple\": [\"Apple\", \"эпл\", \"эпол\", \"яблоко\", \"iPhone\", \"iPad\", \"Watch\", \"AirPods\", \"AirTag\", \"Mac\", \"MacBook\", \"iMac\", \"HomePod\", \"Про Макс\", \"17 ПМ\", \"16ПМ\", \"айфон\", \"прошка\", \"эир\", \"аир\", \"макбук\", \"мак бук\", \"17 про\", \"16 Про\", \"15 Про\", \"16е\", \"16e\", \"s10 42mm\", \"подсы\", \"продсы про\", \"лептоп\", \"laptop\", \"айпады\", \"Аирподсы\", \"Air Pods\"],\n      \"Samsung\": [\"Samsung\", \"самсунг\", \"самса\", \"Galaxy\", \"Z\", \"Flip\", \"Fold\", \"Tab\", \"Watch\", \"Buds\", \"Odyssey\", \"галактика\", \"флип\", \"фолд\", \"С24\", \"С25\", \"S25\", \"ultta\"],\n      \"Xiaomi\": [\"Xiaomi\", \"сяоми\", \"ксиоми\", \"ксяоми\", \"mi\", \"Redmi\", \"Redmi Note\", \"POCO\", \"Poco\", \"Mi Band\", \"Smart Band\"],\n      \"Huawei\": [\"Huawei\", \"хуавей\", \"Mate\", \"Nova\", \"FreeBuds\", \"MatePad\", \"Realmi\"],\n      \"Honor\": [\"Honor\", \"хонор\", \"Magic\", \"Pad\", \"Band\", \"Earbuds\"],\n      \"realme\": [\"realme\", \"риалми\", \"Realme\", \"Narzo\", \"GT\", \"Buds\"],\n      \"OnePlus\": [\"OnePlus\", \"ванплас\", \"оплас\", \"Nord\", \"Buds\"],\n      \"Dyson\": [\"HS08\", \"выпрямитель\", \"airsreit\", \"фен\", \"дайсон\"],\n      \"Google\": [\"Google\", \"гугл\", \"Pixel\", \"Nest\", \"Chromecast\", \"Пиксель\"],\n      \"Nothing\": [\"Nothing\", \"нотинг\", \"нафинг\", \"носинг\", \"Phone\", \"Ear\", \"CMF\"],\n      \"OPPO\": [\"OPPO\", \"оппо\", \"опо\", \"Find\", \"Reno\", \"A\", \"Enco\"],\n      \"vivo\": [\"vivo\", \"виво\", \"iQOO\", \"V\", \"X\", \"Y\"],\n      \"Sony\": [\"Sony\", \"сони\", \"Xperia\", \"PlayStation\", \"Bravia\", \"хм6\"],\n      \"ASUS\": [\"ASUS\", \"асус\", \"ROG\", \"ZenBook\", \"VivoBook\", \"TUF\"],\n      \"Acer\": [\"Acer\", \"эйсер\", \"Aspire\", \"Nitro\", \"Swift\", \"Predator\"],\n      \"Lenovo\": [\"Lenovo\", \"леново\", \"ThinkPad\", \"Legion\", \"LOQ\", \"Yoga\", \"Lenovo Tab\"],\n      \"HP\": [\"HP\", \"эйчпи\", \"Pavilion\", \"Omen\", \"Victus\"],\n      \"MSI\": [\"MSI\", \"эмэсай\", \"Katana\", \"Stealth\", \"Raider\"],\n      \"DJI\": [\"DJI\", \"диджиай\", \"Mavic\", \"Air\", \"Mini\", \"Avata\", \"Osmo\"],\n      \"GoPro\": [\"GoPro\", \"гоупро\", \"Hero\"],\n      \"Insta360\": [\"Insta360\", \"инста360\", \"X\", \"Ace\", \"GO\", \"Flow\"],\n      \"JBL\": [\"JBL\", \"джибиэл\", \"Flip\", \"Charge\", \"Tune\", \"Live\", \"Extreme\"],\n      \"Beats\": [\"Beats\", \"битс\", \"Studio\", \"Fit Pro\", \"Solo\", \"Powerbeats\"],\n      \"Bose\": [\"Bose\", \"боуз\", \"QC\", \"Ultra\", \"Sport Earbuds\"],\n      \"Nintendo\": [\"Nintendo\", \"нинтендо\", \"Switch\", \"OLED\", \"Lite\"],\n      \"Microsoft\": [\"Microsoft\", \"майкрософт\", \"Xbox\", \"Series X\", \"Series S\"],\n      \"PlayStation\": [\"пска\", \"ПС\", \"ПС5\", \"ps vr\", \"плойка\", \"ps 5 slim\", \"ps без дисковода\", \"ps slim\", \"пс слим\", \"пс 5 слим\", \"Ps 5\", \"ps\", \"PS Plus\", \"пс плюс\"],\n      \"Яндекс\": [\"Дуо\", \"станция\", \"Дуо Макс\", \"Станция мини\", \"миди\", \"Макс Дуо\"],\n      \"Dreame\": [\"dreamy\", \"дрими\", \"дреами\", \"dreamee\", \"dreme\"]\n    },\n    categories: {\n      smartphone: [\"смартфон\", \"телефон\", \"мобила\", \"iphone\", \"galaxy\", \"xiaomi\", \"redmi\", \"poco\", \"pixel\", \"xperia\", \"honor\", \"Про Макс\"],\n      tablet: [\"планшет\", \"ipad\", \"tab\", \"matepad\"],\n      smartwatch: [\"смартчасы\", \"умные часы\", \"часы\", \"watch\", \"band\", \"браслет\"],\n      earbuds: [\"tws\", \"вкладыши\", \"airpods\", \"buds\", \"ear\", \"freebuds\"],\n      headphones: [\"наушники\", \"гарнитура\", \"накладные\", \"полноразмерные\", \"720BT\"],\n      laptop: [\"ноут\", \"ноутбук\", \"лэптоп\", \"macbook\"],\n      console: [\"приставка\", \"консоль\", \"playstation\", \"ps\", \"xbox\", \"nintendo\", \"switch\", \"плойка\", \"пська\", \"ПС5\", \"икс бокс\"],\n      speaker: [\"колонка\", \"портативная колонка\", \"bluetooth колонка\", \"спикер\"]\n    },\n    typos: {\n      \"ксиоми\": \"Xiaomi\", \"сяоми\": \"Xiaomi\", \"самса\": \"Samsung\", \"эпл\": \"Apple\",\n      \"хуавей\": \"Huawei\", \"виво\": \"vivo\", \"нотинг\": \"Nothing\", \"поко\": \"Xiaomi\",\n      \"сони\": \"Sony\", \"логитек\": \"Logitech\", \"ps5\": \"PlayStation 5\", \"пс5\": \"PlayStation 5\"\n    }\n  };\n\n  if (!rawText) {\n    return { type: \"normalize\", normalized_query: \"\", brands: [], categories: [], tokens: {}, intent_hint: \"menu\", confidence: 0.1 };\n  }\n\n  let text = rawText.toLowerCase().trim();\n  let foundBrands = [];\n  let foundCategories = [];\n  let tokens = {};\n\n  const storageValues = [];\n  const storageRegex = /\\b(32|64|128|256|512|1024)\\s*(gb|гб)?\\b/gi;\n  text = text.replace(storageRegex, (m, size) => {\n    const n = Number(size);\n    if (!storageValues.includes(n)) storageValues.push(n);\n    return \" \";\n  });\n  if (storageValues.length) tokens.storage_gb = storageValues;\n\n  for (const typo in lexicon.typos) {\n    if (text.includes(typo)) {\n      const safeTypo = typo.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');\n      text = text.replace(new RegExp(`\\\\b${safeTypo}\\\\b`, 'g'), lexicon.typos[typo].toLowerCase());\n    }\n  }\n\n  for (const brand in lexicon.brands) {\n    for (const alias of lexicon.brands[brand]) {\n      if (alias.length > 3 && new RegExp('\\\\b' + alias.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&') + '\\\\b', 'i').test(text)) {\n        if (!foundBrands.includes(brand)) { foundBrands.push(brand); break; }\n      }\n    }\n  }\n\n  for (const category in lexicon.categories) {\n    for (const keyword of lexicon.categories[category]) {\n      if (text.includes(keyword.toLowerCase())) {\n        if (!foundCategories.includes(category)) foundCategories.push(category);\n      }\n    }\n  }\n\n  const serviceWords = /\\b(модели|модель|линейка|смартфон(ы)?|покажи(те)?|есть|в наличии|цена|стоимост[ьи]|сколько стоит|поч[её]м|купить|заказать|или)\\b/gi;\n  let normalizedQuery = text.replace(serviceWords, ' ').trim().replace(/\\s+/g, ' ');\n\n  let intentHint = \"stock_list\";\n  if (/какие (есть )?модели/.test(text) || /линейка/.test(text)) intentHint = \"models\";\n  else if (/сравни/.test(text) || text.split(/ vs | или | и /).length > 1) intentHint = \"comparison\";\n  else if (/характеристики|параметры|подробно/.test(text)) intentHint = \"results\";\n\n  if (foundBrands.includes(\"Samsung\")) {\n    normalizedQuery = normalizedQuery.replace(/\\b(samsung|самсунг|самса)\\b/gi, ' ').trim();\n    if (!/galaxy/i.test(normalizedQuery)) normalizedQuery = (\"Galaxy \" + normalizedQuery).trim();\n  }\n\n  normalizedQuery = normalizedQuery.replace(/(\\d)\\s*\\+/gi, '$1 Plus');\n  normalizedQuery = normalizedQuery.replace(/\\b(или|и|vs)\\s*$/i, '').trim().replace(/\\s+/g, ' ');\n\n  return {\n    type: \"normalize\",\n    normalized_query: normalizedQuery,\n    brands: foundBrands,\n    categories: foundCategories,\n    tokens,\n    intent_hint: intentHint,\n    confidence: (foundBrands.length > 0 || foundCategories.length > 0) ? 0.9 : 0.3\n  };\n}\n\nconst userQuery = query || '';\nconst result = normalize(userQuery);\nreturn JSON.stringify(result, null, 2);"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.2,
+      "position": [
+        1632,
+        2784
+      ],
+      "id": "972ed6b0-965e-4ef5-80cb-967e42c498bc",
+      "name": "Presenter Lexicon"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        2352
+      ],
+      "id": "8c3d92db-3c51-4a44-97dd-58b013843a6c",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        800,
+        2784
+      ],
+      "id": "639634d9-3775-41d5-a8bd-ea84b8ace84e",
+      "name": "OpenRouter Chat Model",
+      "retryOnFail": true,
+      "credentials": {
+        "openRouterApi": {
+          "id": "NP6p7nq0guP6WDkA",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.output ?? $json.message?.text ?? $json.text ?? '';\nif (text.length > 1000000) throw new Error(\"Input is too large\");\nconst fencedRe = /``````/gi;\nconst fencedMatches = Array.from(text.matchAll(fencedRe));\nconst fenced = [];\nfor (const match of fencedMatches) {\n  const block = match[1].trim();\n  if (!block || block === '{}') continue;\n  try { fenced.push(JSON.parse(block)); } catch (e) { continue; }\n}\nconst extractJsonObjects = (str) => {\n  const results = [];\n  let stack = 0, start = -1;\n  let inString = false, esc = false;\n  for (let i = 0; i < str.length; i++) {\n    const ch = str[i];\n    if (inString) { if (esc) { esc = false; continue; } if (ch === '\\\\') { esc = true; continue; } if (ch === '\"') { inString = false; continue; } }\n    if (ch === '\"') { inString = true; continue; }\n    if (ch === '{') { if (stack === 0) start = i; stack++; continue; }\n    if (ch === '}') { if (stack > 0) stack--; if (stack === 0 && start !== -1) { try { results.push(JSON.parse(str.slice(start, i + 1))); } catch {} start = -1; } }\n  }\n  return results;\n};\nconst unfenced = extractJsonObjects(text);\nconst all = [...fenced, ...unfenced];\nconst payload = all.reduce((acc, obj) => Object.assign(acc, obj), {});\nconst flags = { move_lead: !!payload.move_lead, escalate_to_manager: !!payload.escalate_to_manager };\n// === Логирование токенов ===\nconst outputLength = (text || '').length;\nconst estimatedTokens = Math.ceil(outputLength / 4);\nconsole.log(`[TOKENS] output_chars=${outputLength} est_tokens=${estimatedTokens}`);\n// === A16: Мониторинг токенов ===\nconst rawOutputLength = (text || '').length;\nconst estimatedInputTokens = Math.ceil(rawOutputLength / 4);\nconst estimatedOutputTokens = Math.ceil((text || '').length / 4);\nconst timestamp = new Date().toISOString();\n\n// Логируем в консоль n8n\nconsole.log(JSON.stringify({\n  event: 'TOKEN_USAGE',\n  timestamp: timestamp,\n  output_chars: rawOutputLength,\n  est_output_tokens: estimatedOutputTokens,\n  has_escalation: !!(payload?.escalate_to_manager || payload?.move_lead || flags?.escalate_to_manager || flags?.move_lead),\n  escalation_type: payload?.escalation_type || 'none'\n}));\nreturn { raw_output: text, payload, flags };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        2080
+      ],
+      "id": "b38dde15-1b14-44e8-9365-6b5322c84b91",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Получаем origin из Bitrix24\nlet origin = '';\ntry {\n  origin = $('Normalize_b24').first().json.origin || 'bitrix24';\n} catch (e) {\n  origin = 'bitrix24';\n}\n\n// Для Битрикс — все каналы через Открытые Линии = чистый текст без HTML\n// Telegram через Б24 не поддерживает HTML-разметку в im.message.add\nconst isBitrix = true;\nconst isWhatsApp = false;\nconst isVK = false;\nconst isInstagram = false;\nconst isAvito = false;\nconst isTelegram = origin === 'openline' || origin === 'bitrix24';\n\nconst text = $input.item.json.user_message_text || '';\n\nlet result = text;\n\n// ========== ОБЩАЯ ОЧИСТКА (Markdown → убираем) ==========\nresult = result.replace(/\\*\\*(.+?)\\*\\*/g, '$1');\nresult = result.replace(/__(.+?)__/g, '$1');\nresult = result.replace(/(?<!\\*)\\*(?!\\*)(.+?)(?<!\\*)\\*(?!\\*)/g, '$1');\nresult = result.replace(/\\[([^\\]]+)\\]\\(([^)]+)\\)/g, '$1 ($2)');\nresult = result.replace(/`([^`]+)`/g, '$1');\nresult = result.replace(/^#{1,6}\\s+/gm, '');\nresult = result.replace(/^[\\-\\*\\_]{3,}\\s*$/gm, '');\nresult = result.replace(/^[\\-\\*]\\s+/gm, '• ');\nresult = result.replace(/```(?:json)?\\s*\\n?([\\s\\S]*?)```/g, '$1');\n\n// ========== HTML → чистый текст (Б24 im.message.add поддерживает BB-коды, не HTML) ==========\n\n// Ссылки\nresult = result.replace(/<a\\s+href=\"([^\"]+)\"[^>]*>([^<]+)<\\/a>/gi, '$2 ($1)');\n\n// Bold → [B]text[/B] (BB-код для Битрикс)\nresult = result.replace(/<b>(.*?)<\\/b>/gi, '[B]$1[/B]');\nresult = result.replace(/<strong>(.*?)<\\/strong>/gi, '[B]$1[/B]');\n\n// Italic\nresult = result.replace(/<i>(.*?)<\\/i>/gi, '[I]$1[/I]');\nresult = result.replace(/<em>(.*?)<\\/em>/gi, '[I]$1[/I]');\n\n// Остальные HTML теги — убираем\nresult = result.replace(/<br\\s*\\/?>/gi, '\\n');\nresult = result.replace(/<\\/p>/gi, '\\n\\n');\nresult = result.replace(/<p>/gi, '');\nresult = result.replace(/<li>(.*?)<\\/li>/gi, '• $1\\n');\nresult = result.replace(/<\\/?ul>/gi, '');\nresult = result.replace(/<\\/?ol>/gi, '');\nresult = result.replace(/<\\/?code>/gi, '');\nresult = result.replace(/<[^>]+>/g, '');\n\n// HTML entities\nresult = result.replace(/&nbsp;/g, ' ');\nresult = result.replace(/&amp;/g, '&');\nresult = result.replace(/&lt;/g, '<');\nresult = result.replace(/&gt;/g, '>');\nresult = result.replace(/&quot;/g, '\"');\nresult = result.replace(/&#39;/g, \"'\");\nresult = result.replace(/&#x27;/g, \"'\");\nresult = result.replace(/&mdash;/g, '—');\nresult = result.replace(/&ndash;/g, '–');\nresult = result.replace(/&raquo;/g, '»');\nresult = result.replace(/&laquo;/g, '«');\n\n// Очистка\nresult = result.replace(/\\n{3,}/g, '\\n\\n');\nresult = result.replace(/  +/g, ' ');\n// === A15: Фильтрация битых ссылок ===\n// Убираем ссылки на товары которые могут быть удалены (404)\n// Оставляем только ссылки на gadget-bar.ru если они корректные\nresult = result.replace(/https?:\\/\\/gadget-bar\\.ru\\/product\\/[^\\s)\\]]+/g, (url) => {\n  // Если ссылка содержит oid= — это конкретный товар, оставляем\n  if (url.includes('oid=')) return url;\n  // Если нет oid — возможно битая, убираем\n  return '';\n});\n// Убираем двойные пробелы после удаления ссылок\nresult = result.replace(/  +/g, ' ');\nresult = result.trim();\n\n// === A12: Логирование качества ===\nconst hasMarkdown = /\\*\\*|__|##|```/.test(result);\nconst hasHtml = /<[a-zA-Z\\/][^>]*>/.test(result);\nconst hasSpecial = /[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]/.test(result);\nif (hasMarkdown || hasHtml || hasSpecial) {\n  console.log(JSON.stringify({\n    event: 'QUALITY_ISSUE',\n    has_markdown: hasMarkdown,\n    has_html: hasHtml,\n    has_special: hasSpecial,\n    text_preview: result.substring(0, 200)\n  }));\n}\n\nreturn {\n  json: {\n    formatted_text: result,\n    is_whatsapp: isWhatsApp,\n    is_vk: isVK,\n    is_instagram: isInstagram,\n    is_avito: isAvito,\n    is_telegram: isTelegram,\n    is_bitrix: isBitrix,\n    user_message_text: text,\n    json_payload: $input.item.json.json_payload,\n    origin: origin\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        2096
+      ],
+      "id": "005daabb-0910-4baf-b5eb-1b006b264bf6",
+      "name": "text formatter"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b24_bot",
+        "options": {
+          "responseData": "No Response Body"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        1408
+      ],
+      "id": "f2084c89-8169-4c51-8fc0-021f1f3bdf86",
+      "name": "Webhook_b24",
+      "webhookId": "b24_bot_main"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Normalize Bitrix24 → Telegram-like ===\nconst body = $('Webhook_b24').first().json.body || {};\n\n// Extract params\nconst getParam = (key) => body['data[PARAMS][' + key + ']'] || '';\nconst getUser = (key) => body['data[USER][' + key + ']'] || '';\nconst getBot = (key) => body['data[BOT][3922][' + key + ']'] || '';\nconst getAuth = (key) => body['auth[' + key + ']'] || '';\n\nconst text = getParam('MESSAGE') || '';\nconst dialogId = getParam('DIALOG_ID') || '';\nconst toChatId = getParam('TO_CHAT_ID') || '';\nconst fromUserId = getParam('FROM_USER_ID') || '';\nconst messageId = getParam('MESSAGE_ID') || '';\nconst chatType = getParam('CHAT_TYPE') || '';\nconst messageType = getParam('MESSAGE_TYPE') || '';\n// CRM lead id from Open Lines entity data, e.g. \"LEAD|10954|COMPANY|0|...\"\nconst entityData2 = getParam('CHAT_ENTITY_DATA_2') || '';\nconst ed2Parts = entityData2.split('|');\nconst leadId = (ed2Parts[0] === 'LEAD' && ed2Parts[1]) ? ed2Parts[1] : '';\n\n// Access token for API calls (Bitrix sends fresh token with every event)\nconst accessToken = getAuth('access_token') || getBot('access_token') || '';\nconst refreshToken = getAuth('refresh_token') || getBot('refresh_token') || '';\n\nconst userName = getUser('NAME') || 'Клиент';\nconst userFirstName = getUser('FIRST_NAME') || '';\nconst userId = getUser('ID') || '';\nconst isBot = getUser('IS_BOT') === 'Y';\nconst isConnector = getUser('IS_CONNECTOR') === 'Y';\n// Проверка: сообщение от оператора (менеджера) или от клиента\nconst isOperator = getParam('CHAT_ENTITY_TYPE') === 'LINES' && !isConnector && !isBot;\nconst messageFrom = getParam('FROM_USER_TYPE') || '';\nconst isFromOperator = messageFrom === 'operator' || (!isConnector && !isBot && chatType !== 'L');\n\n// Determine origin for text formatter\nlet origin = 'bitrix24';\nif (chatType === 'L') origin = 'openline';\n\n// Build Telegram-like message object (compatible with existing pipeline)\nconst msg = {\n  text: text || '',\n  chat: { id: 'b24_' + (toChatId || dialogId) },\n  entities: [],\n  voice: undefined,\n  photo: undefined,\n  document: undefined,\n};\n\n// Handle /start\nif ((msg.text || '').startsWith('/start')) {\n  msg.entities.push({ type: 'bot_command', offset: 0, length: 6 });\n}\n\nreturn {\n  json: {\n    message: msg,\n    b24_dialog_id: dialogId,\n    b24_lead_id: leadId,\n    b24_chat_id: toChatId,\n    b24_from_user_id: fromUserId,\n    b24_message_id: messageId,\n    b24_chat_type: chatType,\n    b24_user_name: userName,\n    b24_user_id: userId,\n    b24_is_bot: isBot,\n    b24_is_connector: isConnector,\n    b24_access_token: accessToken,\n    b24_refresh_token: refreshToken,\n    origin: origin,\n    raw_event: body.event || 'unknown',\n    b24_is_operator: isFromOperator\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        1408
+      ],
+      "id": "e216a57a-b600-4253-995a-98567344cb3f",
+      "name": "Normalize_b24"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b24-filter-cond-1",
+              "leftValue": "={{ !!( ($('Normalize_b24').first().json.b24_is_connector === true || $('Normalize_b24').first().json.b24_from_user_id === '2578') && $('Normalize_b24').first().json.b24_is_bot !== true && $('Normalize_b24').first().json.message?.text && $('Normalize_b24').first().json.message.text.length > 0 ) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -592,
+        1408
+      ],
+      "id": "66ae1f34-b3ac-4b30-aa53-c17b89beab94",
+      "name": "Filter_b24"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Code2 for Bitrix24 (Redis buffer merge) ---\n\nconst chatId = $('Normalize_b24').first().json.message?.chat?.id ?? null;\n\nif (!chatId) {\n  const errorMsg = \"FATAL: Could not determine chatId.\";\n  return [{ json: { message: { text: JSON.stringify({ user_query:'', context_message:'', error: errorMsg }) } } }];\n}\n\nconst key = `user:${chatId}:buffer`;\nlet redis;\n\ntry {\n  const Redis = require('ioredis');\n  redis = new Redis({\n    host: 'redis',\n    port: 6379,\n    db:   0,\n    lazyConnect: true,\n    connectTimeout: 2000,\n    maxRetriesPerRequest: 1,\n    enableReadyCheck: false,\n  });\n\n  await Promise.race([\n    redis.connect(),\n    new Promise((_, reject) => setTimeout(() => reject(new Error('Redis connection timed out')), 2200)),\n  ]);\n\n  const res = await redis.multi().lrange(key, 0, -1).del(key).exec();\n  const buffer = Array.isArray(res?.[0]?.[1]) ? res[0][1] : [];\n  \n  if (buffer.length === 0) {\n      return [{ json: { message: { text: JSON.stringify({ user_query:'', context_message:'', info: 'Buffer was empty.' }) } } }];\n  }\n\n  const allMessages = buffer.map(r => { try { return JSON.parse(r); } catch { return null; } }).filter(Boolean);\n\n  const combined_user_query = allMessages\n    .map(msg => (msg.user_query ?? msg.user_caption ?? '').trim())\n    .filter(Boolean)\n    .join(' ');\n\n  const first_context_message = allMessages[0]?.context_message ?? '';\n  \n  const out = {\n    user_query: combined_user_query,\n    context_message: first_context_message\n  };\n\n  return [{ json: { message: { text: JSON.stringify(out, null, 2) } } }];\n\n} catch (e) {\n  const errorMessage = String(e?.message || e);\n  return [{ json: { message: { text: JSON.stringify({ user_query:'', context_message:'', error: errorMessage, key_used: key }) } } }];\n} finally {\n  if (redis?.status === 'ready') {\n    try {\n      await Promise.race([redis.quit(), new Promise(r => setTimeout(r, 400))]);\n    } catch {}\n  }\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        2080
+      ],
+      "id": "0c67d1b6-2619-4f98-997b-202b11b8b6da",
+      "name": "Code2_b24"
+    },
+    {
+      "parameters": {
+        "url": "=https://gadgetbar.bitrix24.ru/rest/im.dialog.messages.get",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "DIALOG_ID",
+              "value": "={{ (() => { const d = $('Normalize_b24').first().json.b24_dialog_id; const c = $('Normalize_b24').first().json.b24_chat_id; if (String(d).startsWith('chat')) return d; if (c) return 'chat' + c; return d; })() }}"
+            },
+            {
+              "name": "LIMIT",
+              "value": "30"
+            },
+            {
+              "name": "auth",
+              "value": "={{ $('Normalize_b24').first().json.b24_access_token }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        656,
+        2080
+      ],
+      "id": "3db74f2d-c1f5-499c-836e-d8aacbc6fe1d",
+      "name": "Get_messages_b24"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Code Conversation for Bitrix24 ===\n// Parses im.dialog.messages.get response\n\nconst rawResult = $input.item.json;\nconst result = rawResult?.result || rawResult;\nconst messages = result?.messages || [];\n\nconst BOT_ID = 3922;\n\nconst stripHtml = (s = '') => {\n  if (!s) return '';\n  s = s.replace(/<a\\s+href=\\\"([^\\\"]+)\\\"[^>]*>(.*?)<\\/a>/gis, (_, u, t) => `${t} (${u})`);\n  s = s.replace(/<br\\s*\\/?>/gi, '\\n');\n  s = s.replace(/<\\/p>/gi, '\\n\\n').replace(/<p>/gi, '');\n  s = s.replace(/<\\/?(b|strong|i|em)>/gi, '');\n  s = s.replace(/<\\/?code>/gi, '`');\n  s = s.replace(/<[^>]+>/g, '');\n  s = s.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '\"');\n  return s.replace(/\\n{3,}/g, '\\n\\n').trim();\n};\n\nconst now = Math.floor(Date.now() / 1000);\nconst ONE_WEEK_SEC = 7 * 24 * 60 * 60;\n\n// Messages from B24 API: { id, text, date, author_id, ... }\nconst msgs = messages\n  .filter(m => {\n    const msgTime = m.date ? Math.floor(new Date(m.date).getTime() / 1000) : 0;\n    return (now - msgTime) <= ONE_WEEK_SEC;\n  })\n  .sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));\n\nconst pairs = [];\nlet currentPair = null;\n\nfor (const m of msgs) {\n  const text = stripHtml(m.text || '');\n  if (!text) continue;\n\n  const authorId = Number(m.author_id || 0);\n  const isFromClient = authorId !== BOT_ID && authorId > 0;\n\n  if (isFromClient) {\n    if (!currentPair) {\n      currentPair = { q: text, a: [], qTime: m.date || '' };\n    } else if (currentPair.a.length === 0) {\n      currentPair.q += '\\n' + text;\n    } else {\n      pairs.push(currentPair);\n      currentPair = { q: text, a: [], qTime: m.date || '' };\n    }\n  } else {\n    if (currentPair) {\n      currentPair.a.push(text);\n    }\n  }\n}\nif (currentPair) pairs.push(currentPair);\n\nconst recent = pairs.slice(-6);\nconst qa_md = recent.map((p, i) => {\n  const n = i + 1;\n  return `**Вопрос ${n} (${p.qTime}):** ${p.q}\\n**Ответ ${n}:** ${p.a.join('\\n') || '(нет ответа)'}`;\n}).join('\\n\\n');\n\nconst userName = $('Normalize_b24').first().json.b24_user_name || 'Клиент';\n\nreturn { json: { qa_md, client_label: userName, client_name: userName } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        2080
+      ],
+      "id": "152a6d02-c73c-4e0d-b8e3-5dc988f13e45",
+      "name": "Code_Conversation_b24"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://gadgetbar.bitrix24.ru/rest/imbot.message.add",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "BOT_ID",
+              "value": "3922"
+            },
+            {
+              "name": "DIALOG_ID",
+              "value": "={{ (() => { const d = $('Normalize_b24').first().json.b24_dialog_id; const c = $('Normalize_b24').first().json.b24_chat_id; if (String(d).startsWith('chat')) return d; return d; })() }}"
+            },
+            {
+              "name": "MESSAGE",
+              "value": "={{ (() => {\n  const strip = (t) => {\n    let s = String(t || '').split('```')[0];\n    s = s.replace(/\\{[\\s\\S]*?\"(?:move_lead|escalate_to_manager|dialog_complete|no_purchase)\"[\\s\\S]*$/g, '');\n    return s.trim();\n  };\n  let text = '';\n  try { text = $('Escalation_Router').first()?.json?.formatted_text || ''; } catch (e) {}\n  if (!text) { try { text = $('text formatter').first()?.json?.formatted_text || ''; } catch (e) {} }\n  if (!text) { try { text = $json.formatted_text || ''; } catch (e) {} }\n  if (!text) { try { text = $('Code in JavaScript').first()?.json?.raw_output || ''; } catch (e) {} }\n  return strip(text) || 'Ваш запрос передан менеджеру.';\n})() }}"
+            },
+            {
+              "name": "auth",
+              "value": "={{ $('Normalize_b24').first().json.b24_access_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3104,
+        2000
+      ],
+      "id": "a8085786-689f-4fd4-bd52-cd1b7f40d0f3",
+      "name": "Send_reply_b24",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b24-clientmsg-1",
+              "name": "output",
+              "value": "={{ \n(() => {\n  const raw = $items(\"Code in JavaScript\", 0, 0)?.[0]?.json?.raw_output || \"\";\n  const mainText = raw.split(/```/)[0].trim();\n\n  let clientMsg = \"\";\n  const blocks = [...raw.matchAll(/```(?:json)?\\s*([\\s\\S]*?)\\s*```/gi)];\n  for (const [, b] of blocks) {\n    try { const j = JSON.parse(b); if (j.client_msg) clientMsg = String(j.client_msg).trim(); } catch {}\n  }\n\n  const base = [mainText, clientMsg].filter(Boolean).join(\"\\n\\n\");\n\n  const nowMsk = $now.setZone('Europe/Moscow');\n  const offHours = (nowMsk.hour >= 22 || nowMsk.hour < 10);\n\n  const notice = offHours\n    ? \"Обращаю ваше внимание ВРЕМЯ РАБОТЫ менеджера с 10-00 до 22-00\"\n    : \"\";\n\n  return [base, notice].filter(Boolean).join(\"\\n\\n\");\n})()\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3472,
+        1568
+      ],
+      "id": "b90a3638-81a5-4294-ad1f-29cefc736db7",
+      "name": "Client_msg_b24"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://gadgetbar.bitrix24.ru/rest/tasks.task.add?auth=' + $('Normalize_b24').first().json.b24_access_token }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  fields: {\n    TITLE: 'Запрос клиента — ' + ($('Normalize_b24').first().json.b24_user_name || 'Клиент'),\n    DESCRIPTION: ($json.payload?.task_text || 'Эскалация от бота') + '\\n\\n' + ($json.payload?.user_request || ''),\n    RESPONSIBLE_ID: 1,\n    PRIORITY: 2\n  }\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        1536
+      ],
+      "id": "87769963-c488-4adb-9d84-dcf55fd7a0e4",
+      "name": "Create_task_b24"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://gadgetbar.bitrix24.ru/rest/crm.lead.update?auth=' + $('Normalize_b24').first().json.b24_access_token }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  ID: $json.payload?.lead_id || 0,\n  FIELDS: {\n    STATUS_ID: 'NEW',\n    COMMENTS: $json.payload?.user_request || ''\n  }\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        2400
+      ],
+      "id": "391964c0-ff4c-4f64-8dbf-570037ce8709",
+      "name": "Update_lead_b24"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Подбирает альтернативные товары когда запрошенный товар отсутствует в наличии. Вызывать когда товар не найден или out_of_stock. Параметры: p_name (название товара), p_brand, p_model_line, p_price_from, p_limit. Все опциональны.",
+        "method": "POST",
+        "url": "https://gb.5.3.164.6.sslip.io/api/bot/alternatives",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bot-API-Key",
+              "value": "={{ $env.BOT_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $fromAI('alt_params', 'JSON: {\"p_name\": \"iPhone 16 Pro Max 256GB\"}', 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2048,
+        2784
+      ],
+      "id": "791728a8-6bfc-49e5-b330-3fd842e6d179",
+      "name": "find_alternatives"
+    },
+    {
+      "parameters": {
+        "toolDescription": " Ищет услуги ремонта и сервиса по БД: замена экрана, замена АКБ, переклейка, стекло камеры. Возвращает цены ремонта для конкретной модели. Вызывать когда клиент спрашивает \"сколько стоит замена экрана\", \"цена ремонта\", \"замена батареи\". Параметры: p_query (свободный текст), p_brand (Apple/Samsung), p_model (iPhone 16 Pro), p_group (repair/setup/subscription). Все опциональны.",
+        "method": "POST",
+        "url": "https://gb.5.3.164.6.sslip.io/api/bot/services",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bot-API-Key",
+              "value": "={{ $env.BOT_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $fromAI('service_params', 'JSON: {\"p_model\": \"iPhone 16 Pro\", \"p_group\": \"repair\"}', 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        2224,
+        2784
+      ],
+      "id": "cf311705-ec0d-4745-a703-25ea520b107f",
+      "name": "search_services"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gb.5.3.164.6.sslip.io/api/bot/triggers/check",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bot-API-Key",
+              "value": "={{ $env.BOT_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ p_message: $('Normalize_b24').first().json.message?.text || '', p_channel: $('Normalize_b24').first().json.origin || '' }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        1392
+      ],
+      "id": "bb8375db-f718-486a-adfe-84513dc20540",
+      "name": "Check_trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://gadgetbar.bitrix24.ru/rest/imbot.message.add",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "BOT_ID",
+              "value": "3922"
+            },
+            {
+              "name": "DIALOG_ID",
+              "value": "={{ $('Normalize_b24').first().json.b24_dialog_id }}"
+            },
+            {
+              "name": "MESSAGE",
+              "value": "={{ $('If_trigger').first().json.response_text + ($('If_trigger').first().json.response_link ? '\\n' + $('If_trigger').first().json.response_link : '') }}"
+            },
+            {
+              "name": "auth",
+              "value": "={{ $('Normalize_b24').first().json.b24_access_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        1264
+      ],
+      "id": "24fe6b78-ffa3-4b9a-ab9d-379fe6417653",
+      "name": "Send_trigger_reply"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $('Normalize_b24').first();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        1408
+      ],
+      "id": "5ca3714f-9670-43db-a899-c24814a70bbd",
+      "name": "Restore_data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Escalation Router ===\n// Разбирает тип эскалации и готовит данные для API вызовов\n\nconst payload = $json.payload || {};\nconst flags = $json.flags || {};\nconst rawOutput = $json.raw_output || '';\n\nconst escalationType = payload.escalation_type || (flags.escalate_to_manager ? 'human_request' : 'none');\nconst dealStage = payload.deal_stage || payload.status_name || 'NEW';\nconst taskText = payload.task_text || 'Запрос от бота';\nconst noPurchase = payload.no_purchase || false;\nconst summary = payload.summary || '';\n\nconst accessToken = $('Normalize_b24').first().json.b24_access_token || '';\nconst userName = $('Normalize_b24').first().json.b24_user_name || 'Клиент';\nlet clientText = rawOutput.split('```')[0].trim();\nclientText = clientText.replace(/\\{[\\s\"]*(?:move_lead|escalate_to_manager|dialog_complete|no_purchase)[\\s\\S]*?\\}/g, '').trim();\n\nconst ECOMMERCE_MANAGER_ID = 420;\n\n// === A10: Логирование в bot_action_log ===\n// Будет записано через HTTP Request ноду после\nconst logData = {\n  action_type: 'escalation',\n  escalation_type: escalationType,\n  deal_stage: dealStage,\n  user_name: userName\n};\n\nreturn {\n  json: {\n    escalation_type: escalationType,\n    deal_stage: dealStage,\n    log_data: logData,\n    task_text: taskText + ' (Клиент: ' + userName + ')',\n    no_purchase: noPurchase,\n    summary: summary,\n    client_text: clientText,\n    access_token: accessToken,\n    ecommerce_manager_id: ECOMMERCE_MANAGER_ID,\n    move_lead: flags.move_lead || payload.move_lead || false,\n    escalate: flags.escalate_to_manager || payload.escalate_to_manager || false,\n    formatted_text: clientText\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        1856
+      ],
+      "id": "86327d90-191e-4b65-89ff-140d5b5e4ed7",
+      "name": "Escalation_Router"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://gadgetbar.bitrix24.ru/rest/2578/ax3cwp82b1c20dck/tasks.task.add",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ fields: Object.assign({ TITLE: 'Бот: ' + ($('Escalation_Router').first().json.escalation_type === 'digital_service' ? 'Цифровая услуга' : $('Escalation_Router').first().json.escalation_type === 'purchase' ? 'Покупка' : $('Escalation_Router').first().json.escalation_type === 'booking' ? 'Бронь/доставка' : 'Запрос клиента') + ' — ' + $('Normalize_b24').first().json.b24_user_name, DESCRIPTION: $('Escalation_Router').first().json.task_text + '\\n\\nРезюме: ' + ($('Escalation_Router').first().json.summary || 'см. чат') + '\\n\\n💬 Чат с клиентом: https://gadgetbar.bitrix24.ru/online/?IM_DIALOG=' + $('Normalize_b24').first().json.b24_dialog_id, RESPONSIBLE_ID: $('Escalation_Router').first().json.ecommerce_manager_id, PRIORITY: 2 }, (() => { try { const m = Number($('Get_lead_manager').first().json?.result?.ASSIGNED_BY_ID); return (m && m !== $('Escalation_Router').first().json.ecommerce_manager_id) ? { ACCOMPLICES: [m] } : {}; } catch (e) { return {}; } })()) }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2496,
+        1856
+      ],
+      "id": "dc399ef3-41c8-4b14-96f7-0b681d9607ec",
+      "name": "Create_task_manager"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://gadgetbar.bitrix24.ru/rest/crm.lead.update",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "auth",
+              "value": "={{ $('Escalation_Router').first().json.access_token }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ID: 0, FIELDS: { STATUS_ID: $('Escalation_Router').first().json.no_purchase ? 'UC_REALIZATION' : $('Escalation_Router').first().json.deal_stage, STATUS_DESCRIPTION: $('Escalation_Router').first().json.task_text } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2768,
+        1408
+      ],
+      "id": "9c339d89-3860-49d4-ab4d-803447744f06",
+      "name": "Update_lead_stage"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a5e84a6c-d247-4e2b-963e-7db0672de5f9",
+              "leftValue": "={{ !!$json?.trigger_word && $json.trigger_word.length > 0 }}",
+              "rightValue": "is not empty",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -192,
+        1392
+      ],
+      "id": "44f2cf13-92f5-46f6-aea5-d2ef3f823bd6",
+      "name": "If_trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://gadgetbar.bitrix24.ru/rest/crm.lead.list",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "auth",
+              "value": "={{ $json.b24_access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ filter: { \">ID\": 0 }, select: [\"ID\", \"TITLE\", \"STATUS_ID\"], order: { ID: \"DESC\" }, start: 0 }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -832,
+        1248
+      ],
+      "id": "52e7d052-179d-43b9-9239-3ff6c7a6c1b3",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gb.5.3.164.6.sslip.io/api/bot/log",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bot-API-Key",
+              "value": "={{ $env.BOT_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_action_type: 'escalation', p_escalation_type: $('Escalation_Router').first().json.escalation_type, p_deal_stage: $('Escalation_Router').first().json.deal_stage, p_user_name: $('Normalize_b24').first().json.b24_user_name, p_details: { task_text: $('Escalation_Router').first().json.task_text } }) }}",
+        "options": {},
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ channel: $('Normalize_b24').first().json.origin || '', message: $('Normalize_b24').first().json.message?.text || '', action: 'message_received' }) }}"
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2784,
+        1840
+      ],
+      "id": "50bfbf63-1249-4162-aefb-b37ff1781f05",
+      "name": "Log_action"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gadgetbar.bitrix24.ru/rest/2578/ax3cwp82b1c20dck/crm.lead.get",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ID: $('Normalize_b24').first().json.b24_lead_id }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        1632
+      ],
+      "id": "0c4f8867-84be-4c21-83be-36e84f7247e9",
+      "name": "Get_lead_manager",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-lead-id-cond-1",
+              "leftValue": "={{ $('Normalize_b24').first().json.b24_lead_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2176,
+        1840
+      ],
+      "id": "9c5227fb-774f-4279-8f15-2a8806945ed3",
+      "name": "Has_lead_id?"
+    }
+  ],
+  "pinData": {
+    "Webhook_b24": [
+      {
+        "json": {
+          "headers": {
+            "host": "randomly-aboveboard-dinosaur.cloudpub.ru",
+            "user-agent": "Bitrix24 Webhook Engine",
+            "content-length": "5060",
+            "content-type": "application/x-www-form-urlencoded",
+            "accept-encoding": "gzip",
+            "connection": "close",
+            "x-forwarded-for": "89.208.230.2",
+            "x-forwarded-port": "443",
+            "x-forwarded-host": "randomly-aboveboard-dinosaur.cloudpub.ru",
+            "x-forwarded-proto": "https",
+            "x-real-ip": "89.208.230.2",
+            "x-real-port": "37302"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "ONIMBOTMESSAGEADD",
+            "event_handler_id": "3966",
+            "data[BOT][3922][access_token]": "2e92256a00833c2c008039fc00000f5200000713acf3c7f9164b9e1ec98028c0060505",
+            "data[BOT][3922][expires]": "1780847150",
+            "data[BOT][3922][expires_in]": "3600",
+            "data[BOT][3922][scope]": "crm,task,im,imbot,imopenlines",
+            "data[BOT][3922][domain]": "gadgetbar.bitrix24.ru",
+            "data[BOT][3922][server_endpoint]": "https://oauth.bitrix24.tech/rest/",
+            "data[BOT][3922][status]": "L",
+            "data[BOT][3922][client_endpoint]": "https://gadgetbar.bitrix24.ru/rest/",
+            "data[BOT][3922][member_id]": "0387f4e7675a8f23487e3839a8c7f7dd",
+            "data[BOT][3922][refresh_token]": "1e114d6a00833c2c008039fc00000f52000007366fc4700c7185c7f5b3fd65edbe0381",
+            "data[BOT][3922][user_id]": "3922",
+            "data[BOT][3922][client_id]": "local.69d6736f326d08.24974846",
+            "data[BOT][3922][application_token]": "3a627d7b5a74fbb99be9b1706f2304ac",
+            "data[BOT][3922][AUTH][access_token]": "2e92256a00833c2c008039fc00000f5200000713acf3c7f9164b9e1ec98028c0060505",
+            "data[BOT][3922][AUTH][expires]": "1780847150",
+            "data[BOT][3922][AUTH][expires_in]": "3600",
+            "data[BOT][3922][AUTH][scope]": "crm,task,im,imbot,imopenlines",
+            "data[BOT][3922][AUTH][domain]": "gadgetbar.bitrix24.ru",
+            "data[BOT][3922][AUTH][server_endpoint]": "https://oauth.bitrix24.tech/rest/",
+            "data[BOT][3922][AUTH][status]": "L",
+            "data[BOT][3922][AUTH][client_endpoint]": "https://gadgetbar.bitrix24.ru/rest/",
+            "data[BOT][3922][AUTH][member_id]": "0387f4e7675a8f23487e3839a8c7f7dd",
+            "data[BOT][3922][AUTH][refresh_token]": "1e114d6a00833c2c008039fc00000f52000007366fc4700c7185c7f5b3fd65edbe0381",
+            "data[BOT][3922][AUTH][user_id]": "3922",
+            "data[BOT][3922][AUTH][client_id]": "local.69d6736f326d08.24974846",
+            "data[BOT][3922][AUTH][application_token]": "3a627d7b5a74fbb99be9b1706f2304ac",
+            "data[BOT][3922][BOT_ID]": "3922",
+            "data[BOT][3922][BOT_CODE]": "gadgetbar_ai",
+            "data[PARAMS][MESSAGE]": "Привет",
+            "data[PARAMS][MESSAGE_TYPE]": "L",
+            "data[PARAMS][FROM_USER_ID]": "3790",
+            "data[PARAMS][DIALOG_ID]": "chat11050",
+            "data[PARAMS][TO_CHAT_ID]": "11050",
+            "data[PARAMS][AUTHOR_ID]": "3790",
+            "data[PARAMS][SYSTEM]": "N",
+            "data[PARAMS][CHAT_ID]": "11050",
+            "data[PARAMS][CHAT_TITLE]": "Даниил - ТГ БОТ врн",
+            "data[PARAMS][CHAT_AUTHOR_ID]": "0",
+            "data[PARAMS][CHAT_TYPE]": "L",
+            "data[PARAMS][CHAT_AVATAR]": "57952",
+            "data[PARAMS][CHAT_COLOR]": "BROWN",
+            "data[PARAMS][CHAT_ENTITY_TYPE]": "LINES",
+            "data[PARAMS][CHAT_ENTITY_ID]": "telegrambot|20|1958423018|3790",
+            "data[PARAMS][CHAT_ENTITY_DATA_1]": "Y|LEAD|10308|N|N|6842|1780840820|0|0|0",
+            "data[PARAMS][CHAT_ENTITY_DATA_2]": "LEAD|10308|COMPANY|0|CONTACT|0|DEAL|0",
+            "data[PARAMS][CHAT_ENTITY_DATA_3]": "N",
+            "data[PARAMS][CHAT_EXTRANET]": "N",
+            "data[PARAMS][CHAT_PREV_MESSAGE_ID]": "0",
+            "data[PARAMS][CHAT_CAN_POST]": "MEMBER",
+            "data[PARAMS][RID]": "3790",
+            "data[PARAMS][IS_MANAGER]": "N",
+            "data[PARAMS][PUSH]": "Y",
+            "data[PARAMS][PUSH_IMPORTANT]": "N",
+            "data[PARAMS][RECENT_SKIP_AUTHOR]": "N",
+            "data[PARAMS][CONVERT]": "N",
+            "data[PARAMS][SKIP_COMMAND]": "N",
+            "data[PARAMS][SKIP_COUNTER_INCREMENTS]": "N",
+            "data[PARAMS][SILENT_CONNECTOR]": "N",
+            "data[PARAMS][SKIP_CONNECTOR]": "N",
+            "data[PARAMS][IMPORTANT_CONNECTOR]": "N",
+            "data[PARAMS][NO_SESSION_OL]": "N",
+            "data[PARAMS][FAKE_RELATION]": "0",
+            "data[PARAMS][SKIP_URL_INDEX]": "N",
+            "data[PARAMS][COMMAND_CONTEXT]": "TEXTAREA",
+            "data[PARAMS][CHAT_USER_COUNT]": "2",
+            "data[PARAMS][PLATFORM_CONTEXT]": "web",
+            "data[PARAMS][MESSAGE_ORIGINAL]": "Привет",
+            "data[PARAMS][TO_USER_ID]": "0",
+            "data[PARAMS][MESSAGE_ID]": "411722",
+            "data[PARAMS][LANGUAGE]": "ru",
+            "data[USER][ID]": "3790",
+            "data[USER][NAME]": "Даниил",
+            "data[USER][FIRST_NAME]": "Даниил",
+            "data[USER][LAST_NAME]": "",
+            "data[USER][GENDER]": "M",
+            "data[USER][IS_BOT]": "N",
+            "data[USER][IS_CONNECTOR]": "Y",
+            "data[USER][IS_NETWORK]": "N",
+            "data[USER][IS_EXTRANET]": "Y",
+            "ts": "1780843550",
+            "auth[access_token]": "2e92256a00833c2c008039fc00000ece00000794529deb23db845ec0f0a27b82c4d9ff",
+            "auth[expires]": "1780847150",
+            "auth[expires_in]": "3600",
+            "auth[scope]": "crm,task,im,imbot,imopenlines",
+            "auth[domain]": "gadgetbar.bitrix24.ru",
+            "auth[server_endpoint]": "https://oauth.bitrix24.tech/rest/",
+            "auth[status]": "L",
+            "auth[client_endpoint]": "https://gadgetbar.bitrix24.ru/rest/",
+            "auth[member_id]": "0387f4e7675a8f23487e3839a8c7f7dd",
+            "auth[user_id]": "3790",
+            "auth[refresh_token]": "1e114d6a00833c2c008039fc00000ece000007c489aaf570af22d17dcbfa55d45a8f7a",
+            "auth[application_token]": "3a627d7b5a74fbb99be9b1706f2304ac"
+          },
+          "webhookUrl": "https://randomly-aboveboard-dinosaur.cloudpub.ru/webhook/b24_bot",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook_b24": {
+      "main": [
+        [
+          {
+            "node": "Normalize_b24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize_b24": {
+      "main": [
+        [
+          {
+            "node": "Filter_b24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter_b24": {
+      "main": [
+        [
+          {
+            "node": "Check_trigger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "fileType1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fileType1": {
+      "main": [
+        [
+          {
+            "node": "Voice download",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Photo download",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice download": {
+      "main": [
+        [
+          {
+            "node": "STT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STT": {
+      "main": [
+        [
+          {
+            "node": "Set Voice Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Voice Data": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Photo download": {
+      "main": [
+        [
+          {
+            "node": "recognize photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "recognize photo": {
+      "main": [
+        [
+          {
+            "node": "Redis1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Redis (Push)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis (Push)": {
+      "main": [
+        [
+          {
+            "node": "Redis (Set Active Flag)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis (Set Active Flag)": {
+      "main": [
+        [
+          {
+            "node": "Wait 7s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 7s": {
+      "main": [
+        [
+          {
+            "node": "Redis (Check Active Flag)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis (Check Active Flag)": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code2_b24",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop (Active)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2_b24": {
+      "main": [
+        [
+          {
+            "node": "Get_messages_b24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_messages_b24": {
+      "main": [
+        [
+          {
+            "node": "Code_Conversation_b24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Conversation_b24": {
+      "main": [
+        [
+          {
+            "node": "AI Agent Main",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent Main": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Escalation_Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "text formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "text formatter": {
+      "main": [
+        [
+          {
+            "node": "Send_reply_b24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create_task_b24": {
+      "main": [
+        [
+          {
+            "node": "Client_msg_b24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Client_msg_b24": {
+      "main": [
+        []
+      ]
+    },
+    "If (Is Move Lead?)": {
+      "main": [
+        [
+          {
+            "node": "Update_lead_b24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent Presenter": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Main",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent Supabase": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Main",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent iPhone": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Main",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "General Goods": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Main",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Main",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_tradein_price": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Main",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_bot_config": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Presenter",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_store_info": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Presenter",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Presenter Lexicon": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Presenter",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SupabaseTables1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent iPhone",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "General Goods",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "AI Agent Supabase",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent Presenter",
+            "type": "ai_languageModel",
+            "index": 1
+          },
+          {
+            "node": "General Goods",
+            "type": "ai_languageModel",
+            "index": 1
+          },
+          {
+            "node": "AI Agent iPhone",
+            "type": "ai_languageModel",
+            "index": 1
+          },
+          {
+            "node": "AI Agent Supabase",
+            "type": "ai_languageModel",
+            "index": 1
+          },
+          {
+            "node": "AI Agent Main",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent iPhone",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent Main",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent Supabase",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "General Goods",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent Presenter",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find_alternatives": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Main",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search_services": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Main",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check_trigger": {
+      "main": [
+        [
+          {
+            "node": "If_trigger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore_data": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalation_Router": {
+      "main": [
+        [
+          {
+            "node": "Has_lead_id?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create_task_manager": {
+      "main": [
+        [
+          {
+            "node": "Log_action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update_lead_stage": {
+      "main": [
+        []
+      ]
+    },
+    "If_trigger": {
+      "main": [
+        [
+          {
+            "node": "Send_trigger_reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Restore_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Log_action": {
+      "main": [
+        [
+          {
+            "node": "Send_reply_b24",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_lead_manager": {
+      "main": [
+        [
+          {
+            "node": "Create_task_manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has_lead_id?": {
+      "main": [
+        [
+          {
+            "node": "Get_lead_manager",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create_task_manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "ac16dd3a-a509-44da-a959-458b0d68649b",
+  "meta": {
+    "instanceId": "83ee4b7b0837375f5bfb466b7c0776388bc33017e416f74461eb98c552bdfcee"
+  },
+  "id": "BcQoZoi0fcyj2OYm",
+  "tags": []
+}

@@ -15,7 +15,7 @@ class NotifyPriceChangedTo1C implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
-    public int $backoff = [30, 120, 300];
+    public array $backoff = [30, 120, 300];
 
     public function __construct(
         public string $uuid1c,

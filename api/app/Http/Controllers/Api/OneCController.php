@@ -10,10 +10,10 @@ use App\Models\Offer;
 use App\Models\Price;
 use App\Models\Product;
 use App\Models\Stock;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -35,42 +35,44 @@ class OneCController extends Controller
             'images_urls.*' => ['url'],
         ]);
 
-        $product = DB::transaction(function () use ($data) {
-            $product = Product::firstOrNew(['uuid_1c' => $data['uuid_1c']]);
-            $isNew = ! $product->exists;
+        $product = Price::withoutSyncNotifications(function () use ($data) {
+            return DB::transaction(function () use ($data) {
+                $product = Product::firstOrNew(['uuid_1c' => $data['uuid_1c']]);
+                $isNew = ! $product->exists;
 
-            $categoryId = null;
-            if (! empty($data['category'])) {
-                $categoryId = $this->findOrCreateCategory($data['category'])?->id;
-            }
+                $categoryId = null;
+                if (! empty($data['category'])) {
+                    $categoryId = $this->findOrCreateCategory($data['category'])?->id;
+                }
 
-            $product->fill([
-                'name' => $data['name'],
-                'category_id' => $categoryId,
-                'sku' => $data['article'] ?? $product->sku,
-                'description' => $data['description'] ?? $product->description,
-                'is_active' => $data['is_active'] ?? true,
-            ]);
+                $product->fill([
+                    'name' => $data['name'],
+                    'category_id' => $categoryId,
+                    'sku' => $data['article'] ?? $product->sku,
+                    'description' => $data['description'] ?? $product->description,
+                    'is_active' => $data['is_active'] ?? true,
+                ]);
 
-            if ($isNew) {
-                $product->slug = $this->uniqueSlug($data['name']);
-                $product->url = '/product/' . $product->slug;
-            }
+                if ($isNew) {
+                    $product->slug = $this->uniqueSlug($data['name']);
+                    $product->url = '/product/' . $product->slug;
+                }
 
-            $product->save();
+                $product->save();
 
-            $offer = $this->ensureDefaultOffer($product, $data['article'] ?? null);
-            $this->updatePrice($offer, (float) $data['price'], $data['currency'] ?? 'RUB');
+                $offer = $this->ensureDefaultOffer($product, $data['article'] ?? null);
+                $this->updatePrice($offer, (float) $data['price'], $data['currency'] ?? 'RUB');
 
-            if (isset($data['quantity'])) {
-                $this->updateStock($offer, (float) $data['quantity']);
-            }
+                if (isset($data['quantity'])) {
+                    $this->updateStock($offer, (float) $data['quantity']);
+                }
 
-            if (! empty($data['images_urls'])) {
-                Sync1CProductImages::dispatch($product->id, $data['images_urls']);
-            }
+                if (! empty($data['images_urls'])) {
+                    Sync1CProductImages::dispatch($product->id, $data['images_urls']);
+                }
 
-            return $product;
+                return $product;
+            });
         });
 
         $action = $product->wasRecentlyCreated ? 'created' : 'updated';
@@ -96,24 +98,26 @@ class OneCController extends Controller
         $failed = 0;
         $errors = [];
 
-        DB::transaction(function () use ($data, &$updated, &$failed, &$errors) {
-            foreach ($data['items'] as $index => $item) {
-                $product = Product::where('uuid_1c', $item['uuid_1c'])->first();
+        Price::withoutSyncNotifications(function () use ($data, &$updated, &$failed, &$errors) {
+            DB::transaction(function () use ($data, &$updated, &$failed, &$errors) {
+                foreach ($data['items'] as $index => $item) {
+                    $product = Product::where('uuid_1c', $item['uuid_1c'])->first();
 
-                if (! $product) {
-                    $failed++;
-                    $errors[] = [
-                        'index' => $index,
-                        'uuid_1c' => $item['uuid_1c'],
-                        'error' => 'Товар не найден.',
-                    ];
-                    continue;
+                    if (! $product) {
+                        $failed++;
+                        $errors[] = [
+                            'index' => $index,
+                            'uuid_1c' => $item['uuid_1c'],
+                            'error' => 'Товар не найден.',
+                        ];
+                        continue;
+                    }
+
+                    $offer = $this->ensureDefaultOffer($product, null);
+                    $this->updatePrice($offer, (float) $item['price'], $item['currency'] ?? 'RUB');
+                    $updated++;
                 }
-
-                $offer = $this->ensureDefaultOffer($product, null);
-                $this->updatePrice($offer, (float) $item['price'], $item['currency'] ?? 'RUB');
-                $updated++;
-            }
+            });
         });
 
         return response()->json([

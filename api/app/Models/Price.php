@@ -10,6 +10,8 @@ class Price extends Model
 {
     use HasFactory;
 
+    public static bool $syncingFrom1C = false;
+
     protected $fillable = [
         'offer_id',
         'region_id',
@@ -37,5 +39,16 @@ class Price extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public static function withoutSyncNotifications(callable $callback): mixed
+    {
+        $previous = self::$syncingFrom1C;
+        self::$syncingFrom1C = true;
+        try {
+            return $callback();
+        } finally {
+            self::$syncingFrom1C = $previous;
+        }
     }
 }
