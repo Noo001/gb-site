@@ -32,7 +32,7 @@ docker exec -it gb-api php artisan migrate
 docker exec -it gb-api php artisan bot:rebuild-index
 ```
 
-Команда пересобирает `bot_products` из актуальных `products`/`offers`/`prices`/`stocks`/`attributes`. Запускается автоматически каждый час через Laravel Scheduler.
+Команда пересобирает `bot_products` из актуальных `products`/`offers`/`prices`/`stocks`/`attributes`. Запускается автоматически каждый час — для этого в `docker-compose.caddy.yml` добавлен сервис `gb-scheduler`, который выполняет `php artisan schedule:work`.
 
 ### 4. Заполнить справочники
 

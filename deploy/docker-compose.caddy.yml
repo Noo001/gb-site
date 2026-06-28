@@ -61,6 +61,7 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
+    image: gb-site-api
     container_name: gb-api
     restart: unless-stopped
     env_file:
@@ -113,6 +114,25 @@ services:
       - "8080"
     depends_on:
       - db
+    networks:
+      - shared-network
+      - gb-network
+
+  scheduler:
+    image: gb-site-api
+    container_name: gb-scheduler
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    volumes:
+      - ./api:/var/www/api
+    working_dir: /var/www/api
+    command: ["php", "artisan", "schedule:work"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - shared-network
       - gb-network

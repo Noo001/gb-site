@@ -80,7 +80,7 @@ docker exec gb-api php artisan migrate --force
 docker exec gb-api php artisan bot:rebuild-index
 ```
 
-Перестройка индекса также запускается автоматически каждый час (`php artisan schedule:run` должен быть настроен в cron/supervisor).
+Перестройка индекса также запускается автоматически каждый час — для этого в `docker-compose.caddy.yml` добавлен сервис `gb-scheduler`, который выполняет `php artisan schedule:work`.
 
 ## Файлы деплоя в репозитории
 
