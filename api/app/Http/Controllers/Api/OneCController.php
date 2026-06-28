@@ -10,6 +10,7 @@ use App\Models\Offer;
 use App\Models\Price;
 use App\Models\Product;
 use App\Models\Stock;
+use App\Models\Store;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -247,10 +248,15 @@ class OneCController extends Controller
 
     private function updateStock(Offer $offer, float $quantity): void
     {
+        $storeId = Store::query()
+            ->where('is_active', true)
+            ->orderBy('sort')
+            ->value('id');
+
         Stock::updateOrCreate(
             [
                 'offer_id' => $offer->id,
-                'store_id' => null,
+                'store_id' => $storeId,
             ],
             [
                 'quantity' => $quantity,

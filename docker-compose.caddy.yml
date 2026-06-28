@@ -137,6 +137,25 @@ services:
       - shared-network
       - gb-network
 
+  worker:
+    image: gb-site-api
+    container_name: gb-worker
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    volumes:
+      - ./api:/var/www/api
+    working_dir: /var/www/api
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - shared-network
+      - gb-network
+
   frontend:
     build:
       context: .

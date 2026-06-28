@@ -69,11 +69,11 @@ class BotIndexService
         $totalQty = 0;
         foreach ($offer->stocks as $stock) {
             $qty = max((float) $stock->quantity - (float) $stock->reserved, 0);
-            if ($qty <= 0 || ! $stock->store) {
+            if ($qty <= 0) {
                 continue;
             }
             $totalQty += $qty;
-            $city = $stock->store->city ?: 'Неизвестно';
+            $city = $stock->store?->city ?: 'Неизвестно';
             $available[$city] = true;
             $cityAvailability[$city] = [
                 'available' => true,

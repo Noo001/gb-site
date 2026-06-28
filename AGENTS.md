@@ -53,12 +53,12 @@ docker compose -f docker-compose.caddy.yml --env-file .env.prod up -d --build
 
 - **Админка**: https://gb.5.3.164.6.sslip.io/admin
   - Логин: `admin@gb.5.3.164.6.sslip.io`
-  - Пароль: `admin123`
+  - Пароль: *см. `.env.prod` на сервере (`ADMIN_PASSWORD`)*
 - **БД через Adminer**:
   - Сервер: `db`
-  - Пользователь: `gadget_bar`
-  - Пароль: `gb_secret_2024`
-  - База: `gadget_bar`
+  - Пользователь: *см. `.env.prod` (`DB_USERNAME`)*
+  - Пароль: *см. `.env.prod` (`DB_PASSWORD`)*
+  - База: *см. `.env.prod` (`DB_DATABASE`)*
 
 ## Обязательные env-переменные (добавить в `.env.prod` на сервере)
 
