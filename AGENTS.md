@@ -33,6 +33,12 @@ docker compose -f docker-compose.caddy.yml --env-file .env.prod up -d --build
    - `docker/php/*` или `docker/prod/api-entrypoint.sh` → `api`
    - `frontend/*` или `docker/prod/frontend.Dockerfile` → `frontend`
 
+> Важно: исполняемый файл сервиса лежит в `/opt/gb-site-deploy/deploy-webhook.py` (вне репозитория). После изменений в `deploy/docker/prod/deploy-webhook.py` скопируй файл на сервер и перезапусти сервис:
+> ```bash
+> sudo cp deploy/docker/prod/deploy-webhook.py /opt/gb-site-deploy/deploy-webhook.py
+> sudo systemctl restart gb-site-deploy-webhook.service
+> ```
+
 ## Правила работы
 
 - **Не редактируй deployment-конфиги только на сервере**. Актуальные конфиги лежат в `deploy/`.
@@ -53,6 +59,28 @@ docker compose -f docker-compose.caddy.yml --env-file .env.prod up -d --build
   - Пользователь: `gadget_bar`
   - Пароль: `gb_secret_2024`
   - База: `gadget_bar`
+
+## Обязательные env-переменные (добавить в `.env.prod` на сервере)
+
+```env
+# 1C
+IMPORT_1C_API_KEY=<сильный-ключ>
+EXPORT_1C_WEBHOOK_URL=<URL вебхука в 1С>
+
+# Бот первой линии
+BOT_API_KEY=<сильный-ключ>
+```
+
+## Команды после деплоя
+
+После обновления образа `gb-api`:
+
+```bash
+docker exec gb-api php artisan migrate --force
+docker exec gb-api php artisan bot:rebuild-index
+```
+
+Перестройка индекса также запускается автоматически каждый час (`php artisan schedule:run` должен быть настроен в cron/supervisor).
 
 ## Файлы деплоя в репозитории
 
