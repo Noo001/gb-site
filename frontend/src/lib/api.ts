@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 export const API_BASE = (process.env.API_URL ?? "http://nginx:8000").replace(/\/$/, "");
 
 export const API_PUBLIC_BASE = (
@@ -119,53 +121,53 @@ export async function fetchJson<T>(url: string): Promise<T> {
   return (await res.json()) as T;
 }
 
-export async function getCategories(): Promise<Category[]> {
+export const getCategories = cache(async (): Promise<Category[]> => {
   const data = await fetchJson<{ data: Category[] }>(`${API_BASE}/api/categories`).catch(
     () => ({ data: [] as Category[] })
   );
   return data.data;
-}
+});
 
-export async function getCategory(path: string): Promise<Category | null> {
+export const getCategory = cache(async (path: string): Promise<Category | null> => {
   const encoded = encodeURIComponent(path);
   const data = await fetchJson<{ data: Category }>(
     `${API_BASE}/api/categories/${encoded}`
   ).catch(() => null);
   return data?.data ?? null;
-}
+});
 
-export async function getCategoryProducts(
+export const getCategoryProducts = cache(async (
   path: string,
   page = 1
-): Promise<Paginated<Product>> {
+): Promise<Paginated<Product>> => {
   const encoded = encodeURIComponent(path);
   return fetchJson<Paginated<Product>>(
     `${API_BASE}/api/categories/${encoded}/products?page=${page}`
   ).catch(() => ({ data: [], current_page: 1, last_page: 1, total: 0 } as unknown as Paginated<Product>));
-}
+});
 
-export async function getProducts(
+export const getProducts = cache(async (
   searchParams?: Record<string, string>
-): Promise<Paginated<Product>> {
+): Promise<Paginated<Product>> => {
   const qs = searchParams ? new URLSearchParams(searchParams).toString() : "";
   return fetchJson<Paginated<Product>>(`${API_BASE}/api/products?${qs}`).catch(
     () => ({ data: [], current_page: 1, last_page: 1, total: 0 } as unknown as Paginated<Product>)
   );
-}
+});
 
-export async function getProduct(slug: string): Promise<Product | null> {
+export const getProduct = cache(async (slug: string): Promise<Product | null> => {
   const data = await fetchJson<{ data: Product }>(
     `${API_BASE}/api/products/${encodeURIComponent(slug)}`
   ).catch(() => null);
   return data?.data ?? null;
-}
+});
 
-export async function getSeo(path: string): Promise<{
+export const getSeo = cache(async (path: string): Promise<{
   title?: string;
   description?: string;
   h1?: string;
   breadcrumbs?: { name: string; url: string }[];
-}> {
+}> => {
   const data = await fetchJson<{
     title?: string;
     description?: string;
@@ -173,7 +175,7 @@ export async function getSeo(path: string): Promise<{
     breadcrumbs?: { name: string; url: string }[];
   }>(`${API_BASE}/api/seo?path=${encodeURIComponent(path)}`).catch(() => ({}));
   return data ?? {};
-}
+});
 
 // Client-side helpers (run only in browser)
 function getToken(): string | null {

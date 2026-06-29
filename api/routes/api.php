@@ -32,9 +32,9 @@ Route::get('/offers', [OfferController::class, 'index']);
 Route::get('/offers/{id}', [OfferController::class, 'show']);
 
 // Auth
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:auth');
 Route::get('/auth/{provider}', [SocialAuthController::class, 'redirect'])
     ->where('provider', 'yandex|vkontakte|vk');
 Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])

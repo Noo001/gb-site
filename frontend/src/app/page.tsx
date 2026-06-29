@@ -16,6 +16,10 @@ export default async function HomePage() {
     getProducts({ per_page: "12", has_image: "1" }),
   ]);
 
+  const brandSlugs = categories
+    .filter((c) => c.full_path.startsWith("/brands/"))
+    .map((c) => c.slug);
+
   return (
     <div className="pb-12">
       {/* Promo carousel */}
@@ -25,7 +29,7 @@ export default async function HomePage() {
 
       {/* Brand carousel */}
       <section className="container-theme mb-10">
-        <BrandCarousel />
+        <BrandCarousel existingSlugs={brandSlugs} />
       </section>
 
       {/* Best offers */}

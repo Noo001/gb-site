@@ -93,7 +93,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
       <div className="flex flex-col gap-8 lg:flex-row">
         {/* Sidebar */}
-        <aside className="w-full shrink-0 lg:w-56">
+        <aside className="w-full shrink-0 lg:w-56 space-y-4">
           <div className="rounded-xl border border-[var(--border)] bg-white p-4">
             <h3 className="mb-4 font-semibold">Категория</h3>
             <ul className="space-y-2 text-sm">
@@ -120,14 +120,43 @@ export default async function CategoryPage({ params, searchParams }: Props) {
               ) : null}
             </ul>
           </div>
+          <div className="rounded-xl border border-[var(--border)] bg-white p-4">
+            <h3 className="mb-4 font-semibold">Цена</h3>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                placeholder="от"
+                disabled
+                className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm disabled:cursor-not-allowed disabled:bg-[var(--muted)]"
+              />
+              <span className="text-[var(--text-muted)]">—</span>
+              <input
+                type="number"
+                placeholder="до"
+                disabled
+                className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-sm disabled:cursor-not-allowed disabled:bg-[var(--muted)]"
+              />
+            </div>
+            <button
+              disabled
+              className="mt-3 w-full rounded-lg bg-[#1a1a1a] py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Применить
+            </button>
+          </div>
         </aside>
 
         {/* Products grid */}
         <div className="flex-1">
           <div className="mb-5 flex items-center justify-between">
-            <div className="text-sm text-[var(--text-muted)]">
-              Сначала дешевые
-            </div>
+            <select
+              disabled
+              className="rounded-md border border-[var(--border)] bg-white px-3 py-1.5 text-sm text-[var(--text-muted)] disabled:cursor-not-allowed disabled:bg-[var(--muted)]"
+            >
+              <option>Сначала дешевые</option>
+              <option>Сначала дорогие</option>
+              <option>По популярности</option>
+            </select>
             <div className="flex gap-1">
               <span className="rounded-md border border-[var(--border)] p-1.5">
                 ⊞

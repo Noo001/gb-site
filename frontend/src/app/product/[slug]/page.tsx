@@ -5,6 +5,7 @@ import { getProduct, getSeo } from "@/lib/api";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ProductTabs from "@/components/ProductTabs";
 import AddToCartButton from "@/components/AddToCartButton";
+import ComingSoon from "@/components/ComingSoon";
 import WishlistButton from "@/components/WishlistButton";
 
 export const dynamic = "force-dynamic";
@@ -114,7 +115,7 @@ export default async function ProductPage({ params }: Props) {
             </div>
           )}
           <div className="flex flex-1 items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--muted)] p-8">
-            // eslint-disable-next-line @next/next/no-img-element
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={mainImage}
               alt={product.name}
@@ -131,9 +132,13 @@ export default async function ProductPage({ params }: Props) {
             </h1>
             <div className="flex gap-2">
               <WishlistButton productId={product.id} />
-              <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--accent)]">
+              <ComingSoon
+                className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--accent)]"
+                label="Сравнение товаров скоро появится"
+                aria-label="Сравнить"
+              >
                 <CompareIcon />
-              </button>
+              </ComingSoon>
             </div>
           </div>
 
@@ -142,9 +147,12 @@ export default async function ProductPage({ params }: Props) {
             <div className="mb-3">
               <AddToCartButton productId={product.id} fullWidth />
             </div>
-            <button className="w-full rounded-lg border border-[var(--border)] bg-[var(--muted)] py-3 font-medium transition hover:border-[var(--accent)]">
+            <ComingSoon
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--muted)] py-3 font-medium transition hover:border-[var(--accent)]"
+              label="Оформление в 1 клик скоро появится"
+            >
               Оформить в 1 клик
-            </button>
+            </ComingSoon>
           </div>
 
           {product.offers && product.offers.length > 0 && (

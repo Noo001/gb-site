@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCityStore } from "@/stores/cityStore";
+import ComingSoon from "./ComingSoon";
 import SocialLinks from "./SocialLinks";
 
 const storesByCity: Record<string, { address: string; hours: string }[]> = {
@@ -66,9 +67,12 @@ export default function PhonePopover() {
               8 (800) 505-13-07
             </a>
             <p className="mb-4 text-sm text-[var(--text-muted)]">Отдел продаж</p>
-            <button className="mb-5 w-full rounded-lg bg-[#1a1a1a] py-2.5 text-sm font-medium text-white transition hover:bg-black">
+            <ComingSoon
+              className="mb-5 w-full rounded-lg bg-[#1a1a1a] py-2.5 text-sm font-medium text-white transition hover:bg-black"
+              label="Заказ звонка скоро появится"
+            >
               Заказать звонок
-            </button>
+            </ComingSoon>
 
             <div className="mb-3 text-sm font-semibold">Режим работы</div>
             <ul className="mb-5 space-y-3 text-sm">

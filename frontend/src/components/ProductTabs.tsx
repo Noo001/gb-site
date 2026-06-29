@@ -1,5 +1,6 @@
 "use client";
 
+import { sanitizeHtml } from "@/lib/sanitize";
 import { useState } from "react";
 
 export type ProductAttribute = {
@@ -50,7 +51,7 @@ export default function ProductTabs({
         return description ? (
           <div
             className="prose max-w-none text-[var(--text-muted)]"
-            dangerouslySetInnerHTML={{ __html: description }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
           />
         ) : (
           <p className="text-[var(--text-muted)]">
@@ -90,7 +91,7 @@ export default function ProductTabs({
         return (
           <div
             className="prose max-w-none text-[var(--text-muted)]"
-            dangerouslySetInnerHTML={{ __html: paymentContent }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(paymentContent) }}
           />
         );
 
@@ -98,7 +99,7 @@ export default function ProductTabs({
         return (
           <div
             className="prose max-w-none text-[var(--text-muted)]"
-            dangerouslySetInnerHTML={{ __html: deliveryContent }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(deliveryContent) }}
           />
         );
     }

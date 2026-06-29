@@ -61,7 +61,7 @@ export default function PromoCarousel() {
           {slides.map((s) => (
             <div key={s.href + s.image} className="relative min-w-0 flex-[0_0_100%]">
               <Link href={s.href} className="block">
-                <div className="relative aspect-[3/1] w-full">
+                <div className="relative aspect-[16/9] w-full md:aspect-[3/1]">
                   <Image
                     src={s.image}
                     alt={s.alt}

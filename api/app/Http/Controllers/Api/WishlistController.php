@@ -14,7 +14,7 @@ class WishlistController extends Controller
     public function index(Request $request): JsonResponse
     {
         $items = $request->user()->wishlistItems()
-            ->with('product.media')
+            ->with(['product.media', 'offer'])
             ->get()
             ->map(fn (WishlistItem $item) => [
                 'id' => $item->id,

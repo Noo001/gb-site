@@ -11,6 +11,10 @@ services:
     environment:
       - SERVER_IP=${SERVER_IP}
       - DOMAIN=${DOMAIN}
+      - ADMINER_AUTH_USER=${ADMINER_AUTH_USER}
+      - ADMINER_AUTH_PASSWORD_HASH=${ADMINER_AUTH_PASSWORD_HASH}
+      - DEPLOY_AUTH_USER=${DEPLOY_AUTH_USER}
+      - DEPLOY_AUTH_PASSWORD_HASH=${DEPLOY_AUTH_PASSWORD_HASH}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

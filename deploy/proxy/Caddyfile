@@ -24,9 +24,15 @@
         reverse_proxy gb-nginx-api:80
     }
     handle /adminer* {
+        basicauth {
+            {$ADMINER_AUTH_USER} {$ADMINER_AUTH_PASSWORD_HASH}
+        }
         reverse_proxy gb-adminer:8080
     }
     handle /deploy-hook* {
+        basicauth {
+            {$DEPLOY_AUTH_USER} {$DEPLOY_AUTH_PASSWORD_HASH}
+        }
         reverse_proxy host.docker.internal:9000
     }
     handle /deploy-status* {

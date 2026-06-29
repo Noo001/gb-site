@@ -42,6 +42,10 @@ const brands = [
   { name: "DJI", href: "/brands/dji", logo: null },
 ];
 
+function slugFromHref(href: string): string {
+  return href.replace("/brands/", "");
+}
+
 function PrevIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -58,9 +62,15 @@ function NextIcon() {
   );
 }
 
-export default function BrandCarousel() {
+export default function BrandCarousel({ existingSlugs = [] }: { existingSlugs?: string[] }) {
+  const visibleBrands = existingSlugs.length
+    ? brands.filter((b) => existingSlugs.includes(slugFromHref(b.href)))
+    : brands;
+
+  if (visibleBrands.length === 0) return null;
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true,
+    loop: visibleBrands.length > 3,
     align: "start",
     slidesToScroll: 1,
     containScroll: false,
@@ -73,8 +83,8 @@ export default function BrandCarousel() {
     <div className="relative">
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex">
-          {brands.map((b) => (
-            <div key={b.name} className="min-w-0 flex-[0_0_16.666%] px-3 sm:flex-[0_0_20%] md:flex-[0_0_16.666%]">
+          {visibleBrands.map((b) => (
+            <div key={b.name} className="min-w-0 flex-[0_0_33.333%] px-2 sm:flex-[0_0_25%] md:flex-[0_0_20%] lg:flex-[0_0_16.666%]">
               <Link
                 href={b.href}
                 className="flex h-20 items-center justify-center rounded-xl border border-transparent transition hover:border-[var(--border)] hover:bg-gray-50"

@@ -4,26 +4,8 @@ import MegaMenu from "./MegaMenu";
 import HeaderActions from "./HeaderActions";
 import CitySelector from "./CitySelector";
 import PhonePopover from "./PhonePopover";
+import SearchBox from "./SearchBox";
 import SocialLinks from "./SocialLinks";
-
-function SearchIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
 
 function ChevronDownIcon({ className }: { className?: string }) {
   return (
@@ -86,16 +68,7 @@ export default async function Header() {
           </div>
 
           <div className="hidden flex-1 px-8 lg:block">
-            <div className="relative mx-auto max-w-xl">
-              <input
-                type="text"
-                placeholder="Найти"
-                className="h-9 w-full rounded-lg border border-[var(--border)] bg-white pl-4 pr-10 text-sm outline-none focus:border-[var(--accent)]"
-              />
-              <button className="absolute right-0 top-0 flex h-9 w-9 items-center justify-center text-[var(--text-muted)] hover:text-[var(--accent)]">
-                <SearchIcon />
-              </button>
-            </div>
+            <SearchBox />
           </div>
 
           <div className="flex items-center gap-5">

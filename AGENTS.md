@@ -59,6 +59,13 @@ docker compose -f docker-compose.caddy.yml --env-file .env.prod up -d --build
   - Пользователь: *см. `.env.prod` (`DB_USERNAME`)*
   - Пароль: *см. `.env.prod` (`DB_PASSWORD`)*
   - База: *см. `.env.prod` (`DB_DATABASE`)*
+- **Basic-auth на уровне Caddy** (для `/adminer*` и `/deploy-hook*`):
+  - Adminer: `{$ADMINER_AUTH_USER}` / пароль из `{$ADMINER_AUTH_PASSWORD_HASH}`
+  - Deploy hook: `{$DEPLOY_AUTH_USER}` / пароль из `{$DEPLOY_AUTH_PASSWORD_HASH}`
+  - Хэш пароля — bcrypt, генерируется командой:
+    ```bash
+    docker run --rm caddy:2-alpine caddy hash-password --plaintext 'YOUR_PASSWORD'
+    ```
 
 ## Обязательные env-переменные (добавить в `.env.prod` на сервере)
 
@@ -69,6 +76,12 @@ EXPORT_1C_WEBHOOK_URL=<URL вебхука в 1С>
 
 # Бот первой линии
 BOT_API_KEY=<сильный-ключ>
+
+# Basic auth на уровне Caddy (значения — примеры, задать на сервере)
+ADMINER_AUTH_USER=admin
+ADMINER_AUTH_PASSWORD_HASH=<bcrypt-хэш>
+DEPLOY_AUTH_USER=deploy
+DEPLOY_AUTH_PASSWORD_HASH=<bcrypt-хэш>
 ```
 
 ## Команды после деплоя

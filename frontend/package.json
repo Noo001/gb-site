@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "dompurify": "^3.4.11",
     "embla-carousel-react": "^8.6.0",
     "next": "16.2.9",
     "react": "19.2.4",
