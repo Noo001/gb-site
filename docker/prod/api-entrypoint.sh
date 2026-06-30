@@ -3,6 +3,12 @@ set -e
 
 cd /var/www/api
 
+# Fallback to .env.testing for non-production contours where .env.prod
+# does not define 1C/bot keys. Docker Compose env vars still take precedence.
+if [ -f .env.testing ] && [ -z "$IMPORT_1C_API_KEY" ]; then
+    cp .env.testing .env
+fi
+
 # Install dependencies if vendor is missing (first run / clean volume)
 if [ ! -f vendor/autoload.php ]; then
     composer install --no-dev --no-interaction --optimize-autoloader

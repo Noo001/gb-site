@@ -12,15 +12,24 @@ class OneCProduct extends Model
     protected $table = '1c_products';
 
     protected $fillable = [
+        'batch_id',
         'external_id',
         'category_external_id',
         'name',
         'raw',
         'processed_at',
+        'attempts',
+        'error',
     ];
 
     protected $casts = [
         'raw' => 'array',
         'processed_at' => 'datetime',
+        'attempts' => 'integer',
     ];
+
+    public function scopeUnprocessed($query)
+    {
+        return $query->whereNull('processed_at');
+    }
 }

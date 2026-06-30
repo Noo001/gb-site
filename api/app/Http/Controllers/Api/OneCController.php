@@ -3,9 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Delete1CProductRequest;
+use App\Http\Requests\Store1CBulkSyncRequest;
+use App\Http\Requests\Store1CCategoryRequest;
+use App\Http\Requests\Store1CPriceRequest;
+use App\Http\Requests\Store1CProductRequest;
+use App\Http\Requests\Store1CStockRequest;
+use App\Jobs\Apply1CStagingData;
 use App\Jobs\NotifyPriceChangedTo1C;
+use App\Jobs\RebuildBotIndexJob;
 use App\Jobs\Sync1CProductImages;
 use App\Models\Category;
+use App\Services\OneCStagingService;
+use App\Services\OneCSyncService;
 use App\Models\Offer;
 use App\Models\Price;
 use App\Models\Product;
@@ -20,6 +30,104 @@ use Illuminate\Validation\ValidationException;
 
 class OneCController extends Controller
 {
+    public function __construct(
+        private OneCStagingService $stagingService
+    ) {
+    }
+
+    public function bulkSync(Store1CBulkSyncRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $batchId = $this->stagingService->store($data);
+
+        Apply1CStagingData::dispatch($batchId);
+
+        return response()->json([
+            'success' => true,
+            'batch_id' => $batchId,
+            'message' => 'Данные приняты в обработку. Индекс бота будет обновлён после применения.',
+            'statistics' => $this->stagingService->getStatistics($batchId),
+        ]);
+    }
+
+    public function rebuildBotIndex(): JsonResponse
+    {
+        RebuildBotIndexJob::dispatch();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Перестроение индекса бота поставлено в очередь.',
+        ]);
+    }
+
+    public function bulkSyncStatus(string $batchId): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'batch_id' => $batchId,
+            'statistics' => $this->stagingService->getStatistics($batchId),
+        ]);
+    }
+
+    public function syncProduct(Store1CProductRequest $request): JsonResponse
+    {
+        $result = $this->stagingService->stageAndApplyProduct($request->validated());
+
+        return response()->json([
+            'success' => $result['failed'] === 0,
+            'data' => $result,
+        ], $result['failed'] === 0 ? 200 : 422);
+    }
+
+    public function syncCategory(Store1CCategoryRequest $request): JsonResponse
+    {
+        $result = $this->stagingService->stageAndApplyCategory($request->validated());
+
+        return response()->json([
+            'success' => $result['failed'] === 0,
+            'data' => $result,
+        ], $result['failed'] === 0 ? 200 : 422);
+    }
+
+    public function syncPrice(Store1CPriceRequest $request): JsonResponse
+    {
+        $result = $this->stagingService->stageAndApplyPrice($request->validated());
+
+        return response()->json([
+            'success' => $result['failed'] === 0,
+            'data' => $result,
+        ], $result['failed'] === 0 ? 200 : 422);
+    }
+
+    public function syncStock(Store1CStockRequest $request): JsonResponse
+    {
+        $result = $this->stagingService->stageAndApplyStock($request->validated());
+
+        return response()->json([
+            'success' => $result['failed'] === 0,
+            'data' => $result,
+        ], $result['failed'] === 0 ? 200 : 422);
+    }
+
+    public function deleteProduct(Delete1CProductRequest $request, OneCSyncService $syncService): JsonResponse
+    {
+        $data = $request->validated();
+        $product = $syncService->deactivateProduct($data['external_id'], $data['permanent'] ?? false);
+
+        if (! $product) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Товар не найден.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'product_id' => $product->id,
+            'action' => ($data['permanent'] ?? false) ? 'deleted' : 'deactivated',
+        ]);
+    }
+
     public function syncProducts(Request $request): JsonResponse
     {
         $data = $request->validate([

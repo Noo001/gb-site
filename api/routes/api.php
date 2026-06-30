@@ -72,6 +72,16 @@ Route::middleware(['onec.api', 'onec.log'])->prefix('1c')->group(function () {
     Route::get('/products', [OneCController::class, 'listProducts']);
     Route::get('/products/{uuid_1c}', [OneCController::class, 'showProduct']);
     Route::post('/notify/price-changed', [OneCController::class, 'notifyPriceChanged']);
+
+    Route::post('/bulk-sync', [OneCController::class, 'bulkSync']);
+    Route::get('/bulk-sync/{batch_id}/status', [OneCController::class, 'bulkSyncStatus']);
+    Route::post('/bot/rebuild-index', [OneCController::class, 'rebuildBotIndex']);
+
+    Route::post('/categories', [OneCController::class, 'syncCategory']);
+    Route::post('/products', [OneCController::class, 'syncProduct']);
+    Route::post('/products/delete', [OneCController::class, 'deleteProduct']);
+    Route::post('/prices', [OneCController::class, 'syncPrice']);
+    Route::post('/stocks', [OneCController::class, 'syncStock']);
 });
 
 // First-line bot (read-only data endpoints + logging)

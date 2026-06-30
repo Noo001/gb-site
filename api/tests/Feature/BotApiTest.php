@@ -20,11 +20,12 @@ class BotApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    private string $apiKey = 'test-bot-key';
+    private string $apiKey;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->apiKey = config('services.bot.api_key') ?: 'test-bot-key';
         config()->set('services.bot.api_key', $this->apiKey);
     }
 

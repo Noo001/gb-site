@@ -24,14 +24,9 @@ class BotIndexService
                 })
                 ->chunkById(200, function ($offers) use (&$created) {
                     foreach ($offers as $offer) {
-                        $product = $offer->product;
-                        if (! $product) {
-                            continue;
+                        if ($this->upsertFromOffer($offer)) {
+                            $created++;
                         }
-
-                        $row = $this->buildRow($product, $offer);
-                        BotProduct::create($row);
-                        $created++;
                     }
                 });
         });
@@ -40,6 +35,42 @@ class BotIndexService
             'created' => $created,
             'duration_ms' => (int) round(now()->diffInMilliseconds($started)),
         ];
+    }
+
+    public function upsertByOfferId(int $offerId): bool
+    {
+        $offer = Offer::query()
+            ->with(['product.category', 'prices', 'stocks.store', 'attributeValues.attribute', 'product.media'])
+            ->find($offerId);
+
+        if (! $offer) {
+            $this->deactivateByOfferId($offerId);
+            return false;
+        }
+
+        return $this->upsertFromOffer($offer);
+    }
+
+    public function upsertFromOffer(Offer $offer): bool
+    {
+        $product = $offer->product;
+
+        if (! $product || ! $product->is_active || ! $offer->is_active) {
+            $this->deactivateByOfferId($offer->id);
+            return false;
+        }
+
+        BotProduct::updateOrCreate(
+            ['offer_id' => $offer->id],
+            $this->buildRow($product, $offer)
+        );
+
+        return true;
+    }
+
+    public function deactivateByOfferId(int $offerId): void
+    {
+        BotProduct::where('offer_id', $offerId)->delete();
     }
 
     private function buildRow($product, $offer): array

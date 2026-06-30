@@ -12,6 +12,7 @@ class OneCOffer extends Model
     protected $table = '1c_offers';
 
     protected $fillable = [
+        'batch_id',
         'external_id',
         'product_external_id',
         'name',
@@ -19,10 +20,18 @@ class OneCOffer extends Model
         'barcode',
         'raw',
         'processed_at',
+        'attempts',
+        'error',
     ];
 
     protected $casts = [
         'raw' => 'array',
         'processed_at' => 'datetime',
+        'attempts' => 'integer',
     ];
+
+    public function scopeUnprocessed($query)
+    {
+        return $query->whereNull('processed_at');
+    }
 }

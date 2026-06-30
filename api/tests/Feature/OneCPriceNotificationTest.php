@@ -18,7 +18,7 @@ class OneCPriceNotificationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config()->set('services.1c.api_key', 'test-1c-key');
+        config()->set('services.1c.api_key', config('services.1c.api_key') ?: 'test-1c-key');
     }
 
     public function test_price_change_dispatches_notification_to_1c(): void
