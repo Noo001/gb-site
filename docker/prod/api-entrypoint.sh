@@ -28,4 +28,7 @@ php artisan filament:assets --no-interaction || true
 
 php artisan migrate --force
 
+# Rebuild bot product index after deploy
+php artisan bot:rebuild-index || true
+
 exec php-fpm -R
