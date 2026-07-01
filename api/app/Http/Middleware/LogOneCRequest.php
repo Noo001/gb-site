@@ -9,18 +9,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LogOneCRequest
 {
-    private float $startedAt = 0.0;
-
     public function handle(Request $request, Closure $next): Response
     {
-        $this->startedAt = microtime(true);
+        $request->attributes->set('onec_started_at', microtime(true));
 
         return $next($request);
     }
 
     public function terminate(Request $request, Response $response): void
     {
-        $duration = (int) round((microtime(true) - $this->startedAt) * 1000);
+        $startedAt = $request->attributes->get('onec_started_at');
+        $duration = $startedAt ? (int) round((microtime(true) - $startedAt) * 1000) : null;
 
         $payload = $request->getContent();
         $decodedPayload = json_validate($payload) ? json_decode($payload, true) : null;
