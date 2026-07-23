@@ -11,6 +11,7 @@ use App\Http\Requests\Store1CProductRequest;
 use App\Http\Requests\Store1CStockRequest;
 use App\Http\Requests\Store1CPricesSyncRequest;
 use App\Http\Requests\Store1CStocksSyncRequest;
+use App\Http\Requests\Store1CStoresSyncRequest;
 use Illuminate\Http\Request;
 use App\Models\Failed1CExport;
 use App\Jobs\Apply1CStagingData;
@@ -33,8 +34,26 @@ use Illuminate\Validation\ValidationException;
 class OneCController extends Controller
 {
     public function __construct(
-        private OneCStagingService $stagingService
+        private OneCStagingService $stagingService,
+        private OneCSyncService $syncService
     ) {
+    }
+
+    public function syncStores(Store1CStoresSyncRequest $request): JsonResponse
+    {
+        $processed = 0;
+        foreach ($request->validated()['items'] as $item) {
+            $this->syncService->applyStore($item['external_id'], $item);
+            $processed++;
+        }
+
+        // Города/названия складов влияют на выдачу бота — перестраиваем индекс.
+        RebuildBotIndexJob::dispatch();
+
+        return response()->json([
+            'success' => true,
+            'data' => ['processed' => $processed],
+        ]);
     }
 
     public function bulkSync(Store1CBulkSyncRequest $request): JsonResponse

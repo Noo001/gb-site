@@ -100,6 +100,15 @@ class OneCBulkSyncTest extends TestCase
             ],
         ]);
 
+        // Товар попадает в индекс бота только с ценой > 0.
+        \App\Models\OneCPrice::create([
+            'batch_id' => $batchId,
+            'offer_external_id' => '550e8400-e29b-41d4-a716-446655440000',
+            'price' => 99990,
+            'currency' => 'RUB',
+            'raw' => [],
+        ]);
+
         (new Apply1CStagingData($batchId))->handle();
 
         $this->assertDatabaseHas('products', [

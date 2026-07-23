@@ -204,6 +204,108 @@ class OneCSingleSyncTest extends TestCase
         ]);
     }
 
+    public function test_stores_sync_manages_city_without_overwriting(): void
+    {
+        // Создание склада с городом.
+        $this->withHeader('X-1C-API-Key', 'test-1c-key')
+            ->postJson('/api/1c/stores/sync', [
+                'items' => [
+                    ['external_id' => 'store-1', 'name' => 'ТЦ Гагаринский', 'city' => 'Москва'],
+                ],
+            ])
+            ->assertOk()
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('stores', [
+            'external_id' => 'store-1',
+            'name' => 'ТЦ Гагаринский',
+            'city' => 'Москва',
+        ]);
+
+        // Пустой город не затирает заполненный вручную/ранее.
+        $this->withHeader('X-1C-API-Key', 'test-1c-key')
+            ->postJson('/api/1c/stores/sync', [
+                'items' => [
+                    ['external_id' => 'store-1', 'name' => 'ТЦ Гагаринский (новое имя)'],
+                ],
+            ])
+            ->assertOk();
+
+        $this->assertDatabaseHas('stores', [
+            'external_id' => 'store-1',
+            'name' => 'ТЦ Гагаринский (новое имя)',
+            'city' => 'Москва',
+        ]);
+
+        // Новый непустой город обновляет.
+        $this->withHeader('X-1C-API-Key', 'test-1c-key')
+            ->postJson('/api/1c/stores/sync', [
+                'items' => [
+                    ['external_id' => 'store-1', 'city' => 'Химки'],
+                ],
+            ])
+            ->assertOk();
+
+        $this->assertDatabaseHas('stores', [
+            'external_id' => 'store-1',
+            'city' => 'Химки',
+        ]);
+    }
+
+    public function test_product_without_price_is_inactive_until_price_arrives(): void
+    {
+        // Товар без цены создаётся неактивным.
+        $this->withHeader('X-1C-API-Key', 'test-1c-key')
+            ->postJson('/api/1c/products', [
+                'external_id' => 'prod-no-price',
+                'name' => 'Товар без цены',
+                'is_active' => true,
+            ])
+            ->assertOk();
+
+        $this->assertDatabaseHas('products', [
+            'uuid_1c' => 'prod-no-price',
+            'is_active' => false,
+        ]);
+
+        $this->assertDatabaseMissing('bot_products', [
+            'name' => 'Товар без цены',
+        ]);
+
+        // Приход цены > 0 активирует товар и поднимает его в индекс бота.
+        $this->withHeader('X-1C-API-Key', 'test-1c-key')
+            ->postJson('/api/1c/prices/sync', [
+                'items' => [
+                    ['offer_external_id' => 'prod-no-price', 'price' => 1990, 'currency' => 'RUB'],
+                ],
+            ])
+            ->assertOk();
+
+        $this->assertDatabaseHas('products', [
+            'uuid_1c' => 'prod-no-price',
+            'is_active' => true,
+        ]);
+
+        $this->assertDatabaseHas('bot_products', [
+            'name' => 'Товар без цены',
+            'price' => 1990,
+        ]);
+    }
+
+    public function test_zero_price_is_ignored(): void
+    {
+        $this->withHeader('X-1C-API-Key', 'test-1c-key')
+            ->postJson('/api/1c/prices/sync', [
+                'items' => [
+                    ['offer_external_id' => 'offer-zero', 'name' => 'Нулевой товар', 'price' => 0, 'currency' => 'RUB'],
+                ],
+            ])
+            ->assertOk();
+
+        $this->assertDatabaseMissing('prices', ['price' => 0]);
+        $this->assertDatabaseMissing('bot_products', ['name' => 'Нулевой товар']);
+    }
+
     public function test_delete_product_deactivates_it(): void
     {
         $product = Product::create([

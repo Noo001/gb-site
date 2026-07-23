@@ -107,13 +107,19 @@ class OneCSyncService
         $product = Product::firstOrNew(['uuid_1c' => $staging->external_id]);
         $isNew = ! $product->exists;
 
+        $isActive = $staging->raw['is_active'] ?? true;
+        // Новый товар без цены не показываем: активируется, когда придёт цена > 0.
+        if ($isNew && (float) ($staging->raw['price'] ?? 0) <= 0) {
+            $isActive = false;
+        }
+
         $product->fill([
             'name' => $staging->name,
             'category_id' => $categoryId,
             'sku' => $staging->raw['sku'] ?? $product->sku,
             'brand' => $staging->raw['brand'] ?? $product->brand,
             'description' => $staging->raw['description'] ?? $product->description,
-            'is_active' => $staging->raw['is_active'] ?? true,
+            'is_active' => $isActive,
         ]);
 
         if ($isNew) {
@@ -159,12 +165,17 @@ class OneCSyncService
         return $offer;
     }
 
-    public function applyPrice(OneCPrice $staging): Price
+    public function applyPrice(OneCPrice $staging): ?Price
     {
         $offer = Offer::where('external_id', $staging->offer_external_id)->first();
 
         if (! $offer) {
             $offer = $this->ensureProductAndOffer($staging->offer_external_id, $staging->raw['name'] ?? null);
+        }
+
+        // Товары без цены не добавляем в базу: нулевые цены игнорируем.
+        if ((float) $staging->price <= 0) {
+            return null;
         }
 
         $price = Price::updateOrCreate(
@@ -178,6 +189,12 @@ class OneCSyncService
                 'currency' => strtoupper($staging->currency),
             ]
         );
+
+        // Пришла реальная цена — товар можно показывать.
+        $product = $offer->product;
+        if ($product && ! $product->is_active) {
+            $product->update(['is_active' => true]);
+        }
 
         $this->botIndexService->upsertByOfferId($offer->id);
 
@@ -285,16 +302,21 @@ class OneCSyncService
 
     public function applyStore(string $externalId, ?array $data = null): Store
     {
-        return Store::firstOrCreate(
-            ['external_id' => $externalId],
-            [
-                'name' => $data['name'] ?? $externalId,
-                'city' => $data['city'] ?? null,
-                'address' => $data['address'] ?? null,
-                'is_active' => $data['is_active'] ?? true,
-                'sort' => $data['sort'] ?? 0,
-            ]
-        );
+        $store = Store::firstOrNew(['external_id' => $externalId]);
+
+        $store->name = $data['name'] ?? ($store->name ?: $externalId);
+        $store->address = $data['address'] ?? $store->address;
+        $store->is_active = $data['is_active'] ?? ($store->is_active ?? true);
+        $store->sort = $data['sort'] ?? ($store->sort ?? 0);
+
+        // Город не затираем пустым значением: его могли заполнить вручную в админке.
+        if (! empty($data['city'])) {
+            $store->city = $data['city'];
+        }
+
+        $store->save();
+
+        return $store;
     }
 
     public function deactivateProduct(string $externalId, bool $permanent = false): ?Product

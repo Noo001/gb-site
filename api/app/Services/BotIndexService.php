@@ -60,12 +60,31 @@ class BotIndexService
             return false;
         }
 
+        // Товары без цены не добавляем в индекс бота.
+        if (! $this->bestPrice($offer)) {
+            $this->deactivateByOfferId($offer->id);
+            return false;
+        }
+
         BotProduct::updateOrCreate(
             ['offer_id' => $offer->id],
             $this->buildRow($product, $offer)
         );
 
         return true;
+    }
+
+    // Минимальная положительная цена оффера (без региональных/складских записей, если есть общие).
+    private function bestPrice(Offer $offer): ?float
+    {
+        $prices = $offer->prices->where('region_id', null)->where('store_id', null);
+        if ($prices->isEmpty()) {
+            $prices = $offer->prices;
+        }
+
+        $price = $prices->where('price', '>', 0)->min('price');
+
+        return $price === null ? null : (float) $price;
     }
 
     public function deactivateByOfferId(int $offerId): void
@@ -91,7 +110,7 @@ class BotIndexService
         if ($prices->isEmpty()) {
             $prices = $offer->prices;
         }
-        $price = $prices->min('price') ?? 0;
+        $price = $prices->where('price', '>', 0)->min('price') ?? 0;
         $oldPrice = $prices->max('old_price');
         $currency = $prices->first()?->currency ?? 'RUB';
 
