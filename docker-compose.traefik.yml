@@ -1,0 +1,35 @@
+# Shared Traefik reverse proxy for multiple projects on the same server.
+# Run this once per server:
+#   docker compose -f docker-compose.traefik.yml up -d
+#
+# Then deploy each project using docker-compose.prod.yml, which attaches to
+# the external network "traefik-public" created here.
+
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - --configFile=/traefik.yml
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./docker/prod/traefik.yml:/traefik.yml:ro
+      - traefik-certs:/letsencrypt
+    networks:
+      - traefik-public
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.rule=Host(`traefik.${TRAEFIK_DOMAIN:-localhost}`)
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.entrypoints=web
+
+volumes:
+  traefik-certs:
+
+networks:
+  traefik-public:
+    name: traefik-public

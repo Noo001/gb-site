@@ -1,0 +1,62 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Third Party Services
+    |--------------------------------------------------------------------------
+    |
+    | This file is for storing the credentials for third party services such
+    | as Mailgun, Postmark, AWS and more. This file provides the de facto
+    | location for this type of information, allowing packages to have
+    | a conventional file to locate the various service credentials.
+    |
+    */
+
+    'postmark' => [
+        'token' => env('POSTMARK_TOKEN'),
+    ],
+
+    'ses' => [
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    ],
+
+    'resend' => [
+        'key' => env('RESEND_KEY'),
+    ],
+
+    'slack' => [
+        'notifications' => [
+            'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
+            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
+        ],
+    ],
+
+    'yandex' => [
+        'client_id' => env('YANDEX_CLIENT_ID'),
+        'client_secret' => env('YANDEX_CLIENT_SECRET'),
+        'redirect' => env('YANDEX_REDIRECT_URL', 'http://localhost:8000/api/auth/yandex/callback'),
+    ],
+
+    'vkontakte' => [
+        'client_id' => env('VKONTAKTE_CLIENT_ID'),
+        'client_secret' => env('VKONTAKTE_CLIENT_SECRET'),
+        'redirect' => env('VKONTAKTE_REDIRECT_URL', 'http://localhost:8000/api/auth/vk/callback'),
+    ],
+
+    '1c' => [
+        'api_key' => env('IMPORT_1C_API_KEY'),
+        'webhook_url' => env('EXPORT_1C_WEBHOOK_URL'),
+        'webhook_secret' => env('EXPORT_1C_WEBHOOK_SECRET'),
+        'timeout' => env('EXPORT_1C_TIMEOUT', 10),
+        'max_queue_attempts' => env('IMPORT_1C_MAX_QUEUE_ATTEMPTS', 10),
+    ],
+
+    'bot' => [
+        'api_key' => env('BOT_API_KEY'),
+    ],
+
+];

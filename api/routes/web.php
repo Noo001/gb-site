@@ -1,0 +1,61 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\CatalogController;
+use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Web\BrandController;
+use App\Http\Controllers\Web\CartController;
+use App\Http\Controllers\Web\CheckoutController;
+use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\AccountController;
+use App\Http\Controllers\Web\WishlistController;
+use App\Http\Controllers\Web\PageController;
+use App\Http\Controllers\Web\BlogController;
+use App\Http\Controllers\Web\SalesController;
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/catalog/{path?}', [CatalogController::class, 'show'])
+    ->where('path', '.*')->name('catalog.show');
+
+Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
+
+Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
+Route::get('/brands/{slug}', [BrandController::class, 'show'])->name('brands.show');
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/order/success', [CheckoutController::class, 'success'])->name('checkout.success');
+
+Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.store');
+Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.store');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/account', [AccountController::class, 'index'])->name('account.index');
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+});
+
+Route::get('/info/{slug}', [PageController::class, 'info'])->name('page.info');
+Route::get('/company', [PageController::class, 'company'])->name('page.company');
+Route::get('/contacts', [PageController::class, 'contacts'])->name('page.contacts');
+Route::get('/stores', [PageController::class, 'stores'])->name('page.stores');
+Route::get('/delivery', fn () => redirect()->route('page.info', ['slug' => 'delivery']));
+Route::get('/payment', fn () => redirect()->route('page.info', ['slug' => 'payment']));
+Route::get('/warranty', fn () => redirect()->route('page.info', ['slug' => 'warranty']));
+Route::get('/installment', [PageController::class, 'installment'])->name('page.installment');
+Route::get('/trade-in', [PageController::class, 'tradeIn'])->name('page.trade-in');
+Route::get('/offer', [PageController::class, 'offer'])->name('page.offer');
+Route::get('/privacy', [PageController::class, 'privacy'])->name('page.privacy');
+Route::get('/review', [PageController::class, 'review'])->name('page.review');
+
+Route::get('/blog', [BlogController::class, 'index'])->name('page.blog');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('page.blog.article');
+Route::get('/sales', [SalesController::class, 'index'])->name('page.sales');
+Route::get('/sales/{slug}', [SalesController::class, 'show'])->name('page.sales.article');
+
+Route::post('/access-check', [AuthController::class, 'accessCheck'])->name('access.check');

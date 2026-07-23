@@ -1,0 +1,23 @@
+name: Run CommerceML import on Beget
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/ВыгрузкаДляБота/**'
+  workflow_dispatch:
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger CommerceML import on Beget
+        run: |
+          set -e
+          echo "Triggering CommerceML import..."
+          curl -fsS "${{ secrets.BEGET_IMPORT_URL }}" -o /tmp/import-response.txt || {
+            echo "Import trigger failed"
+            exit 1
+          }
+          cat /tmp/import-response.txt

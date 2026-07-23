@@ -1,0 +1,58 @@
+# Render Blueprint for GADGET·BAR
+# Deploys a single container: Laravel API + Next.js frontend + nginx.
+# Required external services (free tiers available):
+#   - PostgreSQL (e.g. Supabase, Neon)
+#   - S3-compatible object storage (e.g. Cloudflare R2, AWS S3)
+#   - Optional: Redis (Upstash) — not required if CACHE/QUEUE/SESSION use DB/cookie.
+#
+# Create an env group "gb-production" in the Render dashboard and fill:
+#   APP_KEY, APP_URL, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD,
+#   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_BUCKET, AWS_ENDPOINT, AWS_URL,
+#   SANCTUM_STATEFUL_DOMAINS, MAIL_* vars, etc.
+
+services:
+  - type: web
+    name: gadget-bar
+    runtime: docker
+    dockerfilePath: ./docker/render/Dockerfile
+    plan: free
+    region: frankfurt
+    envVarGroups:
+      - gb-production
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_LOCALE
+        value: ru
+      - key: APP_FALLBACK_LOCALE
+        value: ru
+      - key: APP_TIMEZONE
+        value: Europe/Moscow
+      - key: BCRYPT_ROUNDS
+        value: "12"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_STORE
+        value: database
+      - key: CACHE_PREFIX
+        value: gb
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FILESYSTEM_DISK
+        value: s3
+      - key: MEDIA_DISK
+        value: s3
+      - key: AWS_DEFAULT_REGION
+        value: auto
+      - key: AWS_USE_PATH_STYLE_ENDPOINT
+        value: "false"
+      - key: FRONTEND_URL
+        value: https://gadget-bar.onrender.com
