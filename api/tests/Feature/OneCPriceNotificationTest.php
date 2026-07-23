@@ -66,7 +66,7 @@ class OneCPriceNotificationTest extends TestCase
             ->postJson('/api/1c/prices/sync', [
                 'items' => [
                     [
-                        'uuid_1c' => '550e8400-e29b-41d4-a716-446655440001',
+                        'offer_external_id' => '550e8400-e29b-41d4-a716-446655440001',
                         'price' => 79990,
                         'currency' => 'RUB',
                     ],
