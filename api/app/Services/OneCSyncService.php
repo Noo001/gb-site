@@ -194,10 +194,14 @@ class OneCSyncService
 
         $storeId = null;
         if ($staging->store_external_id) {
+            $storeName = $staging->raw['store_name'] ?? null;
             $store = Store::firstOrCreate(
                 ['external_id' => $staging->store_external_id],
-                ['name' => $staging->store_external_id, 'is_active' => true, 'sort' => 0]
+                ['name' => $storeName ?: $staging->store_external_id, 'is_active' => true, 'sort' => 0]
             );
+            if ($storeName && $store->name !== $storeName) {
+                $store->update(['name' => $storeName]);
+            }
             $storeId = $store->id;
         }
 

@@ -149,6 +149,61 @@ class OneCSingleSyncTest extends TestCase
         ]);
     }
 
+    public function test_stocks_sync_creates_and_renames_store(): void
+    {
+        $product = Product::create([
+            'uuid_1c' => '550e8400-e29b-41d4-a716-446655440000',
+            'name' => 'iPhone',
+            'slug' => 'iphone',
+            'is_active' => true,
+        ]);
+
+        Offer::create([
+            'product_id' => $product->id,
+            'external_id' => 'offer-1',
+            'name' => 'iPhone 128GB',
+            'is_active' => true,
+        ]);
+
+        $this->withHeader('X-1C-API-Key', 'test-1c-key')
+            ->postJson('/api/1c/stocks/sync', [
+                'items' => [
+                    [
+                        'offer_external_id' => 'offer-1',
+                        'store_external_id' => 'store-uuid-1',
+                        'store_name' => 'ТЦ Гагаринский',
+                        'quantity' => 7,
+                    ],
+                ],
+            ])
+            ->assertOk()
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('stores', [
+            'external_id' => 'store-uuid-1',
+            'name' => 'ТЦ Гагаринский',
+        ]);
+
+        // Повторная синхронизация с новым именем переименовывает склад.
+        $this->withHeader('X-1C-API-Key', 'test-1c-key')
+            ->postJson('/api/1c/stocks/sync', [
+                'items' => [
+                    [
+                        'offer_external_id' => 'offer-1',
+                        'store_external_id' => 'store-uuid-1',
+                        'store_name' => 'ТЦ Гагаринский, 2 этаж',
+                        'quantity' => 7,
+                    ],
+                ],
+            ])
+            ->assertOk();
+
+        $this->assertDatabaseHas('stores', [
+            'external_id' => 'store-uuid-1',
+            'name' => 'ТЦ Гагаринский, 2 этаж',
+        ]);
+    }
+
     public function test_delete_product_deactivates_it(): void
     {
         $product = Product::create([

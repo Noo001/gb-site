@@ -18,6 +18,7 @@ class Store1CStocksSyncRequest extends FormRequest
             'items.*.offer_external_id' => ['required', 'string', 'max:255'],
             'items.*.name' => ['nullable', 'string', 'max:1000'],
             'items.*.store_external_id' => ['nullable', 'string', 'max:255'],
+            'items.*.store_name' => ['nullable', 'string', 'max:255'],
             'items.*.quantity' => ['required', 'numeric', 'min:0'],
         ];
     }

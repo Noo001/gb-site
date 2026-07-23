@@ -269,6 +269,7 @@ class OneCStagingService
                 'quantity' => $stock['quantity'],
                 'raw' => [
                     'name' => $stock['name'] ?? null,
+                    'store_name' => $stock['store_name'] ?? null,
                 ],
             ]
         );
