@@ -75,10 +75,11 @@ class OneCBulkSyncTest extends TestCase
             return $job->batchId === $batchId;
         });
 
-        Queue::assertNotPushed(RebuildBotIndexJob::class);
+        // Одна отложенная перестройка индекса на весь bulk-процесс.
+        Queue::assertPushed(RebuildBotIndexJob::class);
     }
 
-    public function test_bulk_sync_dispatches_bot_index_rebuild_after_successful_apply(): void
+    public function test_bulk_sync_apply_does_not_touch_bot_index(): void
     {
         $batchId = 'batch-bot-test';
 
@@ -115,7 +116,8 @@ class OneCBulkSyncTest extends TestCase
             'uuid_1c' => '550e8400-e29b-41d4-a716-446655440000',
         ]);
 
-        $this->assertDatabaseHas('bot_products', [
+        // Bulk-применение не трогает индекс: он перестраивается одной отложенной задачей.
+        $this->assertDatabaseMissing('bot_products', [
             'name' => 'iPhone',
         ]);
     }

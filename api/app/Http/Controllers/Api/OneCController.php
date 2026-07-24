@@ -63,6 +63,13 @@ class OneCController extends Controller
 
         Apply1CStagingData::dispatch($batchId);
 
+        // Одна отложенная перестройка индекса бота на весь процесс bulk-выгрузки
+        // (не по задаче на каждый батч). Пока она в очереди, новую не ставим.
+        $hasPendingRebuild = DB::table('jobs')->where('payload', 'like', '%RebuildBotIndexJob%')->exists();
+        if (! $hasPendingRebuild) {
+            RebuildBotIndexJob::dispatch()->delay(now()->addMinutes(10));
+        }
+
         return response()->json([
             'success' => true,
             'batch_id' => $batchId,

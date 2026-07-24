@@ -33,8 +33,15 @@ class OneCSyncService
     /**
      * @param array<int, OneCCategory|OneCProduct|OneCOffer|OneCPrice|OneCStock> $records
      */
-    public function apply(array $records): array
+    // Точечно обновлять индекс бота при применении записей.
+    // false для bulk-применения: индекс перестраивается один раз в конце,
+    // а не тысячи раз по записи.
+    private bool $updateBotIndex = true;
+
+    public function apply(array $records, bool $updateBotIndex = true): array
     {
+        $this->updateBotIndex = $updateBotIndex;
+
         return Price::withoutSyncNotifications(function () use ($records) {
             return DB::transaction(function () use ($records) {
                 $result = [
@@ -136,7 +143,9 @@ class OneCSyncService
         $this->applyProductAttributes($product, $staging->raw['attributes'] ?? []);
 
         $offer = $this->ensureDefaultOfferForProduct($product);
-        $this->botIndexService->upsertFromOffer($offer);
+        if ($this->updateBotIndex) {
+            $this->botIndexService->upsertFromOffer($offer);
+        }
 
         return $product;
     }
@@ -160,7 +169,9 @@ class OneCSyncService
             ]
         );
 
-        $this->botIndexService->upsertFromOffer($offer);
+        if ($this->updateBotIndex) {
+            $this->botIndexService->upsertFromOffer($offer);
+        }
 
         return $offer;
     }
@@ -196,7 +207,9 @@ class OneCSyncService
             $product->update(['is_active' => true]);
         }
 
-        $this->botIndexService->upsertByOfferId($offer->id);
+        if ($this->updateBotIndex) {
+            $this->botIndexService->upsertByOfferId($offer->id);
+        }
 
         return $price;
     }
@@ -232,7 +245,9 @@ class OneCSyncService
             ]
         );
 
-        $this->botIndexService->upsertByOfferId($offer->id);
+        if ($this->updateBotIndex) {
+            $this->botIndexService->upsertByOfferId($offer->id);
+        }
 
         return $stock;
     }

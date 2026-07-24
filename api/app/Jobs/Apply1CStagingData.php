@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Jobs\RebuildBotIndexJob;
 use App\Models\OneCCategory;
 use App\Models\OneCOffer;
 use App\Models\OneCPrice;
@@ -37,10 +36,8 @@ class Apply1CStagingData implements ShouldQueue
             ->merge(OneCPrice::unprocessed()->when($this->batchId, fn ($q) => $q->where('batch_id', $this->batchId))->get())
             ->merge(OneCStock::unprocessed()->when($this->batchId, fn ($q) => $q->where('batch_id', $this->batchId))->get());
 
-        $result = $this->syncService->apply($records->all());
-
-        if ($result['failed'] === 0) {
-            RebuildBotIndexJob::dispatch();
-        }
+        // Bulk-применение без точечных обновлений индекса бота.
+        // Индекс перестраивается один раз отложенной задачей из bulkSync-эндпоинта.
+        $this->syncService->apply($records->all(), false);
     }
 }
