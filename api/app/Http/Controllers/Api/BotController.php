@@ -33,32 +33,32 @@ class BotController extends Controller
         if ($query !== '') {
             $dbQuery->where(function ($q) use ($query) {
                 $search = "%{$query}%";
-                $q->where('search_text', 'like', $search)
-                    ->orWhere('name', 'like', $search)
-                    ->orWhere('brand', 'like', $search)
-                    ->orWhere('category', 'like', $search)
-                    ->orWhere('subcategory', 'like', $search);
+                $q->whereLike('search_text', $search)
+                    ->orWhereLike('name', $search)
+                    ->orWhereLike('brand', $search)
+                    ->orWhereLike('category', $search)
+                    ->orWhereLike('subcategory', $search);
             });
         }
 
         if (! empty($filter['brand_contains'])) {
-            $dbQuery->where('brand', 'like', '%' . $filter['brand_contains'] . '%');
+            $dbQuery->whereLike('brand', '%' . $filter['brand_contains'] . '%');
         }
 
         if (! empty($filter['name_contains'])) {
             $dbQuery->where(function ($q) use ($filter) {
                 $term = '%' . $filter['name_contains'] . '%';
-                $q->where('name', 'like', $term)
-                    ->orWhere('search_text', 'like', $term);
+                $q->whereLike('name', $term)
+                    ->orWhereLike('search_text', $term);
             });
         }
 
         if (! empty($filter['category'])) {
-            $dbQuery->where('category', 'like', '%' . $filter['category'] . '%');
+            $dbQuery->whereLike('category', '%' . $filter['category'] . '%');
         }
 
         if (! empty($filter['subcategory'])) {
-            $dbQuery->where('subcategory', 'like', '%' . $filter['subcategory'] . '%');
+            $dbQuery->whereLike('subcategory', '%' . $filter['subcategory'] . '%');
         }
 
         if (! empty($filter['availability']) && $filter['availability'] === 'in_stock') {
@@ -115,14 +115,14 @@ class BotController extends Controller
             ->where('availability', 'in_stock');
 
         if (! empty($data['p_brand'])) {
-            $query->where('brand', 'like', '%' . $data['p_brand'] . '%');
+            $query->whereLike('brand', '%' . $data['p_brand'] . '%');
         }
 
         if (! empty($data['p_model_line'])) {
             $query->where(function ($q) use ($data) {
                 $term = '%' . $data['p_model_line'] . '%';
-                $q->where('name', 'like', $term)
-                    ->orWhere('search_text', 'like', $term);
+                $q->whereLike('name', $term)
+                    ->orWhereLike('search_text', $term);
             });
         }
 
@@ -134,8 +134,8 @@ class BotController extends Controller
             $name = $data['p_name'];
             $query->where(function ($q) use ($name) {
                 $term = '%' . $name . '%';
-                $q->where('name', 'not like', $term)
-                    ->where('search_text', 'not like', $term);
+                $q->whereNotLike('name', $term)
+                    ->whereNotLike('search_text', $term);
             });
         }
 
@@ -275,7 +275,7 @@ class BotController extends Controller
             ->where('is_active', true);
 
         if (! empty($data['p_city'])) {
-            $query->where('city', 'like', '%' . $data['p_city'] . '%');
+            $query->whereLike('city', '%' . $data['p_city'] . '%');
         }
 
         if (! empty($data['p_type'])) {
@@ -314,15 +314,15 @@ class BotController extends Controller
             ->where('is_active', true);
 
         if (! empty($data['p_brand'])) {
-            $query->where('brand', 'like', '%' . $data['p_brand'] . '%');
+            $query->whereLike('brand', '%' . $data['p_brand'] . '%');
         }
 
         if (! empty($data['p_model'])) {
-            $query->where('model', 'like', '%' . $data['p_model'] . '%');
+            $query->whereLike('model', '%' . $data['p_model'] . '%');
         }
 
         if (! empty($data['p_storage'])) {
-            $query->where('storage', 'like', '%' . $data['p_storage'] . '%');
+            $query->whereLike('storage', '%' . $data['p_storage'] . '%');
         }
 
         if (! empty($data['p_condition'])) {
