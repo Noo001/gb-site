@@ -267,7 +267,9 @@
                         </div>
                         <div class="pc-field">
                             <label class="pc-label" for="pc-phone">Телефон</label>
-                            <input class="pc-input" id="pc-phone" type="tel" x-model="form.phone" required maxlength="50" placeholder="+7 (___) ___-__-__">
+                            <input class="pc-input" id="pc-phone" type="tel" x-model="form.phone" required maxlength="18"
+                                   placeholder="+7 (___) ___-__-__"
+                                   @focus="phoneFocus()" @input="phoneMask($event)">
                         </div>
                         <button type="submit" class="pc-submit-btn" :disabled="!canSubmit || submitting"
                                 x-text="submitting ? 'Отправляем…' : 'Оформить заявку'"></button>
@@ -498,6 +500,25 @@
                 const base = { t: 'rotateY(-6deg) rotateX(3deg)', o: '50% 50%' };
                 const pose = (this.activeSlot && poses[this.activeSlot]) || base;
                 return 'transform: ' + pose.t + '; transform-origin: ' + pose.o + ';';
+            },
+
+            phoneFocus() {
+                if (!this.form.phone) this.form.phone = '+7 (';
+            },
+
+            // Маска +7 (XXX) XXX-XX-XX: 7/8 в начале заменяются на +7,
+            // остальные цифры (макс. 10) встают по формату плейсхолдера.
+            phoneMask(event) {
+                let digits = event.target.value.replace(/\D/g, '');
+                if (digits.startsWith('8') || digits.startsWith('7')) digits = digits.slice(1);
+                digits = digits.slice(0, 10);
+                if (!digits.length) { this.form.phone = ''; return; }
+                let out = '+7 (' + digits.slice(0, 3);
+                if (digits.length >= 3) out += ') ';
+                if (digits.length > 3) out += digits.slice(3, 6);
+                if (digits.length > 6) out += '-' + digits.slice(6, 8);
+                if (digits.length > 8) out += '-' + digits.slice(8, 10);
+                this.form.phone = out;
             },
 
             async submit() {
