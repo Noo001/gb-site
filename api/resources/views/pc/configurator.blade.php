@@ -354,7 +354,7 @@
                 const slot = this.slots.find(s => s.id === this.hoveredSlot);
                 if (!slot) return '';
                 if (slot.empty) return slot.title + ' — скоро в продаже';
-                const chosen = this.shortName(slot.id);
+                const chosen = this.build[slot.id] ? this.build[slot.id].name : '';
                 return slot.title + (chosen ? ': ' + chosen : '');
             },
 
