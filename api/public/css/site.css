@@ -1602,6 +1602,20 @@ button {
     font-size: 0.95rem;
 }
 
+.pc-demo-banner {
+    margin: -1rem auto 2rem;
+    padding: 0.75rem 1.25rem;
+    max-width: 640px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #e879f9;
+    border: 1px solid #e879f9;
+    border-radius: 0.75rem;
+    background: rgba(232, 121, 249, 0.08);
+    box-shadow: 0 0 14px rgba(232, 121, 249, 0.25);
+}
+
 .pc-layout {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;

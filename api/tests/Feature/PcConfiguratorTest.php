@@ -6,9 +6,11 @@ use App\Models\Attribute;
 use App\Models\Category;
 use App\Models\Offer;
 use App\Models\Order;
+use App\Models\PcDemoPart;
 use App\Models\Price;
 use App\Models\Product;
 use App\Models\ProductAttributeValue;
+use App\Models\Setting;
 use App\Models\Stock;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -183,6 +185,108 @@ class PcConfiguratorTest extends TestCase
             'customer_phone' => '+79001234567',
             'items' => [['product_id' => 9999, 'quantity' => 1]],
         ])->assertUnprocessable();
+    }
+
+    public function test_demo_mode_returns_demo_parts(): void
+    {
+        Setting::set('pc_demo_mode', '1');
+
+        $gpu = $this->makeDemoPart('gpu', 'Видеокарта GeForce RTX 4060 8GB', 38900, [
+            'gpu_chip' => 'RTX 4060',
+            'vram_gb' => '8',
+            'psu_w' => '550',
+        ]);
+
+        $slotsResponse = $this->getJson('/api/pc/slots');
+
+        $slotsResponse->assertOk()->assertJsonPath('demo', true);
+
+        $gpuSlot = collect($slotsResponse->json('data'))->firstWhere('id', 'gpu');
+        $this->assertFalse($gpuSlot['empty']);
+
+        $response = $this->getJson('/api/pc/parts?slot=gpu');
+
+        $response->assertOk()->assertJsonPath('empty', false);
+
+        $data = collect($response->json('data'));
+
+        $this->assertContains($gpu->id, $data->pluck('id'));
+        $this->assertSame('Видеокарта GeForce RTX 4060 8GB', $data->firstWhere('id', $gpu->id)['name']);
+    }
+
+    public function test_demo_mode_filters_ram_by_motherboard_memory_type(): void
+    {
+        Setting::set('pc_demo_mode', '1');
+
+        $mb = $this->makeDemoPart('motherboard', 'Материнская плата ASUS PRIME B760M-K', 12500, [
+            'socket' => 'LGA1700',
+            'memory_type' => 'DDR5',
+            'form_factor' => 'mATX',
+        ]);
+
+        $ramDdr5 = $this->makeDemoPart('ram', 'Kingston Fury 16GB DDR5', 5900, ['memory_type' => 'DDR5']);
+        $ramDdr4 = $this->makeDemoPart('ram', 'Kingston Fury 16GB DDR4', 3900, ['memory_type' => 'DDR4']);
+
+        $response = $this->getJson('/api/pc/parts?' . http_build_query([
+            'slot' => 'ram',
+            'build' => json_encode(['motherboard' => $mb->id]),
+        ]));
+
+        $response->assertOk();
+
+        $ids = collect($response->json('data'))->pluck('id');
+
+        $this->assertContains($ramDdr5->id, $ids);
+        $this->assertNotContains($ramDdr4->id, $ids);
+    }
+
+    public function test_demo_mode_filters_motherboard_by_cpu_socket(): void
+    {
+        Setting::set('pc_demo_mode', '1');
+
+        $cpu = $this->makeDemoPart('cpu', 'Процессор AMD Ryzen 7 7800X3D', 39900, [
+            'socket' => 'AM5',
+            'tdp_w' => '120',
+        ]);
+
+        $mbAm5 = $this->makeDemoPart('motherboard', 'Gigabyte B650 AORUS', 18900, ['socket' => 'AM5']);
+        $mbLga = $this->makeDemoPart('motherboard', 'ASUS PRIME B760M-K', 12500, ['socket' => 'LGA1700']);
+
+        $response = $this->getJson('/api/pc/parts?' . http_build_query([
+            'slot' => 'motherboard',
+            'build' => json_encode(['cpu' => $cpu->id]),
+        ]));
+
+        $response->assertOk();
+
+        $ids = collect($response->json('data'))->pluck('id');
+
+        $this->assertContains($mbAm5->id, $ids);
+        $this->assertNotContains($mbLga->id, $ids);
+    }
+
+    public function test_demo_mode_off_ignores_demo_parts(): void
+    {
+        $this->makeDemoPart('gpu', 'Видеокарта GeForce RTX 4060 8GB', 38900, ['gpu_chip' => 'RTX 4060']);
+
+        $response = $this->getJson('/api/pc/parts?slot=gpu');
+
+        $response->assertOk()
+            ->assertJsonPath('empty', true)
+            ->assertJsonPath('data', []);
+
+        $this->getJson('/api/pc/slots')->assertOk()->assertJsonPath('demo', false);
+    }
+
+    private function makeDemoPart(string $slot, string $name, float $price, array $attributes = []): PcDemoPart
+    {
+        return PcDemoPart::create([
+            'slot' => $slot,
+            'name' => $name,
+            'price' => $price,
+            'stock' => 5,
+            'attributes' => $attributes,
+        ]);
     }
 
     private function makeProduct(Category $category, string $name, float $price = 1000, float $stock = 5): Product

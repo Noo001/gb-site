@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PcDemoPart;
 use App\Models\Product;
 use App\Services\PcCompatibilityService;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,10 @@ class PcConfiguratorController extends Controller
             'empty' => ! $service->slotHasParts($slot['id']),
         ])->values();
 
-        return response()->json(['data' => $slots]);
+        return response()->json([
+            'data' => $slots,
+            'demo' => $service->isDemoMode(),
+        ]);
     }
 
     public function parts(Request $request, PcCompatibilityService $service): JsonResponse
@@ -55,6 +59,24 @@ class PcConfiguratorController extends Controller
                     $build[$buildSlot] = (int) $productId;
                 }
             }
+        }
+
+        if ($service->isDemoMode()) {
+            $parts = $service->availableDemoParts($slot, $build)
+                ->map(fn (PcDemoPart $part) => [
+                    'id' => $part->id,
+                    'name' => $part->name,
+                    'price' => (float) $part->price,
+                    'stock' => $part->stock,
+                    'attributes' => $service->resolveDemoAttributes($part),
+                ])
+                ->values();
+
+            return response()->json([
+                'slot' => $slot,
+                'empty' => ! $service->slotHasParts($slot),
+                'data' => $parts,
+            ]);
         }
 
         $parts = $service->availableParts($slot, $build)

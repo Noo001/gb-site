@@ -12,6 +12,10 @@
                 <p class="pc-subtitle">Соберите систему по шагам — покажем только совместимые комплектующие</p>
             </div>
 
+            @if($demo ?? false)
+                <div class="pc-demo-banner">ДЕМО-РЕЖИМ: тестовые данные</div>
+            @endif
+
             {{-- Экран успеха --}}
             <div class="pc-success" x-show="orderId" x-cloak>
                 <div class="pc-success-icon">✓</div>

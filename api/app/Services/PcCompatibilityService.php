@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Category;
+use App\Models\PcDemoPart;
 use App\Models\Product;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -73,10 +75,22 @@ class PcCompatibilityService
     }
 
     /**
+     * Включён ли демо-режим конфигуратора (тестовые данные из pc_demo_parts).
+     */
+    public function isDemoMode(): bool
+    {
+        return Setting::get('pc_demo_mode') === '1';
+    }
+
+    /**
      * Есть ли в базе вообще доступные товары для слота (без учёта сборки).
      */
     public function slotHasParts(string $slot): bool
     {
+        if ($this->isDemoMode()) {
+            return PcDemoPart::query()->where('slot', $slot)->exists();
+        }
+
         $categoryIds = $this->categoryIdsForSlot($slot);
 
         if (empty($categoryIds)) {
@@ -109,6 +123,67 @@ class PcCompatibilityService
             ->get()
             ->filter(fn (Product $product) => $this->isCompatible($slot, $this->resolveAttributes($product), $buildAttrs))
             ->values();
+    }
+
+    /**
+     * Демо-комплектующие слота (демо-режим), отфильтрованные теми же
+     * правилами совместимости, что и реальные товары.
+     *
+     * @param array<string, int> $build Выбранные позиции: slot => pc_demo_part_id
+     * @return Collection<int, PcDemoPart>
+     */
+    public function availableDemoParts(string $slot, array $build = []): Collection
+    {
+        $buildAttrs = $this->resolveDemoBuildAttributes($build);
+
+        return PcDemoPart::query()
+            ->where('slot', $slot)
+            ->orderBy('sort')
+            ->orderBy('name')
+            ->get()
+            ->filter(fn (PcDemoPart $part) => $this->isCompatible($slot, $this->resolveDemoAttributes($part), $buildAttrs))
+            ->values();
+    }
+
+    /**
+     * Атрибуты демо-позиции в виде [slug => value].
+     *
+     * @return array<string, string>
+     */
+    public function resolveDemoAttributes(PcDemoPart $part): array
+    {
+        return collect($part->attributes ?? [])
+            ->mapWithKeys(fn ($value, $key) => [(string) $key => (string) $value])
+            ->all();
+    }
+
+    /**
+     * @param array<string, int> $build
+     * @return array<string, array<string, string>>
+     */
+    private function resolveDemoBuildAttributes(array $build): array
+    {
+        $ids = array_filter(array_values($build));
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        $parts = PcDemoPart::query()
+            ->whereIn('id', $ids)
+            ->get()
+            ->keyBy('id');
+
+        $resolved = [];
+
+        foreach ($build as $slot => $partId) {
+            $part = $parts->get($partId);
+            if ($part) {
+                $resolved[$slot] = $this->resolveDemoAttributes($part);
+            }
+        }
+
+        return $resolved;
     }
 
     /**
