@@ -133,7 +133,7 @@ class PcConfiguratorTest extends TestCase
         $slots = collect($response->json('data'));
 
         $this->assertSame(
-            ['case', 'cpu', 'motherboard', 'gpu', 'ram', 'storage', 'psu', 'extra'],
+            ['case', 'cpu', 'cooler', 'motherboard', 'gpu', 'ram', 'storage', 'psu', 'extra'],
             $slots->pluck('id')->all()
         );
 
@@ -276,6 +276,51 @@ class PcConfiguratorTest extends TestCase
             ->assertJsonPath('data', []);
 
         $this->getJson('/api/pc/slots')->assertOk()->assertJsonPath('demo', false);
+    }
+
+    public function test_demo_mode_filters_cooler_by_case_clearance(): void
+    {
+        Setting::set('pc_demo_mode', '1');
+
+        $case = $this->makeDemoPart('case', 'Корпус AeroCool Mini Tower', 4900, [
+            'form_factor' => 'mATX,Mini-ITX',
+            'cooler_clearance_mm' => '145',
+        ]);
+
+        $coolerLow = $this->makeDemoPart('cooler', 'Кулер ID-Cooling SE-214', 2900, ['height_mm' => '140']);
+        $coolerHigh = $this->makeDemoPart('cooler', 'Кулер Noctua NH-U12S', 7900, ['height_mm' => '158']);
+
+        $response = $this->getJson('/api/pc/parts?' . http_build_query([
+            'slot' => 'cooler',
+            'build' => json_encode(['case' => $case->id]),
+        ]));
+
+        $response->assertOk();
+
+        $ids = collect($response->json('data'))->pluck('id');
+
+        $this->assertContains($coolerLow->id, $ids);
+        $this->assertNotContains($coolerHigh->id, $ids);
+    }
+
+    public function test_demo_mode_cooler_not_limited_by_case_without_clearance(): void
+    {
+        Setting::set('pc_demo_mode', '1');
+
+        $case = $this->makeDemoPart('case', 'Корпус Zalman Z3 Mid Tower', 5900, [
+            'form_factor' => 'ATX,mATX',
+        ]);
+
+        $cooler = $this->makeDemoPart('cooler', 'Кулер Noctua NH-U12S', 7900, ['height_mm' => '158']);
+
+        $response = $this->getJson('/api/pc/parts?' . http_build_query([
+            'slot' => 'cooler',
+            'build' => json_encode(['case' => $case->id]),
+        ]));
+
+        $response->assertOk();
+
+        $this->assertContains($cooler->id, collect($response->json('data'))->pluck('id'));
     }
 
     private function makeDemoPart(string $slot, string $name, float $price, array $attributes = []): PcDemoPart

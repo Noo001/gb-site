@@ -1616,9 +1616,13 @@ button {
     box-shadow: 0 0 14px rgba(232, 121, 249, 0.25);
 }
 
+.pc-section .container-theme {
+    max-width: 1500px;
+}
+
 .pc-layout {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 55fr 45fr;
     gap: 2rem;
     align-items: start;
 }
@@ -1851,7 +1855,7 @@ button {
 
 .pc-case-3d {
     width: 100%;
-    max-width: 340px;
+    max-width: 500px;
     transition: transform 0.6s ease;
     transform-style: preserve-3d;
     will-change: transform;
@@ -2107,7 +2111,7 @@ button {
     }
 
     .pc-case-3d {
-        max-width: 220px;
+        max-width: 280px;
         transition: none;
         transform: none !important;
     }
@@ -2260,4 +2264,26 @@ button {
     text-align: center;
     font-size: 0.9rem;
     color: #9ca3af;
+}
+
+/* --- PC Configurator: 3D-грани корпуса и кулер --- */
+
+.pc-slot .pc-case-top {
+    fill: url(#pcTopGrad);
+}
+
+.pc-slot .pc-case-side {
+    fill: url(#pcSideGrad);
+}
+
+.pc-slot .pc-cooler {
+    fill: #131c29;
+}
+
+.pc-slot--selected.pc-slot-case .pc-case-top {
+    fill: url(#pcTopGrad);
+}
+
+.pc-slot--selected.pc-slot-case .pc-case-side {
+    fill: url(#pcSideGrad);
 }

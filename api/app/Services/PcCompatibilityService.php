@@ -24,17 +24,19 @@ class PcCompatibilityService
     private const SLOT_CATEGORIES = [
         'case' => ['ids' => [], 'names' => ['Корпус']],
         'cpu' => ['ids' => [354], 'names' => ['Процессор']],
+        'cooler' => ['ids' => [], 'names' => ['Кулер', 'Охлажден']],
         'motherboard' => ['ids' => [355], 'names' => ['Материнск']],
         'gpu' => ['ids' => [353], 'names' => ['Видеокарт']],
         'ram' => ['ids' => [356], 'names' => ['ОЗУ', 'Оперативн']],
         'storage' => ['ids' => [], 'names' => ['SSD', 'Накопител', 'Жёстк', 'Жестк']],
         'psu' => ['ids' => [], 'names' => ['Блок питания', 'Блоки питания']],
-        'extra' => ['ids' => [], 'names' => ['Кулер', 'Охлажден', 'Вентилятор']],
+        'extra' => ['ids' => [], 'names' => ['Вентилятор', 'Привод']],
     ];
 
     private const SLOT_TITLES = [
         'case' => 'Корпус',
         'cpu' => 'Процессор',
+        'cooler' => 'Кулер',
         'motherboard' => 'Материнская плата',
         'gpu' => 'Видеокарта',
         'ram' => 'Память',
@@ -322,6 +324,18 @@ class PcCompatibilityService
             }
         }
 
+        // Высота кулера <= допуск корпуса (cooler_clearance_mm).
+        if ($slot === 'cooler' && isset($buildAttrs['case'])) {
+            if (! $this->coolerFits($candidate['height_mm'] ?? null, $buildAttrs['case']['cooler_clearance_mm'] ?? null)) {
+                return false;
+            }
+        }
+        if ($slot === 'case' && isset($buildAttrs['cooler'])) {
+            if (! $this->coolerFits($buildAttrs['cooler']['height_mm'] ?? null, $candidate['cooler_clearance_mm'] ?? null)) {
+                return false;
+            }
+        }
+
         // Мощность БП: >= TDP процессора + рекомендация видеокарты + запас.
         if ($slot === 'psu') {
             $required = $this->requiredPsuWattage($buildAttrs);
@@ -360,6 +374,19 @@ class PcCompatibilityService
         $allowed = array_map('trim', explode(',', $caseFormFactors));
 
         return in_array($mbFormFactor, $allowed, true);
+    }
+
+    /**
+     * Влезает ли кулер в корпус по высоте.
+     * Если у корпуса не указан допуск (cooler_clearance_mm) — не ограничиваем.
+     */
+    private function coolerFits(?string $coolerHeightMm, ?string $caseClearanceMm): bool
+    {
+        if ($coolerHeightMm === null || $caseClearanceMm === null) {
+            return true;
+        }
+
+        return (int) $coolerHeightMm <= (int) $caseClearanceMm;
     }
 
     /**

@@ -19,16 +19,23 @@ class PcDemoPartsSeeder extends Seeder
         PcDemoPart::query()->delete();
 
         $parts = [
-            // Корпуса: form_factor — список допустимых форм-факторов материнских плат.
-            ['slot' => 'case', 'name' => 'Корпус Zalman Z3 Mid Tower', 'price' => 5900, 'attributes' => ['form_factor' => 'ATX,mATX']],
-            ['slot' => 'case', 'name' => 'Корпус AeroCool Mini Tower', 'price' => 4900, 'attributes' => ['form_factor' => 'mATX,Mini-ITX']],
-            ['slot' => 'case', 'name' => 'Корпус Lian Li Full Tower', 'price' => 8900, 'attributes' => ['form_factor' => 'ATX,E-ATX,mATX']],
+            // Корпуса: form_factor — список допустимых форм-факторов материнских плат,
+            // cooler_clearance_mm — максимальная высота кулера.
+            ['slot' => 'case', 'name' => 'Корпус Zalman Z3 Mid Tower', 'price' => 5900, 'attributes' => ['form_factor' => 'ATX,mATX', 'cooler_clearance_mm' => '160']],
+            ['slot' => 'case', 'name' => 'Корпус AeroCool Mini Tower', 'price' => 4900, 'attributes' => ['form_factor' => 'mATX,Mini-ITX', 'cooler_clearance_mm' => '145']],
+            ['slot' => 'case', 'name' => 'Корпус Lian Li Full Tower', 'price' => 8900, 'attributes' => ['form_factor' => 'ATX,E-ATX,mATX', 'cooler_clearance_mm' => '170']],
 
             // Процессоры.
             ['slot' => 'cpu', 'name' => 'Процессор Intel Core i5-13400F', 'price' => 19900, 'attributes' => ['socket' => 'LGA1700', 'tdp_w' => '65']],
             ['slot' => 'cpu', 'name' => 'Процессор Intel Core i7-14700K', 'price' => 44900, 'attributes' => ['socket' => 'LGA1700', 'tdp_w' => '125']],
             ['slot' => 'cpu', 'name' => 'Процессор AMD Ryzen 5 7600', 'price' => 22900, 'attributes' => ['socket' => 'AM5', 'tdp_w' => '105']],
             ['slot' => 'cpu', 'name' => 'Процессор AMD Ryzen 7 7800X3D', 'price' => 39900, 'attributes' => ['socket' => 'AM5', 'tdp_w' => '120']],
+
+            // Кулеры: height_mm — высота башни, сверяется с cooler_clearance_mm корпуса.
+            ['slot' => 'cooler', 'name' => 'Кулер ID-Cooling SE-214', 'price' => 2900, 'attributes' => ['height_mm' => '150']],
+            ['slot' => 'cooler', 'name' => 'Кулер DeepCool AK400', 'price' => 3900, 'attributes' => ['height_mm' => '155']],
+            ['slot' => 'cooler', 'name' => 'Кулер be quiet! Pure Rock 2', 'price' => 4900, 'attributes' => ['height_mm' => '155']],
+            ['slot' => 'cooler', 'name' => 'Кулер Noctua NH-U12S', 'price' => 7900, 'attributes' => ['height_mm' => '158']],
 
             // Материнские платы.
             ['slot' => 'motherboard', 'name' => 'Материнская плата ASUS PRIME B760M-K', 'price' => 12500, 'attributes' => ['socket' => 'LGA1700', 'memory_type' => 'DDR5', 'form_factor' => 'mATX']],
@@ -59,9 +66,9 @@ class PcDemoPartsSeeder extends Seeder
             ['slot' => 'psu', 'name' => 'Блок питания Corsair RM750 750W', 'price' => 9900, 'attributes' => ['wattage' => '750']],
             ['slot' => 'psu', 'name' => 'Блок питания DeepCool 850W', 'price' => 11900, 'attributes' => ['wattage' => '850']],
 
-            // Необязательное.
-            ['slot' => 'extra', 'name' => 'Кулер башенный DeepCool AK400', 'price' => 2900, 'attributes' => []],
+            // Необязательное: вентиляторы, приводы.
             ['slot' => 'extra', 'name' => 'Доп. вентиляторы ×3 Arctic P12', 'price' => 2400, 'attributes' => []],
+            ['slot' => 'extra', 'name' => 'DVD-привод ASUS DRW-24D5MT', 'price' => 1900, 'attributes' => []],
         ];
 
         foreach ($parts as $index => $part) {
