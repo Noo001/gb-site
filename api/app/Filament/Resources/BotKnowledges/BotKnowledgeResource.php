@@ -19,6 +19,10 @@ class BotKnowledgeResource extends Resource
 {
     protected static ?string $model = BotKnowledge::class;
 
+    // Без явного slug Filament генерирует «bot-knowledges/bot-knowledge»
+    // (knowledge — uncountable, pluralStudly не срабатывает).
+    protected static ?string $slug = 'bot-knowledges';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
     protected static UnitEnum|string|null $navigationGroup = 'Бот';
