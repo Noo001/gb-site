@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\BotProducts\Tables;
 
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BotProductsTable
 {
@@ -28,6 +30,10 @@ class BotProductsTable
             ])
             ->defaultSort('name')
             ->filters([
+                Filter::make('in_stock_only')
+                    ->label('Не показывать товары с нулевым остатком')
+                    ->checkbox()
+                    ->query(fn (Builder $query): Builder => $query->where('quantity', '>', 0)),
                 SelectFilter::make('availability')
                     ->options([
                         'in_stock' => 'in_stock',
