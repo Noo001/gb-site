@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Глобально, а не в web-группе: иначе заглушка не срабатывает на 404
         // (при отсутствии маршрута групповые middleware не выполняются).
         $middleware->append(\App\Http\Middleware\PasswordGate::class);
+        // Гейт работает до StartSession (нет сессии → csrf_token() пустой),
+        // поэтому его форма проверки пароля идёт без CSRF-токена.
+        $middleware->validateCsrfTokens(except: ['access-check']);
         $middleware->web(\App\Http\Middleware\RedirectMiddleware::class);
         $middleware->alias([
             'onec.api' => \App\Http\Middleware\OneCApiKey::class,

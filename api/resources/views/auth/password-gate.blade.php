@@ -82,7 +82,7 @@
         <h1>Сайт в режиме разработки</h1>
         <p>Введите пароль, чтобы продолжить.</p>
         <form id="access-form" method="POST" action="{{ route('access.check') }}">
-            @csrf
+            {{-- CSRF исключён для access-check: гейт глобальный, сессии на этом этапе нет --}}
             <input type="password" name="password" id="password" placeholder="Пароль" autofocus required>
             <button type="submit" id="submit-btn">Войти</button>
         </form>
