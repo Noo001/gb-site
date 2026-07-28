@@ -1759,8 +1759,9 @@ button {
 }
 
 .pc-part:hover {
+    background: #101a29;
     border-color: #22d3ee;
-    box-shadow: 0 0 14px rgba(34, 211, 238, 0.22);
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.38);
     transform: translateY(-2px);
 }
 
@@ -1898,12 +1899,14 @@ button {
 }
 
 .pc-slot-label {
-    fill: #22d3ee;
-    font-size: 11px;
+    fill: #e5e7eb;
+    font-size: 13px;
+    font-weight: 600;
     text-anchor: middle;
     paint-order: stroke;
     stroke: #0b0f14;
     stroke-width: 3px;
+    pointer-events: none;
 }
 
 @keyframes pcSlotPulse {
@@ -2124,4 +2127,137 @@ button {
     .pc-reset-btn {
         margin-left: 0;
     }
+}
+
+/* --- PC Configurator: детализация корпуса и ховеры --- */
+
+.pc-slot .pc-case-body {
+    fill: url(#pcCaseGrad);
+}
+
+.pc-slot .pc-mb {
+    fill: url(#pcPcbGrad);
+}
+
+.pc-slot .pc-psu {
+    fill: url(#pcPsuGrad);
+}
+
+.pc-slot .pc-gpu {
+    fill: #101725;
+}
+
+.pc-slot--selected.pc-slot-case .pc-case-body {
+    fill: url(#pcCaseGrad);
+}
+
+.pc-detail {
+    fill: #1a2432;
+    stroke: #334155;
+    stroke-width: 1;
+}
+
+.pc-detail-line {
+    fill: none;
+    stroke: #475569;
+    stroke-width: 1.5;
+}
+
+.pc-trace {
+    fill: none;
+    stroke: rgba(34, 211, 238, 0.28);
+    stroke-width: 1;
+}
+
+.pc-io {
+    fill: #0a0f16;
+}
+
+.pc-notch {
+    fill: #22d3ee;
+    opacity: 0.6;
+}
+
+.pc-fan-ring {
+    fill: #0b1018;
+    stroke: #475569;
+}
+
+.pc-fan-blades {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pcFanSpin 9s linear infinite;
+}
+
+.pc-fan-blades path {
+    fill: rgba(34, 211, 238, 0.35);
+    stroke: none;
+}
+
+@keyframes pcFanSpin {
+    to { transform: rotate(360deg); }
+}
+
+.pc-glass {
+    fill: url(#pcGlassGrad);
+    stroke: rgba(125, 211, 252, 0.18);
+    stroke-width: 1;
+    pointer-events: none;
+}
+
+.pc-glass-glare {
+    fill: rgba(255, 255, 255, 0.045);
+    pointer-events: none;
+}
+
+.pc-led {
+    fill: url(#pcLedGrad);
+    filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.7));
+    pointer-events: none;
+}
+
+.pc-foot {
+    fill: #1a2230;
+    stroke: #2a3444;
+    stroke-width: 1;
+}
+
+.pc-slot {
+    cursor: pointer;
+}
+
+.pc-slot--soon {
+    cursor: not-allowed;
+}
+
+.pc-slot--soon .pc-detail,
+.pc-slot--soon .pc-detail-line,
+.pc-slot--soon .pc-trace,
+.pc-slot--soon .pc-fan-blades,
+.pc-slot--soon .pc-notch {
+    opacity: 0.35;
+}
+
+.pc-slot:hover .pc-shape {
+    stroke: #67e8f9;
+    stroke-dasharray: none;
+    animation: none;
+    filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.85));
+}
+
+.pc-slot--selected:hover .pc-shape {
+    stroke: #a5f3fc;
+}
+
+.pc-slot--soon:hover .pc-shape {
+    stroke: #4b5563;
+    filter: none;
+}
+
+.pc-case-hint {
+    min-height: 1.6em;
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #9ca3af;
 }
