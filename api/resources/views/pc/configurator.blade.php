@@ -470,7 +470,7 @@
             shortName(slotId) {
                 const part = this.build[slotId];
                 if (!part) return '';
-                return part.name.length > 16 ? part.name.slice(0, 15) + '…' : part.name;
+                return part.name.length > 12 ? part.name.slice(0, 11) + '…' : part.name;
             },
 
             slotClass(slotId) {
