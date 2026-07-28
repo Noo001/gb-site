@@ -18,7 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: ['*']);
         $middleware->encryptCookies(except: ['cart_session_id']);
         $middleware->web(\App\Http\Middleware\EnsureCartSession::class);
-        $middleware->web(\App\Http\Middleware\PasswordGate::class);
+        // Глобально, а не в web-группе: иначе заглушка не срабатывает на 404
+        // (при отсутствии маршрута групповые middleware не выполняются).
+        $middleware->append(\App\Http\Middleware\PasswordGate::class);
         $middleware->web(\App\Http\Middleware\RedirectMiddleware::class);
         $middleware->alias([
             'onec.api' => \App\Http\Middleware\OneCApiKey::class,
