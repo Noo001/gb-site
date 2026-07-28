@@ -1571,3 +1571,543 @@ button {
     margin: 0 0 1rem;
     font-size: 0.875rem;
 }
+
+/* === PC Configurator === */
+
+.pc-section {
+    background: #0b0f14;
+    color: #e5e7eb;
+    padding: 3rem 0 4rem;
+    min-height: 70vh;
+}
+
+.pc-hero {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.pc-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    background: linear-gradient(90deg, #22d3ee, #e879f9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.pc-subtitle {
+    color: #9ca3af;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.pc-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* --- Шаги-аккордеон --- */
+
+.pc-wizard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.pc-step {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.pc-step--active {
+    border-color: #22d3ee;
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.18);
+}
+
+.pc-step--done {
+    border-color: rgba(34, 211, 238, 0.45);
+}
+
+.pc-step--soon {
+    opacity: 0.5;
+}
+
+.pc-step-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.pc-step--soon .pc-step-head {
+    cursor: not-allowed;
+}
+
+.pc-step-num {
+    flex: 0 0 auto;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid #374151;
+    color: #9ca3af;
+    font-size: 0.85rem;
+}
+
+.pc-step--active .pc-step-num {
+    border-color: #22d3ee;
+    color: #22d3ee;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.35);
+}
+
+.pc-step--done .pc-step-num {
+    border-color: #22d3ee;
+    background: rgba(34, 211, 238, 0.12);
+    color: #22d3ee;
+}
+
+.pc-step-title {
+    font-weight: 600;
+}
+
+.pc-step-chosen {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.pc-step-state {
+    margin-left: auto;
+    flex: 0 0 auto;
+}
+
+.pc-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    border: 1px solid #374151;
+    color: #9ca3af;
+}
+
+.pc-badge--soon {
+    border-color: #e879f9;
+    color: #e879f9;
+}
+
+.pc-badge--done {
+    border-color: #22d3ee;
+    color: #22d3ee;
+    box-shadow: 0 0 8px rgba(34, 211, 238, 0.35);
+}
+
+.pc-step-body {
+    padding: 0 1rem 1rem;
+}
+
+.pc-parts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+.pc-part {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem;
+    background: #0d1420;
+    border: 1px solid #1f2937;
+    border-radius: 0.6rem;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.pc-part:hover {
+    border-color: #22d3ee;
+    box-shadow: 0 0 14px rgba(34, 211, 238, 0.22);
+    transform: translateY(-2px);
+}
+
+.pc-part--selected {
+    border-color: #e879f9;
+    box-shadow: 0 0 14px rgba(232, 121, 249, 0.25);
+}
+
+.pc-part-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.pc-part-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.pc-chip {
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    background: rgba(34, 211, 238, 0.1);
+    border: 1px solid rgba(34, 211, 238, 0.35);
+    color: #22d3ee;
+}
+
+.pc-part-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.pc-part-price {
+    font-weight: 700;
+    color: #e879f9;
+}
+
+.pc-part-stock {
+    font-size: 0.78rem;
+    color: #9ca3af;
+}
+
+.pc-parts-loading,
+.pc-parts-empty {
+    padding: 1.25rem;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.9rem;
+}
+
+.pc-skip-btn {
+    margin-top: 0.75rem;
+    padding: 0.45rem 1rem;
+    background: none;
+    border: 1px dashed #374151;
+    border-radius: 0.5rem;
+    color: #9ca3af;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.pc-skip-btn:hover {
+    border-color: #e879f9;
+    color: #e879f9;
+}
+
+/* --- Корпус (схема + 3D) --- */
+
+.pc-case-panel {
+    position: sticky;
+    top: 1.5rem;
+}
+
+.pc-case-scene {
+    perspective: 900px;
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.pc-case-3d {
+    width: 100%;
+    max-width: 340px;
+    transition: transform 0.6s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.pc-case-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.pc-slot .pc-shape {
+    fill: rgba(34, 211, 238, 0.03);
+    stroke: #374151;
+    stroke-width: 1.5;
+    stroke-dasharray: 5 4;
+    transition: fill 0.35s, stroke 0.35s, filter 0.35s;
+}
+
+.pc-slot .pc-shape-inner {
+    stroke-dasharray: none;
+}
+
+.pc-slot--soon .pc-shape {
+    opacity: 0.35;
+}
+
+.pc-slot--active .pc-shape {
+    stroke: #22d3ee;
+    stroke-dasharray: none;
+    animation: pcSlotPulse 1.4s ease-in-out infinite;
+}
+
+.pc-slot--selected .pc-shape {
+    fill: rgba(34, 211, 238, 0.18);
+    stroke: #22d3ee;
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.6));
+}
+
+.pc-slot--selected.pc-slot-case .pc-shape {
+    fill: rgba(232, 121, 249, 0.06);
+    stroke: #e879f9;
+    filter: drop-shadow(0 0 8px rgba(232, 121, 249, 0.45));
+}
+
+.pc-slot-label {
+    fill: #22d3ee;
+    font-size: 11px;
+    text-anchor: middle;
+    paint-order: stroke;
+    stroke: #0b0f14;
+    stroke-width: 3px;
+}
+
+@keyframes pcSlotPulse {
+    0%, 100% { filter: drop-shadow(0 0 2px rgba(34, 211, 238, 0.4)); }
+    50% { filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.9)); }
+}
+
+/* --- Итог и форма --- */
+
+.pc-summary {
+    margin-top: 2rem;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+
+.pc-total {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+
+.pc-total-label {
+    color: #9ca3af;
+    font-size: 0.95rem;
+}
+
+.pc-total-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #22d3ee;
+    text-shadow: 0 0 14px rgba(34, 211, 238, 0.5);
+}
+
+.pc-reset-btn {
+    margin-left: auto;
+    padding: 0.4rem 0.9rem;
+    background: none;
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    color: #9ca3af;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.pc-reset-btn:hover {
+    border-color: #e879f9;
+    color: #e879f9;
+}
+
+.pc-order-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.pc-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.pc-label {
+    font-size: 0.85rem;
+    color: #9ca3af;
+}
+
+.pc-input {
+    padding: 0.65rem 0.9rem;
+    background: #0d1420;
+    border: 1px solid #1f2937;
+    border-radius: 0.5rem;
+    color: #e5e7eb;
+    font: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pc-input:focus {
+    outline: none;
+    border-color: #22d3ee;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.25);
+}
+
+.pc-submit-btn {
+    padding: 0.7rem 1.6rem;
+    background: #22d3ee;
+    border: none;
+    border-radius: 0.5rem;
+    color: #0b0f14;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.45);
+    transition: box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+    white-space: nowrap;
+}
+
+.pc-submit-btn:hover:not(:disabled) {
+    box-shadow: 0 0 26px rgba(34, 211, 238, 0.7);
+    transform: translateY(-1px);
+}
+
+.pc-submit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.pc-form-error {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(232, 121, 249, 0.5);
+    border-radius: 0.5rem;
+    color: #e879f9;
+    font-size: 0.9rem;
+}
+
+/* --- Экран успеха --- */
+
+.pc-success {
+    text-align: center;
+    padding: 4rem 1rem;
+    background: #111827;
+    border: 1px solid rgba(34, 211, 238, 0.4);
+    border-radius: 1rem;
+    box-shadow: 0 0 30px rgba(34, 211, 238, 0.15);
+}
+
+.pc-success-icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid #22d3ee;
+    color: #22d3ee;
+    font-size: 2rem;
+    box-shadow: 0 0 22px rgba(34, 211, 238, 0.5);
+}
+
+.pc-success h2 {
+    margin: 0 0 0.5rem;
+    color: #e5e7eb;
+}
+
+.pc-success p {
+    color: #9ca3af;
+    margin: 0 0 1.5rem;
+}
+
+.pc-success-btn {
+    padding: 0.7rem 1.6rem;
+    background: none;
+    border: 1px solid #22d3ee;
+    border-radius: 0.5rem;
+    color: #22d3ee;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+
+.pc-success-btn:hover {
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.45);
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* --- Мобильная адаптация --- */
+
+@media (max-width: 767px) {
+    .pc-section {
+        padding: 1.5rem 0 2.5rem;
+    }
+
+    .pc-title {
+        font-size: 1.5rem;
+    }
+
+    .pc-layout {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .pc-case-panel {
+        position: static;
+        order: -1;
+    }
+
+    .pc-case-3d {
+        max-width: 220px;
+        transition: none;
+        transform: none !important;
+    }
+
+    .pc-parts {
+        grid-template-columns: 1fr;
+    }
+
+    .pc-order-form {
+        grid-template-columns: 1fr;
+    }
+
+    .pc-submit-btn {
+        width: 100%;
+    }
+
+    .pc-reset-btn {
+        margin-left: 0;
+    }
+}

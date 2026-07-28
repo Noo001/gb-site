@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\BotController;
 use App\Http\Controllers\Api\OneCController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OfferController;
+use App\Http\Controllers\Api\PcConfiguratorController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SeoController;
 use App\Http\Controllers\Api\SocialAuthController;
@@ -30,6 +31,10 @@ Route::get('/products/{slug}', [ProductController::class, 'show']);
 
 Route::get('/offers', [OfferController::class, 'index']);
 Route::get('/offers/{id}', [OfferController::class, 'show']);
+
+// PC configurator (public)
+Route::get('/pc/slots', [PcConfiguratorController::class, 'slots']);
+Route::get('/pc/parts', [PcConfiguratorController::class, 'parts']);
 
 // Auth
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:auth');

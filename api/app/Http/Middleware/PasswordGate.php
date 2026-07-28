@@ -12,7 +12,7 @@ class PasswordGate
 
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->is('admin*', 'api/*', 'up', '_debugbar/*', 'images/*', 'css/*', 'js/*', 'favicon.ico', 'livewire*')) {
+        if ($request->is('admin*', 'api/*', 'up', '_debugbar/*', 'images/*', 'css/*', 'js/*', 'favicon.ico', 'livewire*', 'pc*')) {
             return $next($request);
         }
 

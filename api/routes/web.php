@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\BrandController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\CheckoutController;
+use App\Http\Controllers\Web\PcConfiguratorController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\AccountController;
 use App\Http\Controllers\Web\WishlistController;
@@ -28,6 +29,9 @@ Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/order/success', [CheckoutController::class, 'success'])->name('checkout.success');
+
+Route::get('/pc', [PcConfiguratorController::class, 'index'])->name('pc.index');
+Route::post('/pc/build', [PcConfiguratorController::class, 'store'])->name('pc.build');
 
 Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.store');
