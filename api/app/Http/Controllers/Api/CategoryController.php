@@ -11,23 +11,23 @@ class CategoryController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $cacheKey = 'category_tree_for_catalog';
-        $ttl = now()->addHour();
-
-        $roots = \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, function () {
-            return Category::query()
-                ->whereNull('parent_id')
-                ->forCatalog()
-                ->orderBy('sort')
-                ->orderBy('name')
-                ->with([
-                    'children' => fn ($q) => $q->forCatalog()->orderBy('sort')->orderBy('name'),
-                ])
-                ->get();
-        });
+        $roots = Category::query()
+            ->whereNull('parent_id')
+            ->forCatalog()
+            ->orderBy('sort')
+            ->orderBy('name')
+            ->get();
 
         return response()->json([
-            'data' => $roots->map(fn (Category $c) => $this->treeNode($c)),
+            'data' => $roots->map(fn (Category $c) => [
+                'id' => $c->id,
+                'name' => $c->name,
+                'slug' => $c->slug,
+                'full_path' => $c->full_path,
+                'url' => $c->url,
+                'image' => null,
+                'children' => [],
+            ]),
         ]);
     }
 
