@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -92,8 +93,11 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Category not found'], 404);
         }
 
-        $products = $category->products()
+        $categoryIds = $this->descendantIds($category);
+
+        $products = Product::query()
             ->where('is_active', true)
+            ->whereIn('category_id', $categoryIds)
             ->with([
                 'media',
                 'offers' => fn ($q) => $q->where('is_active', true)->orderBy('sort'),
@@ -150,12 +154,29 @@ class CategoryController extends Controller
             return $url;
         }
 
-        $product = $category->products()
+        $categoryIds = $this->descendantIds($category);
+
+        $product = Product::query()
             ->where('is_active', true)
+            ->whereIn('category_id', $categoryIds)
             ->whereHas('media')
             ->with('media')
             ->first();
 
         return $product?->getFirstMediaUrl('images');
+    }
+
+    private function descendantIds(Category $category): array
+    {
+        $rows = \DB::select("
+            WITH RECURSIVE tree AS (
+                SELECT id FROM categories WHERE id = ?
+                UNION ALL
+                SELECT c.id FROM categories c JOIN tree t ON c.parent_id = t.id
+            )
+            SELECT id FROM tree
+        ", [$category->id]);
+
+        return array_map(fn ($r) => (int) $r->id, $rows);
     }
 }
