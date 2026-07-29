@@ -16,6 +16,12 @@
                 <div class="pc-demo-banner">ДЕМО-РЕЖИМ: тестовые данные</div>
             @endif
 
+            {{-- Переключатель режимов --}}
+            <div class='pc-mode-tabs' x-show='!orderId'>
+                <button type='button' class='pc-mode-tab' :class='{ "pc-mode-tab--active": mode === "manual" }' @click='mode = "manual"'>Собрать самому</button>
+                <button type='button' class='pc-mode-tab' :class='{ "pc-mode-tab--active": mode === "auto" }' @click='mode = "auto"'>Автоподбор по бюджету</button>
+            </div>
+
             {{-- Экран успеха --}}
             <div class="pc-success" x-show="orderId" x-cloak>
                 <div class="pc-success-icon">✓</div>
@@ -24,7 +30,7 @@
                 <button type="button" class="pc-success-btn" @click="orderId = null">Собрать новую конфигурацию</button>
             </div>
 
-            <div x-show="!orderId">
+            <div x-show="mode === 'manual' && !orderId">
                 <div class="pc-layout">
                     {{-- Визард: шаги-аккордеон --}}
                     <div class="pc-wizard">
@@ -58,7 +64,7 @@
                                     <div class="pc-parts" x-show="!loadingParts && !partsEmpty">
                                         <template x-for="part in parts" :key="part.id">
                                             <button type="button" class="pc-part"
-                                                    :class="{ 'pc-part--selected': build[slot.id] && build[slot.id].id === part.id }"
+                                                    :class="{ 'pc-part--selected': isSelected(slot, part) }"
                                                     @click="choose(slot, part)">
                                                 <span class="pc-part-name" x-text="part.name"></span>
                                                 <span class="pc-part-meta">
@@ -70,12 +76,23 @@
                                                     <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
                                                     <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
                                                 </span>
+                                                <template x-if="isMulti(slot.id) && isSelected(slot, part)">
+                                                    <span class="pc-part-qty" @click.stop>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
                                             </button>
                                         </template>
                                     </div>
 
-                                    <button type="button" class="pc-skip-btn" x-show="!slot.required && !loadingParts"
-                                            @click="skipStep(slot)">Пропустить шаг</button>
+                                    <div class="pc-step-actions" x-show="!loadingParts && !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required && !hasSlotItems(slot.id)"
+                                                @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) && hasSlotItems(slot.id)"
+                                                @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -278,6 +295,106 @@
                     <div class="pc-form-error" x-show="error" x-text="error" x-cloak></div>
                 </div>
             </div>
+
+            {{-- Автоподбор по бюджету --}}
+            <div class='pc-auto-build' x-show='mode === "auto" && !orderId' x-cloak>
+                <div class='pc-auto-intro'>
+                    <h2 class='pc-auto-title'>Подберём конфигурацию под бюджет</h2>
+                    <p class='pc-auto-subtitle'>Укажите сумму и цель — мы сами соберём совместимые комплектующие. Если не получится, заявку получит менеджер.</p>
+                </div>
+
+                <form class='pc-auto-form' @submit.prevent='runAutoBuild()'>
+                    <div class='pc-field'>
+                        <label class='pc-label' for='pc-budget'>Бюджет, ₽</label>
+                        <input class='pc-input' id='pc-budget' type='number' min='1000' step='100' x-model='autoForm.budget' required placeholder='Например, 100000'>
+                    </div>
+                    <div class='pc-field'>
+                        <label class='pc-label' for='pc-purpose'>Для чего ПК</label>
+                        <select class='pc-input pc-select' id='pc-purpose' x-model='autoForm.purpose'>
+                            <option value=''>Не важно</option>
+                            <option value='games'>Игры</option>
+                            <option value='work'>Работа / учёба</option>
+                            <option value='office'>Офис</option>
+                        </select>
+                    </div>
+                    <div class='pc-field'>
+                        <label class='pc-label' for='pc-wishes'>Пожелания</label>
+                        <textarea class='pc-input pc-textarea' id='pc-wishes' rows='3' x-model='autoForm.wishes' maxlength='2000' placeholder='Например, хочу тихий корпус, SSD 1 ТБ'></textarea>
+                    </div>
+                    <button type='submit' class='pc-submit-btn' :disabled='autoLoading || !autoForm.budget' x-text='autoLoading ? "Подбираем…" : "Подобрать конфигурацию"'></button>
+                </form>
+
+                <div class='pc-parts-loading' x-show='autoLoading'>Подбираем конфигурацию…</div>
+
+                {{-- Результат автоподбора --}}
+                <div class='pc-auto-result' x-show='!autoLoading && autoBuild'>
+                    <h3 class='pc-auto-result-title'>Подобранная конфигурация</h3>
+                    <div class='pc-auto-items'>
+                        <template x-for='(item, slot) in autoBuild?.items' :key='slot'>
+                            <div class='pc-auto-item'>
+                                <span class='pc-auto-item-slot' x-text='slotTitle(slot)'></span>
+                                <span class='pc-auto-item-name' x-text='item.name'></span>
+                                <span class='pc-auto-item-price' x-text='fmtPrice(item.price)'></span>
+                            </div>
+                        </template>
+                    </div>
+                    <div class='pc-auto-total'>
+                        <span>Итого</span>
+                        <span x-text='fmtPrice(autoBuild?.total)'></span>
+                    </div>
+                    <form class='pc-order-form' @submit.prevent='submitAutoBuildOrder()'>
+                        <div class='pc-field'>
+                            <label class='pc-label' for='pc-auto-name'>Имя</label>
+                            <input class='pc-input' id='pc-auto-name' type='text' x-model='form.name' required maxlength='255' placeholder='Как к вам обращаться'>
+                        </div>
+                        <div class='pc-field'>
+                            <label class='pc-label' for='pc-auto-phone'>Телефон</label>
+                            <input class='pc-input' id='pc-auto-phone' type='tel' x-model='form.phone' required maxlength='18'
+                                   placeholder='+7 (___) ___-__-__' @focus='phoneFocus()' @input='phoneMask($event)'>
+                        </div>
+                        <button type='submit' class='pc-submit-btn' :disabled='!canAutoSubmit || submitting'
+                                x-text='submitting ? "Отправляем…" : "Оформить заявку на эту сборку"'></button>
+                    </form>
+                    <button type='button' class='pc-reset-btn' @click='resetAutoBuild()'>Подобрать заново</button>
+                </div>
+
+                {{-- Не удалось подобрать — заявка менеджеру --}}
+                <div class='pc-auto-fallback' x-show='!autoLoading && autoError'>
+                    <div class='pc-auto-fallback-icon'>🛠</div>
+                    <h3>Не удалось подобрать в автоматическом режиме</h3>
+                    <p x-text='autoError'></p>
+                    <p>Оставьте заявку — менеджер подберёт комплектующие вручную.</p>
+
+                    <form class='pc-order-form' @submit.prevent='submitManagerRequest()'>
+                        <div class='pc-field'>
+                            <label class='pc-label' for='pc-fallback-name'>Имя</label>
+                            <input class='pc-input' id='pc-fallback-name' type='text' x-model='form.name' required maxlength='255' placeholder='Как к вам обращаться'>
+                        </div>
+                        <div class='pc-field'>
+                            <label class='pc-label' for='pc-fallback-phone'>Телефон</label>
+                            <input class='pc-input' id='pc-fallback-phone' type='tel' x-model='form.phone' required maxlength='18'
+                                   placeholder='+7 (___) ___-__-__' @focus='phoneFocus()' @input='phoneMask($event)'>
+                        </div>
+                        <div class='pc-field'>
+                            <label class='pc-label' for='pc-fallback-budget'>Бюджет, ₽</label>
+                            <input class='pc-input' id='pc-fallback-budget' type='number' x-model='autoForm.budget' readonly>
+                        </div>
+                        <div class='pc-field'>
+                            <label class='pc-label' for='pc-fallback-purpose'>Цель</label>
+                            <input class='pc-input' id='pc-fallback-purpose' type='text' :value='purposeLabel(autoForm.purpose)' readonly>
+                        </div>
+                        <div class='pc-field'>
+                            <label class='pc-label' for='pc-fallback-wishes'>Пожелания</label>
+                            <textarea class='pc-input pc-textarea' id='pc-fallback-wishes' rows='3' x-model='autoForm.wishes' maxlength='2000' readonly></textarea>
+                        </div>
+                        <button type='submit' class='pc-submit-btn' :disabled='!canFallbackSubmit || submitting'
+                                x-text='submitting ? "Отправляем…" : "Отправить заявку менеджеру"'></button>
+                    </form>
+                    <button type='button' class='pc-reset-btn' @click='resetAutoBuild()'>Попробовать другой бюджет</button>
+                </div>
+
+                <div class='pc-form-error' x-show='error' x-text='error' x-cloak></div>
+            </div>
         </div>
     </section>
 @endsection
@@ -287,6 +404,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('pcConfigurator', (city) => ({
             city: city || null,
+            mode: 'manual',
             slots: [],
             activeSlot: null,
             build: {},
@@ -300,6 +418,10 @@
             orderId: null,
             isMobile: false,
             hoveredSlot: null,
+            autoForm: { budget: '', purpose: '', wishes: '' },
+            autoBuild: null,
+            autoError: '',
+            autoLoading: false,
 
             init() {
                 const mq = window.matchMedia('(max-width: 767px)');
@@ -308,7 +430,7 @@
 
                 try {
                     const saved = JSON.parse(localStorage.getItem('pc_build') || '{}');
-                    if (saved && typeof saved === 'object') this.build = saved;
+                    if (saved && typeof saved === 'object') this.build = this.migrateBuild(saved);
                 } catch (e) { this.build = {}; }
 
                 this.loadSlots();
@@ -356,8 +478,52 @@
                 const slot = this.slots.find(s => s.id === this.hoveredSlot);
                 if (!slot) return '';
                 if (slot.empty) return slot.title + ' — скоро в продаже';
-                const chosen = this.build[slot.id] ? this.build[slot.id].name : '';
-                return slot.title + (chosen ? ': ' + chosen : '');
+                const chosen = this.build[slot.id];
+                if (!chosen) return slot.title;
+                if (Array.isArray(chosen)) {
+                    if (!chosen.length) return slot.title;
+                    return slot.title + ': ' + chosen.map(p => {
+                        const qty = p.qty || 1;
+                        return qty > 1 ? `${p.name} ×${qty}` : p.name;
+                    }).join(', ');
+                }
+                return slot.title + ': ' + chosen.name;
+            },
+
+            isMulti(slotId) {
+                return ['ram', 'storage', 'extra'].includes(slotId);
+            },
+
+            hasSlotItems(slotId) {
+                const val = this.build[slotId];
+                if (!val) return false;
+                if (Array.isArray(val)) return val.length > 0;
+                return true;
+            },
+
+            isSelected(slot, part) {
+                const val = this.build[slot.id];
+                if (!val) return false;
+                if (Array.isArray(val)) return val.some(p => p.id === part.id);
+                return val.id === part.id;
+            },
+
+            migrateBuild(saved) {
+                const out = {};
+                for (const [slot, val] of Object.entries(saved)) {
+                    if (!val) continue;
+                    if (this.isMulti(slot)) {
+                        if (Array.isArray(val)) {
+                            out[slot] = val.filter(p => p && p.id).map(p => ({ ...p, qty: p.qty || 1 }));
+                        } else if (val.id) {
+                            out[slot] = [{ ...val, qty: val.qty || 1 }];
+                        }
+                    } else {
+                        if (Array.isArray(val)) out[slot] = val[0] || null;
+                        else out[slot] = val;
+                    }
+                }
+                return out;
             },
 
             skipStep(slot) {
@@ -374,7 +540,11 @@
 
             buildIds() {
                 const ids = {};
-                for (const [slot, part] of Object.entries(this.build)) ids[slot] = part.id;
+                for (const [slot, val] of Object.entries(this.build)) {
+                    if (!val) continue;
+                    if (Array.isArray(val)) ids[slot] = val.map(p => p.id);
+                    else ids[slot] = val.id;
+                }
                 return ids;
             },
 
@@ -402,12 +572,56 @@
             },
 
             choose(slot, part) {
-                this.build[slot.id] = { id: part.id, name: part.name, price: part.price };
+                if (this.isMulti(slot.id)) {
+                    const list = this.build[slot.id] || [];
+                    const idx = list.findIndex(p => p.id === part.id);
+                    if (idx >= 0) {
+                        list.splice(idx, 1);
+                    } else {
+                        list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
+                    }
+                    if (list.length) this.build[slot.id] = list;
+                    else delete this.build[slot.id];
+                } else {
+                    this.build[slot.id] = { id: part.id, name: part.name, price: part.price };
+                }
                 this.saveBuild();
 
+                if (this.isMulti(slot.id)) {
+                    this.parts = this.parts.map(p => ({ ...p }));
+                    return;
+                }
+
+                this.advanceSlot(slot);
+            },
+
+            qtyOf(slot, part) {
+                if (!this.isMulti(slot.id)) return 1;
+                const list = this.build[slot.id] || [];
+                const item = list.find(p => p.id === part.id);
+                return item ? item.qty : 0;
+            },
+
+            changeQty(slot, part, delta) {
+                if (!this.isMulti(slot.id)) return;
+                const list = this.build[slot.id] || [];
+                const idx = list.findIndex(p => p.id === part.id);
+                if (idx < 0) return;
+                const next = list[idx].qty + delta;
+                if (next <= 0) {
+                    list.splice(idx, 1);
+                    if (!list.length) delete this.build[slot.id];
+                } else {
+                    list[idx].qty = next;
+                }
+                this.saveBuild();
+                this.parts = this.parts.map(p => ({ ...p }));
+            },
+
+            advanceSlot(slot) {
                 const idx = this.slots.indexOf(slot);
-                const next = this.slots.slice(idx + 1).find(s => !s.empty && !this.build[s.id])
-                    || this.slots.find(s => !s.empty && !this.build[s.id]);
+                const next = this.slots.slice(idx + 1).find(s => !s.empty && !this.hasSlotItems(s.id))
+                    || this.slots.find(s => !s.empty && !this.hasSlotItems(s.id));
                 if (next) {
                     this.activeSlot = next.id;
                     this.loadParts();
@@ -436,7 +650,10 @@
             },
 
             get total() {
-                return Object.values(this.build).reduce((sum, p) => sum + (p.price || 0), 0);
+                return Object.values(this.build).reduce((sum, val) => {
+                    if (Array.isArray(val)) return sum + val.reduce((s, p) => s + (p.price || 0) * (p.qty || 1), 0);
+                    return sum + (val.price || 0);
+                }, 0);
             },
 
             get canSubmit() {
@@ -444,7 +661,7 @@
                 if (!this.hasBuild) return false;
                 return this.slots
                     .filter(s => s.required && !s.empty)
-                    .every(s => !!this.build[s.id]);
+                    .every(s => this.hasSlotItems(s.id));
             },
 
             chips(part) {
@@ -470,15 +687,24 @@
             },
 
             shortName(slotId) {
-                const part = this.build[slotId];
-                if (!part) return '';
-                return part.name.length > 12 ? part.name.slice(0, 11) + '…' : part.name;
+                const val = this.build[slotId];
+                if (!val) return '';
+                if (Array.isArray(val)) {
+                    if (!val.length) return '';
+                    const totalQty = val.reduce((s, p) => s + (p.qty || 1), 0);
+                    const first = val[0].name;
+                    const suffix = totalQty > 1 ? ` ×${totalQty}` : '';
+                    const extra = val.length > 1 ? ' + ещё ' + (val.length - 1) : '';
+                    const base = first.length > 12 ? first.slice(0, 11) + '…' : first;
+                    return base + suffix + extra;
+                }
+                return val.name.length > 12 ? val.name.slice(0, 11) + '…' : val.name;
             },
 
             slotClass(slotId) {
                 const slot = this.slots.find(s => s.id === slotId);
                 return {
-                    'pc-slot--selected': !!this.build[slotId],
+                    'pc-slot--selected': this.hasSlotItems(slotId),
                     'pc-slot--active': this.activeSlot === slotId,
                     'pc-slot--soon': slot ? slot.empty : false,
                 };
@@ -521,6 +747,170 @@
                 this.form.phone = out;
             },
 
+            slotTitle(slotId) {
+                const slot = this.slots.find(s => s.id === slotId);
+                return slot ? slot.title : slotId;
+            },
+
+            purposeLabel(purpose) {
+                const map = { games: 'Игры', work: 'Работа / учёба', office: 'Офис' };
+                return map[purpose] || 'Не важно';
+            },
+
+            get canAutoSubmit() {
+                return this.form.name.trim() && this.form.phone.trim() && this.autoBuild;
+            },
+
+            get canFallbackSubmit() {
+                return this.form.name.trim() && this.form.phone.trim();
+            },
+
+            resetAutoBuild() {
+                this.autoBuild = null;
+                this.autoError = '';
+                this.error = '';
+            },
+
+            async runAutoBuild() {
+                if (this.autoLoading) return;
+                this.autoLoading = true;
+                this.autoBuild = null;
+                this.autoError = '';
+                this.error = '';
+
+                try {
+                    const res = await fetch('/api/pc/auto-build', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            budget: Number(this.autoForm.budget),
+                            purpose: this.autoForm.purpose || null,
+                            wishes: this.autoForm.wishes.trim() || null,
+                        }),
+                    });
+                    const data = await res.json();
+
+                    if (res.status === 200 && data.success && data.data) {
+                        this.autoBuild = data.data;
+                        this.build = {};
+                        for (const [slot, item] of Object.entries(data.data.items)) {
+                            const base = { id: item.id, name: item.name, price: item.price };
+                            this.build[slot] = this.isMulti(slot) ? [base] : base;
+                        }
+                        this.saveBuild();
+                    } else if (res.status === 422) {
+                        const details = data.errors ? Object.values(data.errors).flat().join(' ') : '';
+                        this.error = (data.message || 'Проверьте данные формы.') + (details ? ' ' + details : '');
+                    } else {
+                        this.autoError = data.reason || 'Не удалось подобрать конфигурацию в указанный бюджет.';
+                    }
+                } catch (e) {
+                    this.error = 'Ошибка сети. Проверьте подключение и попробуйте ещё раз.';
+                } finally {
+                    this.autoLoading = false;
+                }
+            },
+
+            buildItems() {
+                const items = [];
+                for (const val of Object.values(this.build)) {
+                    if (Array.isArray(val)) {
+                        for (const p of val) items.push({ product_id: p.id, quantity: p.qty || 1 });
+                    } else if (val) {
+                        items.push({ product_id: val.id, quantity: 1 });
+                    }
+                }
+                return items;
+            },
+
+            async submitAutoBuildOrder() {
+                if (!this.canAutoSubmit || this.submitting) return;
+                this.submitting = true;
+                this.error = '';
+                try {
+                    const res = await fetch('/pc/build', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify({
+                            customer_name: this.form.name.trim(),
+                            customer_phone: this.form.phone.trim(),
+                            customer_city: this.city,
+                            items: this.buildItems(),
+                        }),
+                    });
+                    const data = await res.json();
+                    if (res.status === 201 && data.success) {
+                        this.orderId = data.order_id;
+                        this.build = {};
+                        this.autoBuild = null;
+                        this.autoForm = { budget: '', purpose: '', wishes: '' };
+                        localStorage.removeItem('pc_build');
+                        this.form = { name: '', phone: '' };
+                        this.activeSlot = null;
+                        this.parts = [];
+                    } else if (res.status === 422) {
+                        const details = data.errors ? Object.values(data.errors).flat().join(' ') : '';
+                        this.error = (data.message || 'Проверьте данные формы.') + (details ? ' ' + details : '');
+                    } else {
+                        this.error = 'Не удалось отправить заявку. Попробуйте позже.';
+                    }
+                } catch (e) {
+                    this.error = 'Ошибка сети. Проверьте подключение и попробуйте ещё раз.';
+                } finally {
+                    this.submitting = false;
+                }
+            },
+
+            async submitManagerRequest() {
+                if (!this.canFallbackSubmit || this.submitting) return;
+                this.submitting = true;
+                this.error = '';
+                try {
+                    const res = await fetch('/pc/manager-request', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify({
+                            customer_name: this.form.name.trim(),
+                            customer_phone: this.form.phone.trim(),
+                            customer_city: this.city,
+                            budget: this.autoForm.budget ? Number(this.autoForm.budget) : null,
+                            purpose: this.purposeLabel(this.autoForm.purpose),
+                            wishes: this.autoForm.wishes.trim() || null,
+                        }),
+                    });
+                    const data = await res.json();
+                    if (res.status === 201 && data.success) {
+                        this.orderId = data.order_id;
+                        this.build = {};
+                        this.autoBuild = null;
+                        this.autoError = '';
+                        this.autoForm = { budget: '', purpose: '', wishes: '' };
+                        localStorage.removeItem('pc_build');
+                        this.form = { name: '', phone: '' };
+                    } else if (res.status === 422) {
+                        const details = data.errors ? Object.values(data.errors).flat().join(' ') : '';
+                        this.error = (data.message || 'Проверьте данные формы.') + (details ? ' ' + details : '');
+                    } else {
+                        this.error = 'Не удалось отправить заявку. Попробуйте позже.';
+                    }
+                } catch (e) {
+                    this.error = 'Ошибка сети. Проверьте подключение и попробуйте ещё раз.';
+                } finally {
+                    this.submitting = false;
+                }
+            },
+
             async submit() {
                 if (!this.canSubmit || this.submitting) return;
                 this.submitting = true;
@@ -537,7 +927,7 @@
                             customer_name: this.form.name.trim(),
                             customer_phone: this.form.phone.trim(),
                             customer_city: this.city,
-                            items: Object.values(this.build).map(p => ({ product_id: p.id, quantity: 1 })),
+                            items: this.buildItems(),
                         }),
                     });
                     const data = await res.json();

@@ -54,6 +54,10 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'initial_admin_email' => env('INITIAL_ADMIN_EMAIL', 'admin@gbsale.ru'),
+
+    'initial_admin_password' => env('INITIAL_ADMIN_PASSWORD', 'change-me'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

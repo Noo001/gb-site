@@ -10,6 +10,7 @@ use App\Filament\Resources\Stores\Tables\StoresTable;
 use App\Models\Store;
 use BackedEnum;
 use Filament\Resources\Resource;
+use UnitEnum;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -21,6 +22,8 @@ class StoreResource extends Resource
     protected static ?string $model = Store::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Каталог';
 
     protected static ?string $navigationLabel = 'Магазины';
 

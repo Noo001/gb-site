@@ -10,6 +10,7 @@ use App\Filament\Resources\Offers\Tables\OffersTable;
 use App\Models\Offer;
 use BackedEnum;
 use Filament\Resources\Resource;
+use UnitEnum;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -21,6 +22,8 @@ class OfferResource extends Resource
     protected static ?string $model = Offer::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Каталог';
 
     protected static ?string $navigationLabel = 'Офферы';
 

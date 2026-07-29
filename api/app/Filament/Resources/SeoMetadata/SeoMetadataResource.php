@@ -10,6 +10,7 @@ use App\Filament\Resources\SeoMetadata\Tables\SeoMetadataTable;
 use App\Models\SeoMetadata;
 use BackedEnum;
 use Filament\Resources\Resource;
+use UnitEnum;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -19,6 +20,8 @@ class SeoMetadataResource extends Resource
     protected static ?string $model = SeoMetadata::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Сайт';
 
     protected static ?string $navigationLabel = 'SEO';
 

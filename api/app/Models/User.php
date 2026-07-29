@@ -10,16 +10,23 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
-    // Доступ в админ-панель Filament (в production без этого — 403).
+    // Доступ в админ-панель Filament только для пользователей с ролью.
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->hasAnyRole([
+            'superadmin',
+            'manager',
+            'content',
+            'bot-operator',
+            '1c-operator',
+        ]);
     }
 
     /**

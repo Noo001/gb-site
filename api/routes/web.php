@@ -32,6 +32,7 @@ Route::get('/order/success', [CheckoutController::class, 'success'])->name('chec
 
 Route::get('/pc', [PcConfiguratorController::class, 'index'])->name('pc.index');
 Route::post('/pc/build', [PcConfiguratorController::class, 'store'])->name('pc.build');
+Route::post('/pc/manager-request', [PcConfiguratorController::class, 'storeManagerRequest'])->name('pc.manager-request');
 
 Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.store');

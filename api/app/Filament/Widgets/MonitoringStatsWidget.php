@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class MonitoringStatsWidget extends StatsOverviewWidget
 {
+    public static function canView(?\Illuminate\Contracts\Auth\Authenticatable $user = null): bool
+    {
+        return auth()->user()?->hasAnyPermission(['monitoring.view', 'monitoring.manage']) ?? false;
+    }
     protected function getStats(): array
     {
         return array_merge(

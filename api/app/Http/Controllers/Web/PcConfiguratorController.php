@@ -160,4 +160,47 @@ class PcConfiguratorController extends Controller
             'message' => 'Заявка на сборку принята. Менеджер свяжется с вами.',
         ], 201);
     }
+
+    /**
+     * Заявка на подбор ПК менеджером (когда автоподбор не справился).
+     */
+    public function storeManagerRequest(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'customer_name' => ['required', 'string', 'max:255'],
+            'customer_phone' => ['required', 'string', 'max:50'],
+            'customer_city' => ['nullable', 'string', 'max:255'],
+            'budget' => ['nullable', 'numeric', 'min:0'],
+            'purpose' => ['nullable', 'string', 'max:255'],
+            'wishes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $commentLines = ['Заявка на подбор ПК менеджером:'];
+
+        if (! empty($data['budget'])) {
+            $commentLines[] = sprintf('Бюджет: %s ₽', number_format((float) $data['budget'], 0, '.', ' '));
+        }
+        if (! empty($data['purpose'])) {
+            $commentLines[] = sprintf('Цель: %s', $data['purpose']);
+        }
+        if (! empty($data['wishes'])) {
+            $commentLines[] = sprintf('Пожелания: %s', $data['wishes']);
+        }
+
+        $order = Order::create([
+            'user_id' => $request->user()?->id,
+            'status' => Order::STATUS_PENDING,
+            'customer_name' => $data['customer_name'],
+            'customer_phone' => $data['customer_phone'],
+            'customer_city' => $data['customer_city'] ?? null,
+            'total' => null,
+            'customer_comment' => implode("\n", $commentLines),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'order_id' => $order->id,
+            'message' => 'Заявка принята. Менеджер свяжется с вами и подберёт конфигурацию.',
+        ], 201);
+    }
 }

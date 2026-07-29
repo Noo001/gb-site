@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\PcDemoPart;
 use App\Models\Product;
+use App\Services\PcAutoBuildService;
 use App\Services\PcCompatibilityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -57,6 +58,8 @@ class PcConfiguratorController extends Controller
             foreach ($decoded as $buildSlot => $productId) {
                 if (is_string($buildSlot) && is_numeric($productId)) {
                     $build[$buildSlot] = (int) $productId;
+                } elseif (is_string($buildSlot) && is_array($productId)) {
+                    $build[$buildSlot] = array_values(array_filter(array_map('intval', array_filter($productId, 'is_numeric'))));
                 }
             }
         }
@@ -87,6 +90,29 @@ class PcConfiguratorController extends Controller
             'slot' => $slot,
             'empty' => ! $service->slotHasParts($slot),
             'data' => $parts,
+        ]);
+    }
+
+    public function autoBuild(Request $request, PcAutoBuildService $auto): JsonResponse
+    {
+        $validated = $request->validate([
+            'budget' => ['required', 'numeric', 'min:1000'],
+            'purpose' => ['nullable', 'string', 'in:games,work,office,other'],
+            'wishes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $result = $auto->build($validated['budget'], $validated['purpose'] ?? null);
+
+        if ($result === null) {
+            return response()->json([
+                'success' => false,
+                'reason' => 'Не удалось подобрать комплектующие в указанный бюджет. Попробуйте увеличить бюджет или оставить заявку менеджеру.',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $result,
         ]);
     }
 

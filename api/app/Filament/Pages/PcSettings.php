@@ -26,6 +26,11 @@ class PcSettings extends Page implements HasForms
 
     public ?array $data = [];
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasAnyPermission(['catalog.manage', 'site.manage']) ?? false;
+    }
+
     public function mount(): void
     {
         $this->form->fill([

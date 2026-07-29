@@ -34,6 +34,10 @@ class PcConfiguratorTest extends TestCase
         $this->ram = Category::create(['name' => 'ОЗУ', 'slug' => 'ram', 'parent_id' => $this->componentsRoot->id]);
         $this->gpus = Category::create(['name' => 'Видеокарты', 'slug' => 'gpu', 'parent_id' => $this->componentsRoot->id]);
         $this->cpus = Category::create(['name' => 'Процессоры', 'slug' => 'cpu', 'parent_id' => $this->componentsRoot->id]);
+
+        // Web-запросы в тестах идут с фиксированным CSRF-токеном.
+        $this->withSession(['_token' => 'test-csrf-token']);
+        $this->withHeaders(['X-CSRF-TOKEN' => 'test-csrf-token']);
     }
 
     public function test_parse_attributes_command_extracts_attributes_from_names(): void
@@ -375,5 +379,207 @@ class PcConfiguratorTest extends TestCase
             ->where('product_id', $product->id)
             ->whereHas('attribute', fn ($q) => $q->where('slug', $slug))
             ->value('value');
+    }
+
+    public function test_auto_build_returns_config_within_budget(): void
+    {
+        Setting::set('pc_demo_mode', '1');
+
+        $case = $this->makeDemoPart('case', 'Корпус Zalman Z3 Mid Tower', 5900, [
+            'form_factor' => 'ATX,mATX',
+            'cooler_clearance_mm' => '160',
+        ]);
+        $cpu = $this->makeDemoPart('cpu', 'Процессор Intel Core i5-13400F', 19900, [
+            'socket' => 'LGA1700',
+            'tdp_w' => '65',
+        ]);
+        $cooler = $this->makeDemoPart('cooler', 'Кулер ID-Cooling SE-214', 2900, ['height_mm' => '150']);
+        $motherboard = $this->makeDemoPart('motherboard', 'Материнская плата ASUS PRIME B760M-K', 12500, [
+            'socket' => 'LGA1700',
+            'memory_type' => 'DDR5',
+            'form_factor' => 'mATX',
+        ]);
+        $gpu = $this->makeDemoPart('gpu', 'Видеокарта GeForce RTX 4060 8GB', 38900, [
+            'gpu_chip' => 'RTX 4060',
+            'vram_gb' => '8',
+            'psu_w' => '550',
+        ]);
+        $ram = $this->makeDemoPart('ram', 'Оперативная память Kingston Fury 16GB DDR5', 5900, [
+            'memory_type' => 'DDR5',
+            'module_gb' => '16',
+        ]);
+        $storage = $this->makeDemoPart('storage', 'SSD Kingston NV2 1TB NVMe', 6900, ['capacity_gb' => '1000']);
+        $psu = $this->makeDemoPart('psu', 'Блок питания Corsair RM750 750W', 9900, ['wattage' => '750']);
+
+        $response = $this->postJson('/api/pc/auto-build', [
+            'budget' => 200000,
+            'purpose' => 'games',
+        ]);
+
+        $response->assertOk()->assertJsonPath('success', true);
+
+        $items = $response->json('data.items');
+        $total = $response->json('data.total');
+
+        $this->assertNotEmpty($items);
+        $this->assertArrayHasKey('cpu', $items);
+        $this->assertArrayHasKey('motherboard', $items);
+        $this->assertArrayHasKey('gpu', $items);
+        $this->assertArrayHasKey('ram', $items);
+        $this->assertArrayHasKey('storage', $items);
+        $this->assertArrayHasKey('case', $items);
+        $this->assertArrayHasKey('cooler', $items);
+        $this->assertArrayHasKey('psu', $items);
+        $this->assertLessThanOrEqual(200000, $total);
+
+        $this->assertSame($cpu->id, $items['cpu']['id']);
+        $this->assertSame($gpu->id, $items['gpu']['id']);
+    }
+
+    public function test_auto_build_fails_when_budget_too_low(): void
+    {
+        Setting::set('pc_demo_mode', '1');
+
+        $this->makeDemoPart('cpu', 'Процессор Intel Core i5-13400F', 19900, ['socket' => 'LGA1700', 'tdp_w' => '65']);
+        $this->makeDemoPart('motherboard', 'Материнская плата ASUS PRIME B760M-K', 12500, [
+            'socket' => 'LGA1700',
+            'memory_type' => 'DDR5',
+            'form_factor' => 'mATX',
+        ]);
+        $this->makeDemoPart('gpu', 'Видеокарта GeForce RTX 4060 8GB', 38900, ['gpu_chip' => 'RTX 4060', 'vram_gb' => '8', 'psu_w' => '550']);
+        $this->makeDemoPart('ram', 'Оперативная память Kingston Fury 16GB DDR5', 5900, ['memory_type' => 'DDR5', 'module_gb' => '16']);
+        $this->makeDemoPart('storage', 'SSD Kingston NV2 1TB NVMe', 6900, ['capacity_gb' => '1000']);
+        $this->makeDemoPart('case', 'Корпус Zalman Z3 Mid Tower', 5900, ['form_factor' => 'ATX,mATX', 'cooler_clearance_mm' => '160']);
+        $this->makeDemoPart('cooler', 'Кулер ID-Cooling SE-214', 2900, ['height_mm' => '150']);
+        $this->makeDemoPart('psu', 'Блок питания Corsair RM750 750W', 9900, ['wattage' => '750']);
+
+        $response = $this->postJson('/api/pc/auto-build', [
+            'budget' => 10000,
+            'purpose' => 'games',
+        ]);
+
+        $response->assertOk()->assertJsonPath('success', false);
+        $this->assertNotEmpty($response->json('reason'));
+    }
+
+    public function test_auto_build_fails_when_required_slot_is_empty(): void
+    {
+        Setting::set('pc_demo_mode', '1');
+
+        // Нет процессоров — сборка невозможна.
+        $this->makeDemoPart('motherboard', 'Материнская плата ASUS PRIME B760M-K', 12500, [
+            'socket' => 'LGA1700',
+            'memory_type' => 'DDR5',
+            'form_factor' => 'mATX',
+        ]);
+
+        $response = $this->postJson('/api/pc/auto-build', [
+            'budget' => 200000,
+        ]);
+
+        $response->assertOk()->assertJsonPath('success', false);
+    }
+
+    public function test_manager_request_creates_order_with_comment(): void
+    {
+        $response = $this->postJson('/pc/manager-request?site_access=granted', [
+            'customer_name' => 'Иван Иванов',
+            'customer_phone' => '+79001234567',
+            'customer_city' => 'Смоленск',
+            'budget' => 100000,
+            'purpose' => 'Игры',
+            'wishes' => 'Тихий корпус, SSD 1 ТБ',
+        ]);
+
+        $response->assertCreated()->assertJsonPath('success', true);
+
+        $order = Order::findOrFail($response->json('order_id'));
+
+        $this->assertSame('Иван Иванов', $order->customer_name);
+        $this->assertSame(Order::STATUS_PENDING, $order->status);
+        $this->assertNull($order->total);
+        $this->assertCount(0, $order->items);
+        $this->assertStringContainsString('Заявка на подбор ПК менеджером:', $order->customer_comment);
+        $this->assertStringContainsString('100 000 ₽', $order->customer_comment);
+        $this->assertStringContainsString('Игры', $order->customer_comment);
+        $this->assertStringContainsString('Тихий корпус, SSD 1 ТБ', $order->customer_comment);
+    }
+
+    public function test_parts_accepts_multiselect_build_ids(): void
+    {
+        Setting::set('pc_demo_mode', '1');
+
+        $mb = $this->makeDemoPart('motherboard', 'Материнская плата ASUS PRIME B760M-K', 12500, [
+            'socket' => 'LGA1700',
+            'memory_type' => 'DDR5',
+            'form_factor' => 'mATX',
+        ]);
+
+        $ram1 = $this->makeDemoPart('ram', 'Оперативная память Kingston Fury 16GB DDR5', 5900, ['memory_type' => 'DDR5']);
+        $ram2 = $this->makeDemoPart('ram', 'Оперативная память Corsair 32GB DDR5', 11900, ['memory_type' => 'DDR5']);
+
+        $response = $this->getJson('/api/pc/parts?' . http_build_query([
+            'slot' => 'ram',
+            'build' => json_encode(['motherboard' => $mb->id, 'ram' => [$ram1->id, $ram2->id]]),
+        ]));
+
+        $response->assertOk()->assertJsonPath('empty', false);
+        $ids = collect($response->json('data'))->pluck('id');
+        $this->assertContains($ram1->id, $ids);
+        $this->assertContains($ram2->id, $ids);
+    }
+
+    public function test_build_store_accepts_multiple_extra_items(): void
+    {
+        $mb = $this->makeProduct($this->motherboards, 'Материнская плата ASUS PRIME B760M-K', 12500);
+        $extra1 = $this->makeProduct($this->gpus, 'Доп. вентиляторы Arctic P12', 2400);
+        $extra2 = $this->makeProduct($this->gpus, 'Wi-Fi адаптер TP-Link', 1900);
+
+        $response = $this->postJson('/pc/build?site_access=granted', [
+            'customer_name' => 'Иван Иванов',
+            'customer_phone' => '+79001234567',
+            'items' => [
+                ['product_id' => $mb->id, 'quantity' => 1],
+                ['product_id' => $extra1->id, 'quantity' => 1],
+                ['product_id' => $extra2->id, 'quantity' => 1],
+            ],
+        ]);
+
+        $response->assertCreated()->assertJsonPath('success', true);
+
+        $order = Order::findOrFail($response->json('order_id'));
+        $this->assertCount(3, $order->items);
+        $this->assertEquals(16800, (float) $order->total);
+    }
+
+    public function test_build_store_accepts_quantity_for_multiselect_slots(): void
+    {
+        $mb = $this->makeProduct($this->motherboards, 'Материнская плата ASUS PRIME B760M-K', 12500);
+        $ram = $this->makeProduct($this->ram, 'Оперативная память Kingston Fury 16GB DDR5', 5900);
+        $fan = $this->makeProduct($this->gpus, 'Доп. вентиляторы Arctic P12', 2400);
+
+        $response = $this->postJson('/pc/build?site_access=granted', [
+            'customer_name' => 'Иван Иванов',
+            'customer_phone' => '+79001234567',
+            'items' => [
+                ['product_id' => $mb->id, 'quantity' => 1],
+                ['product_id' => $ram->id, 'quantity' => 2],
+                ['product_id' => $fan->id, 'quantity' => 3],
+            ],
+        ]);
+
+        $response->assertCreated()->assertJsonPath('success', true);
+
+        $order = Order::findOrFail($response->json('order_id'));
+        $this->assertCount(3, $order->items);
+        $this->assertEquals(31500, (float) $order->total);
+
+        $ramItem = $order->items->firstWhere('product_id', $ram->id);
+        $this->assertEquals(2, $ramItem->quantity);
+        $this->assertEquals(11800, (float) $ramItem->total);
+
+        $fanItem = $order->items->firstWhere('product_id', $fan->id);
+        $this->assertEquals(3, $fanItem->quantity);
+        $this->assertEquals(7200, (float) $fanItem->total);
     }
 }

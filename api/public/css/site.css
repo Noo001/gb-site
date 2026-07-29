@@ -1813,6 +1813,47 @@ button {
     color: #9ca3af;
 }
 
+.pc-part-qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.4rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid #374151;
+    border-radius: 0.4rem;
+    align-self: flex-start;
+}
+
+.pc-qty-btn {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 0.25rem;
+    background: #1f2937;
+    color: #e5e7eb;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.pc-qty-btn:hover {
+    background: #374151;
+}
+
+.pc-qty-value {
+    min-width: 1.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f3f4f6;
+}
+
 .pc-parts-loading,
 .pc-parts-empty {
     padding: 1.25rem;
@@ -2288,4 +2329,234 @@ button {
 
 .pc-slot--selected.pc-slot-case .pc-case-side {
     fill: url(#pcSideGrad);
+}
+
+/* --- PC Configurator: автоподбор по бюджету --- */
+
+.pc-mode-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+}
+
+.pc-mode-tab {
+    flex: 1;
+    padding: 0.625rem 1rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.pc-mode-tab:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.pc-mode-tab--active {
+    color: #fff;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.pc-mode-tab--active:hover {
+    color: #fff;
+    background: var(--accent-hover);
+}
+
+.pc-auto-build {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.pc-auto-intro {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.pc-auto-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+}
+
+.pc-auto-subtitle {
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.pc-auto-form {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.pc-select {
+    appearance: auto;
+}
+
+.pc-textarea {
+    resize: vertical;
+    min-height: 5rem;
+}
+
+.pc-auto-result {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    background: #fff;
+    margin-bottom: 1.5rem;
+}
+
+.pc-auto-result-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+}
+
+.pc-auto-items {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.pc-auto-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.pc-auto-item:last-child {
+    border-bottom: none;
+}
+
+.pc-auto-item-slot {
+    flex-shrink: 0;
+    width: 8rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+}
+
+.pc-auto-item-name {
+    flex: 1;
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+.pc-auto-item-price {
+    flex-shrink: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-align: right;
+}
+
+.pc-auto-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+    border-top: 2px solid var(--foreground);
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.pc-auto-fallback {
+    text-align: center;
+    padding: 2rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #fff;
+}
+
+.pc-auto-fallback-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.pc-auto-fallback h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+}
+
+.pc-auto-fallback p {
+    color: var(--text-muted);
+    margin: 0 0 1rem;
+}
+
+.pc-auto-fallback .pc-order-form {
+    text-align: left;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+    .pc-auto-title {
+        font-size: 1.5rem;
+    }
+
+    .pc-auto-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .pc-auto-form .pc-field:last-of-type {
+        grid-column: 1 / -1;
+    }
+
+    .pc-auto-form .pc-submit-btn {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (min-width: 768px) {
+    .pc-auto-build {
+        margin: 0;
+    }
+}
+
+/* --- PC Configurator: мультивыбор в слотах (RAM, storage, extra) --- */
+
+.pc-step-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.pc-next-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: var(--foreground);
+    color: #fff;
+    transition: background 0.2s;
+}
+
+.pc-next-btn:hover {
+    background: #000;
+}
+
+.pc-part--selected {
+    border-color: var(--accent);
+    background: rgba(12, 192, 223, 0.06);
+}
+
+.pc-step--done .pc-step-chosen {
+    max-width: 100%;
 }

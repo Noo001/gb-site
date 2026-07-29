@@ -10,6 +10,7 @@ Artisan::command('inspire', function () {
 
 Schedule::command('bot:rebuild-index')->hourly();
 Schedule::command('1c:process-queue')->everyMinute();
+Schedule::command('reconcile:1c --deactivate-missing --cleanup-logs')->dailyAt('03:00');
 
 // Shared-хостинг: нет постоянного queue worker, обрабатываем очередь пачками по cron
 Schedule::command('queue:work --stop-when-empty --max-jobs=50 --sleep=3 --tries=3')

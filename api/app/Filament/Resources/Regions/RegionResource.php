@@ -10,6 +10,7 @@ use App\Filament\Resources\Regions\Tables\RegionsTable;
 use App\Models\Region;
 use BackedEnum;
 use Filament\Resources\Resource;
+use UnitEnum;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -21,6 +22,8 @@ class RegionResource extends Resource
     protected static ?string $model = Region::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Сайт';
 
     protected static ?string $navigationLabel = 'Регионы';
 

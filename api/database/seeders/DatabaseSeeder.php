@@ -21,5 +21,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(PcDemoPartsSeeder::class);
+        $this->call(RolesAndPermissionsSeeder::class);
+        $this->call(InitialAdminSeeder::class);
     }
 }

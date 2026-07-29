@@ -6,10 +6,16 @@ use App\Models\IntegrationLog;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class LatestIntegrationLogsWidget extends TableWidget
 {
     protected int | string | array $columnSpan = 'full';
+
+    public static function canView(?Authenticatable $user = null): bool
+    {
+        return auth()->user()?->hasAnyPermission(['monitoring.view', 'monitoring.manage']) ?? false;
+    }
 
     public function table(Table $table): Table
     {

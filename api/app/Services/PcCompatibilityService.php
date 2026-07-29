@@ -160,12 +160,12 @@ class PcCompatibilityService
     }
 
     /**
-     * @param array<string, int> $build
+     * @param array<string, int|array<int>> $build
      * @return array<string, array<string, string>>
      */
     private function resolveDemoBuildAttributes(array $build): array
     {
-        $ids = array_filter(array_values($build));
+        $ids = collect(array_values($build))->flatten()->filter()->all();
 
         if (empty($ids)) {
             return [];
@@ -179,7 +179,8 @@ class PcCompatibilityService
         $resolved = [];
 
         foreach ($build as $slot => $partId) {
-            $part = $parts->get($partId);
+            $id = is_array($partId) ? (reset($partId) ?: null) : $partId;
+            $part = $id ? $parts->get($id) : null;
             if ($part) {
                 $resolved[$slot] = $this->resolveDemoAttributes($part);
             }
@@ -249,12 +250,12 @@ class PcCompatibilityService
     }
 
     /**
-     * @param array<string, int> $build
+     * @param array<string, int|array<int>> $build
      * @return array<string, array<string, string>>
      */
     private function resolveBuildAttributes(array $build): array
     {
-        $ids = array_filter(array_values($build));
+        $ids = collect(array_values($build))->flatten()->filter()->all();
 
         if (empty($ids)) {
             return [];
@@ -269,7 +270,8 @@ class PcCompatibilityService
         $resolved = [];
 
         foreach ($build as $slot => $productId) {
-            $product = $products->get($productId);
+            $id = is_array($productId) ? (reset($productId) ?: null) : $productId;
+            $product = $id ? $products->get($id) : null;
             if ($product) {
                 $resolved[$slot] = $this->resolveAttributes($product);
             }
