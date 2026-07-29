@@ -21,8 +21,7 @@ class CategoryController extends Controller
                 ->orderBy('sort')
                 ->orderBy('name')
                 ->with([
-                    'media',
-                    'children' => fn ($q) => $q->forCatalog()->orderBy('sort')->orderBy('name')->with('media'),
+                    'children' => fn ($q) => $q->forCatalog()->orderBy('sort')->orderBy('name'),
                 ])
                 ->get();
         });
@@ -62,7 +61,7 @@ class CategoryController extends Controller
                 'slug' => $category->slug,
                 'full_path' => $category->full_path,
                 'url' => $category->url,
-                'image' => $this->categoryImage($category),
+                'image' => null,
                 'parent' => $category->parent ? [
                     'id' => $category->parent->id,
                     'name' => $category->parent->name,
@@ -137,7 +136,7 @@ class CategoryController extends Controller
             'slug' => $category->slug,
             'full_path' => $category->full_path,
             'url' => $category->url,
-            'image' => $this->categoryImage($category),
+            'image' => null,
             'children' => $category->children
                 ? $category->children->map(fn (Category $c) => $this->treeNode($c))
                 : [],
