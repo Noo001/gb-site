@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use App\Filament\Concerns\HasDefaultTableSettings;
+
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -17,9 +19,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ProductsTable
 {
+    use HasDefaultTableSettings;
+
     public static function configure(Table $table): Table
     {
-        return $table
+        return self::applyDefaults($table)
             ->columns([
                 SpatieMediaLibraryImageColumn::make('images')
                     ->collection('images')

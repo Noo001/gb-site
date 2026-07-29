@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\BotProducts\Tables;
 
+use App\Filament\Concerns\HasDefaultTableSettings;
+
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -10,9 +12,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class BotProductsTable
 {
+    use HasDefaultTableSettings;
+
     public static function configure(Table $table): Table
     {
-        return $table
+        return self::applyDefaults($table)
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),

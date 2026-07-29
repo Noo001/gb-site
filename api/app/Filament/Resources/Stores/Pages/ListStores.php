@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Stores\Pages;
 
 use App\Filament\Resources\Stores\StoreResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\ListRecords;
 
 class ListStores extends ListRecords
 {

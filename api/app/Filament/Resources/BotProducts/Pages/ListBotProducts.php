@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\BotProducts\Pages;
 
 use App\Filament\Resources\BotProducts\BotProductResource;
-use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\ListRecords;
 
 class ListBotProducts extends ListRecords
 {

@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="W7aRXjYRWI7GnX86mN3Mb2bdV83tqmNfEIUUHGUF">
+    <title>Gadget Bar — интернет-магазин гаджетов</title>
+            <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="https://gbsale.ru/css/site.css?v=1785357339">
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('cart', {
+                count: 0,
+                async load() {
+                    try {
+                        const res = await fetch('/api/cart', { credentials: 'include' });
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        this.count = data.count ?? 0;
+                    } catch (e) {}
+                }
+            });
+            Alpine.store('wishlist', {
+                count: 0,
+                async load() {
+                    try {
+                        const res = await fetch('/api/wishlist', { credentials: 'include' });
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        this.count = data.count ?? 0;
+                    } catch (e) {}
+                }
+            });
+        });
+    </script>
+</head>
+<body x-data x-init="$store.cart.load(); $store.wishlist.load()">
+    <header class="site-header">
+    <div class="header-top">
+        <div class="container-theme header-top-inner">
+            <a href="/" class="logo">
+                <img src="/images/original/logo.png" alt="GADGET·BAR" height="32">
+            </a>
+
+            <form action="/catalog" method="GET" class="header-search">
+                <input type="text" name="search" placeholder="Поиск по товарам" class="input">
+                <button type="submit" class="btn btn-primary">Найти</button>
+            </form>
+
+            <div class="header-contacts">
+                <a href="tel:88005051307" class="phone">8 (800) 505-13-07</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-nav">
+        <div class="container-theme header-nav-inner">
+            <nav class="main-nav">
+                <div class="nav-item has-submenu">
+                    <a href="/catalog">Каталог</a>
+                    <div class="submenu">
+                                                    <a href="/catalog/amd/">AMD</a>
+                                                    <a href="/catalog/apple/">Apple</a>
+                                                    <a href="/catalog/dyson/">Dyson</a>
+                                                    <a href="/catalog/garmin/">Garmin</a>
+                                                    <a href="/catalog/intel/">Intel</a>
+                                                    <a href="/catalog/smeg/">SMEG</a>
+                                                    <a href="/catalog/samsung/">Samsung</a>
+                                                    <a href="/catalog/usb-flash-nakopiteli/">USB Flash накопители</a>
+                                                    <a href="/catalog/wi-fi-kamery/">Wi-Fi Камеры</a>
+                                                    <a href="/catalog/adaptery-pitaniia/">Адаптеры питания</a>
+                                                    <a href="/catalog/aksessuary/">Аксессуары</a>
+                                                    <a href="/catalog/videotexnika-eksn-kamery/">Видеотехника / Экшн-Камеры</a>
+                                                    <a href="/catalog/gadzety/">Гаджеты</a>
+                                                    <a href="/catalog/geimpad-dlia-sony-ps5/">Геймпад для Sony PS5</a>
+                                                    <a href="/catalog/geimpad-dlia-xbox-series-xsone/">Геймпад для Xbox series X/S/One</a>
+                                                    <a href="/catalog/geimpady-dlia-nintendo-switch/">Геймпады для Nintendo Switch</a>
+                                                    <a href="/catalog/igrovye-konsoli/">Игровые Консоли</a>
+                                                    <a href="/catalog/kabeli/">Кабели</a>
+                                                    <a href="/catalog/krasota-i-zdorove/">Красота и здоровье</a>
+                                                    <a href="/catalog/kuxonnaia-texnika-i-prinadleznosti/">Кухонная техника и принадлежности</a>
+                                                    <a href="/catalog/nastolnye-lampy/">Настольные лампы</a>
+                                                    <a href="/catalog/nausniki-i-audio/">Наушники и аудио</a>
+                                                    <a href="/catalog/perexodniki/">Переходники</a>
+                                                    <a href="/catalog/periferiia-sony/">Периферия Sony</a>
+                                                    <a href="/catalog/plansety-i-pk/">Планшеты и ПК</a>
+                                                    <a href="/catalog/smart-casy-huawei/">Смарт-часы Huawei</a>
+                                                    <a href="/catalog/smart-casy-xiaomi/">Смарт-часы Xiaomi</a>
+                                                    <a href="/catalog/smart-casy-xiaomi-haylou/">Смарт-часы Xiaomi HAYLOU</a>
+                                                    <a href="/catalog/smartfony/">Смартфоны</a>
+                                                    <a href="/catalog/televizory-i-video/">Телевизоры и видео</a>
+                                                    <a href="/catalog/uborka-doma/">Уборка дома</a>
+                                                    <a href="/catalog/umnyi-dom/">Умный дом</a>
+                                                    <a href="/catalog/fitnes-trekery/">Фитнес трекеры</a>
+                                            </div>
+                </div>
+                                    <a href="/brands" class="nav-item">Бренды</a>
+                                    <a href="/blog" class="nav-item">Статьи</a>
+                                    <a href="/sales" class="nav-item">Акции</a>
+                                    <a href="/installment" class="nav-item">Рассрочка</a>
+                                    <a href="/contacts" class="nav-item">Контакты</a>
+                                <div class="nav-item has-submenu">
+                    <span>Информация</span>
+                    <div class="submenu">
+                                                    <a href="/info/payment">Способы оплаты</a>
+                                                    <a href="/info/delivery">Доставка</a>
+                                                    <a href="/info/warranty">Гарантия</a>
+                                                    <a href="/info/return">Обмен и возврат</a>
+                                            </div>
+                </div>
+            </nav>
+
+            <div class="header-actions">
+                                    <a href="/login" class="action-link">Войти</a>
+                                <a href="/wishlist" class="action-link">
+                    Избранное
+                    <span x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="badge"></span>
+                </a>
+                <a href="/cart" class="action-link">
+                    Корзина
+                    <span x-show="$store.cart.count > 0" x-text="$store.cart.count" class="badge"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <main>
+            <section class="page-section">
+        <div class="container-theme">
+            <div class="promo-carousel" x-data="{ current: 0, total: 10 }" x-init="setInterval(() => current = (current + 1) % total, 5000)">
+    <div class="promo-slides">
+                    <a href="/sales/kodovyy-zamok-udachi" class="promo-slide" x-show="current === 0" x-transition.opacity>
+                <img src="/images/original/banner-1.png" alt="Кодовый замок удачи">
+            </a>
+                    <a href="/catalog/smartfony" class="promo-slide" x-show="current === 1" x-transition.opacity>
+                <img src="/images/original/banner-2.png" alt="iPhone">
+            </a>
+                    <a href="/installment" class="promo-slide" x-show="current === 2" x-transition.opacity>
+                <img src="/images/original/banner-3.png" alt="Рассрочка">
+            </a>
+                    <a href="/brands/samsung" class="promo-slide" x-show="current === 3" x-transition.opacity>
+                <img src="/images/original/banner-4.png" alt="Samsung">
+            </a>
+                    <a href="/catalog/smartfony" class="promo-slide" x-show="current === 4" x-transition.opacity>
+                <img src="/images/original/banner-5.png" alt="iPhone">
+            </a>
+                    <a href="/brands/dyson" class="promo-slide" x-show="current === 5" x-transition.opacity>
+                <img src="/images/original/banner-6.png" alt="Dyson">
+            </a>
+                    <a href="/catalog/igrovye-konsoli" class="promo-slide" x-show="current === 6" x-transition.opacity>
+                <img src="/images/original/banner-7.png" alt="Игровые консоли">
+            </a>
+                    <a href="/catalog/naushniki-i-audio/kolonki" class="promo-slide" x-show="current === 7" x-transition.opacity>
+                <img src="/images/original/banner-8.png" alt="Яндекс Станции">
+            </a>
+                    <a href="/sales/trade-in" class="promo-slide" x-show="current === 8" x-transition.opacity>
+                <img src="/images/original/banner-9.png" alt="Trade-In">
+            </a>
+                    <a href="/brands/smeg" class="promo-slide" x-show="current === 9" x-transition.opacity>
+                <img src="/images/original/banner-10.png" alt="Smeg">
+            </a>
+            </div>
+
+    <button type="button" class="promo-nav promo-prev" @click="current = (current - 1 + total) % total" aria-label="Назад">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="promo-nav promo-next" @click="current = (current + 1) % total" aria-label="Вперёд">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+    <div class="promo-dots">
+                    <button type="button" @click="current = 0" :class="current === 0 ? 'active' : ''" aria-label="Слайд 1"></button>
+                    <button type="button" @click="current = 1" :class="current === 1 ? 'active' : ''" aria-label="Слайд 2"></button>
+                    <button type="button" @click="current = 2" :class="current === 2 ? 'active' : ''" aria-label="Слайд 3"></button>
+                    <button type="button" @click="current = 3" :class="current === 3 ? 'active' : ''" aria-label="Слайд 4"></button>
+                    <button type="button" @click="current = 4" :class="current === 4 ? 'active' : ''" aria-label="Слайд 5"></button>
+                    <button type="button" @click="current = 5" :class="current === 5 ? 'active' : ''" aria-label="Слайд 6"></button>
+                    <button type="button" @click="current = 6" :class="current === 6 ? 'active' : ''" aria-label="Слайд 7"></button>
+                    <button type="button" @click="current = 7" :class="current === 7 ? 'active' : ''" aria-label="Слайд 8"></button>
+                    <button type="button" @click="current = 8" :class="current === 8 ? 'active' : ''" aria-label="Слайд 9"></button>
+                    <button type="button" @click="current = 9" :class="current === 9 ? 'active' : ''" aria-label="Слайд 10"></button>
+            </div>
+</div>
+        </div>
+    </section>
+
+    <section class="page-section">
+    <div class="container-theme">
+        <div class="brand-grid">
+                            <a href="/brands/apple" class="brand-item">Apple</a>
+                            <a href="/brands/samsung" class="brand-item">SAMSUNG</a>
+                            <a href="/brands/xiaomi" class="brand-item">Xiaomi</a>
+                            <a href="/brands/honor" class="brand-item">HONOR</a>
+                            <a href="/brands/huawei" class="brand-item">Huawei</a>
+                            <a href="/brands/sony" class="brand-item">SONY</a>
+                            <a href="/brands/dyson" class="brand-item">dyson</a>
+                            <a href="/brands/smeg" class="brand-item">smeg</a>
+                            <a href="/brands/jbl" class="brand-item">JBL</a>
+                            <a href="/brands/dji" class="brand-item">DJI</a>
+                    </div>
+    </div>
+</section>
+
+    <section class="page-section">
+        <div class="container-theme">
+            <div class="section-header">
+                <h2 class="section-title">Лучшие предложения</h2>
+                <a href="/catalog" class="section-link">Смотреть все →</a>
+            </div>
+            <div class="product-grid">
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/apple-magsafe-charger-15w" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Apple MagSafe Charger 15W" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+                    <div class="product-card-brand">Apple</div>
+        
+                <div class="product-card-price">4 990 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Apple MagSafe Charger 15W</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2902, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2902 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/apple-magsafe-charger-15w-2m" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Apple MagSafe Charger 15W (2m)" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+                    <div class="product-card-brand">Apple</div>
+        
+                <div class="product-card-price">6 490 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Apple MagSafe Charger 15W (2m)</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 5, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 5 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/apple-watch-magnetic-charger-cable-1m" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Apple Watch Magnetic Charger Cable (1m)" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+                    <div class="product-card-brand">Apple</div>
+        
+                <div class="product-card-price">4 490 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Apple Watch Magnetic Charger Cable (1m)</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3671, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3671 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/cardholder-vlp-iz-ekokozi-s-magsafe" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="CardHolder  VLP из экокожи с MagSafe" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+        
+                <div class="product-card-price">2 490 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">CardHolder  VLP из экокожи с MagSafe</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3150, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3150 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/cardholder-ubear-fold" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Cardholder uBear Fold" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+        
+                <div class="product-card-price">3 490 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Cardholder uBear Fold</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3146, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3146 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/cardholder-ubear-fold-geo" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Cardholder uBear Fold Geo" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+        
+                <div class="product-card-price">3 990 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Cardholder uBear Fold Geo</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2674, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2674 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/cardholder-ubear-leather-shell" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Cardholder uBear Leather Shell" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+        
+                <div class="product-card-price">2 790 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Cardholder uBear Leather Shell</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2679, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2679 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/cardholder-ubear-shell" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Cardholder uBear Shell" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+        
+                <div class="product-card-price">2 790 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Cardholder uBear Shell</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3065, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3065 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/cardholder-ubear-split" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Cardholder uBear Split" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+        
+                <div class="product-card-price">2 990 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Cardholder uBear Split</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3126, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 3126 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/cardholder-ubear-split-geo" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Cardholder uBear Split Geo" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+        
+                <div class="product-card-price">3 990 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Cardholder uBear Split Geo</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2075, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2075 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/huawei-matepad-12x-bky-w09" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="Huawei MatePad 12X (BKY-W09)" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+                    <div class="product-card-brand">Huawei</div>
+        
+                <div class="product-card-price">54 990 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">Huawei MatePad 12X (BKY-W09)</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Под заказ
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                                    <div class="card product-card" x-data="{
+    loading: false,
+    isAuth: false,
+    async addToCart() {
+        this.loading = true;
+        try {
+            const res = await fetch('/api/cart/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2992, quantity: 1 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+            alert('Товар добавлен в корзину');
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    },
+    async toggleWishlist() {
+        if (!this.isAuth) {
+            window.location.href = '/login';
+            return;
+        }
+        this.loading = true;
+        try {
+            const res = await fetch('/api/wishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                credentials: 'include',
+                body: JSON.stringify({ product_id: 2992 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Ошибка');
+            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+        } catch (e) {
+            alert(e.message);
+        } finally {
+            this.loading = false;
+        }
+    }
+}">
+    <a href="/product/ip-kamera-imilab-c21-home-security" class="product-card-link">
+        <div class="product-card-image">
+            <img src="/images/placeholder-product.svg" alt="IP-Камера Imilab c21 Home Security" loading="lazy">
+            <span class="product-card-badge">ХИТ</span>
+        </div>
+
+                    <div class="product-card-brand">Xiaomi</div>
+        
+                <div class="product-card-price">2 490 ₽</div>
+        <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
+        <div class="product-card-name">IP-Камера Imilab c21 Home Security</div>
+        <div class="product-card-stock">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            В наличии
+        </div>
+    </a>
+
+    <div class="product-card-actions">
+        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+            <span x-show="!loading">В корзину</span>
+            <span x-show="loading">Добавляем...</span>
+        </button>
+        <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading" title="В избранное">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        </button>
+    </div>
+</div>
+                            </div>
+        </div>
+    </section>
+
+    <section class="page-section">
+        <div class="container-theme">
+            <h2 class="section-title">Каталог</h2>
+            <div class="category-grid">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+        </div>
+    </section>
+
+    <section class="page-section">
+    <div class="container-theme">
+        <div class="section-header">
+            <h2 class="section-title">Акции</h2>
+            <a href="/sales" class="section-link">Смотреть все →</a>
+        </div>
+        <div class="promo-cards-grid">
+                            <a href="/sales/besplatnaya-zashchita-ekrana-v-gadget-bar" class="promo-card">
+                    <div class="promo-card-image">
+                        <img src="/images/original/promo-screen.png" alt="Бесплатная защита экрана в Gadget bar" loading="lazy">
+                    </div>
+                    <div class="promo-card-body">
+                        <h3>Бесплатная защита экрана в Gadget bar</h3>
+                        <p>При покупке смартфона</p>
+                    </div>
+                </a>
+                            <a href="/sales/skidka-za-otzyv" class="promo-card">
+                    <div class="promo-card-image">
+                        <img src="/images/original/promo-review.png" alt="Скидка за отзыв" loading="lazy">
+                    </div>
+                    <div class="promo-card-body">
+                        <h3>Скидка за отзыв</h3>
+                        <p>Бессрочная акция</p>
+                    </div>
+                </a>
+                            <a href="/sales/programma-trade-in" class="promo-card">
+                    <div class="promo-card-image">
+                        <img src="/images/original/promo-tradein.png" alt="Программа Trade-In" loading="lazy">
+                    </div>
+                    <div class="promo-card-body">
+                        <h3>Программа Trade-In</h3>
+                        <p>Выгодный обмен старого устройства</p>
+                    </div>
+                </a>
+                    </div>
+    </div>
+</section>
+    <section class="page-section">
+    <div class="container-theme">
+        <div class="about-block">
+            <div class="about-block-content">
+                <h2>Интернет-магазин в Воронеже</h2>
+                <div class="about-block-text">
+                    <p>Gadget Bar — это один из крупнейших розничных продавцов оригинальной техники в 15 регионах России. Мы работаем на рынке с 2012 года и предлагаем широкий ассортимент устройств от ведущих брендов: Apple, Xiaomi, Samsung, Dyson и других.</p>
+                    <p>В наших магазинах вы найдёте всё — от смартфонов и игровых приставок до фенов, очистителей воздуха и аксессуаров.</p>
+                </div>
+                <a href="/company" class="btn btn-primary">Подробнее</a>
+            </div>
+            <div class="about-block-image">
+                <img src="/images/original/about-collage.png" alt="Gadget Bar" loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+    <section class="page-section">
+    <div class="container-theme">
+        <div class="section-header">
+            <h2 class="section-title">Мы ВКонтакте</h2>
+            <a href="https://vk.com/gadgetbarru" target="_blank" rel="noopener" class="section-link">Смотреть все →</a>
+        </div>
+        <div class="vk-posts-grid">
+                            <a href="#" class="vk-post-card">
+                    <div class="vk-post-image">
+                        <img src="/images/original/promo-review.png" alt="Apple может поднять цены на iPhone, MacBook и другую технику" loading="lazy">
+                    </div>
+                    <div class="vk-post-body">
+                        <div class="vk-post-meta">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#0077ff"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.12-5.339-3.202C4.624 10.857 4 8.673 4 8.2c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.779.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.745-.576.745z"/></svg>
+                            18.06.2026
+                        </div>
+                        <h3>Apple может поднять цены на iPhone, MacBook и другую технику</h3>
+                        <p>Об этом заявил...</p>
+                    </div>
+                </a>
+                            <a href="#" class="vk-post-card">
+                    <div class="vk-post-image">
+                        <img src="/images/original/promo-tradein.png" alt="Оформляй подписку ChatGPT Plus или Claude в Gadget Bar" loading="lazy">
+                    </div>
+                    <div class="vk-post-body">
+                        <div class="vk-post-meta">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#0077ff"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.12-5.339-3.202C4.624 10.857 4 8.673 4 8.2c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.779.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.745-.576.745z"/></svg>
+                            18.06.2026
+                        </div>
+                        <h3>Оформляй подписку ChatGPT Plus или Claude в Gadget Bar</h3>
+                        <p>Подписка на ваш аккаунт...</p>
+                    </div>
+                </a>
+                            <a href="#" class="vk-post-card">
+                    <div class="vk-post-image">
+                        <img src="/images/original/promo-screen.png" alt="Нейросети всё больше становятся частью нашей жизни" loading="lazy">
+                    </div>
+                    <div class="vk-post-body">
+                        <div class="vk-post-meta">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#0077ff"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.12-5.339-3.202C4.624 10.857 4 8.673 4 8.2c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.779.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.745-.576.745z"/></svg>
+                            18.06.2026
+                        </div>
+                        <h3>Нейросети всё больше становятся частью нашей жизни</h3>
+                        <p>С их помощью...</p>
+                    </div>
+                </a>
+                            <a href="#" class="vk-post-card">
+                    <div class="vk-post-image">
+                        <img src="/images/original/about-collage.png" alt="Как вернуть уведомления в Макс?" loading="lazy">
+                    </div>
+                    <div class="vk-post-body">
+                        <div class="vk-post-meta">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#0077ff"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.12-5.339-3.202C4.624 10.857 4 8.673 4 8.2c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.779.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.745-.576.745z"/></svg>
+                            17.06.2026
+                        </div>
+                        <h3>Как вернуть уведомления в Макс?</h3>
+                        <p>После удаления Макс из App Store у многих...</p>
+                    </div>
+                </a>
+                    </div>
+    </div>
+</section>
+    <section class="page-section">
+    <div class="container-theme">
+        <div class="features-grid">
+                            <div class="feature-item">
+                    <div class="feature-icon">
+                                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="15" height="12" rx="2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="17.5" cy="17.5" r="1.5"/><path d="M18 12h2a1 1 0 0 1 1 1v3"/></svg>
+                                            </div>
+                    <div class="feature-text">
+                        <h3>Быстрая доставка</h3>
+                        <p>Если выглянуть в окно, можно услышать, как торопится наш курьер</p>
+                    </div>
+                </div>
+                            <div class="feature-item">
+                    <div class="feature-icon">
+                                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2Z"/><path d="M15 11v2"/><path d="M12 11v2"/><path d="M9 11v2"/></svg>
+                                            </div>
+                    <div class="feature-text">
+                        <h3>Клиентский сервис</h3>
+                        <p>Если что-то пошло не так, мы вам поможем</p>
+                    </div>
+                </div>
+                            <div class="feature-item">
+                    <div class="feature-icon">
+                                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 2.5 2.5v2.5"/><path d="M16.5 8V6a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1-2.5 2.5h-2.5"/></svg>
+                                            </div>
+                    <div class="feature-text">
+                        <h3>Акции и скидки</h3>
+                        <p>Специально для вас, каждую неделю</p>
+                    </div>
+                </div>
+                            <div class="feature-item">
+                    <div class="feature-icon">
+                                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
+                                            </div>
+                    <div class="feature-text">
+                        <h3>15 лет с вами</h3>
+                        <p>С нами Вы будете довольны в своих гаджетах!</p>
+                    </div>
+                </div>
+                    </div>
+    </div>
+</section>
+    </main>
+
+    <footer class="site-footer">
+    <div class="container-theme footer-inner">
+        <p class="footer-disclaimer">
+            Гарантия на товар и гарантийное обслуживание предоставляется в соответствии с Гражданским кодексом Российской Федерации (ГК РФ) и Законом Российской Федерации от 7 февраля 1992 г. № 2300-1 "О защите прав потребителей".
+        </p>
+
+        <div class="footer-columns">
+            <div>
+                <h3>Интернет-магазин</h3>
+                <ul>
+                    <li><a href="/catalog">Каталог</a></li>
+                    <li><a href="/sales">Акции</a></li>
+                    <li><a href="/brands">Бренды</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Компания</h3>
+                <ul>
+                    <li><a href="/stores">Магазины</a></li>
+                    <li><a href="/review">Оставить отзыв</a></li>
+                    <li><a href="/company">О компании</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Информация</h3>
+                <ul>
+                    <li><a href="/info/payment">Способы оплаты</a></li>
+                    <li><a href="/info/delivery">Доставка</a></li>
+                    <li><a href="/info/warranty">Гарантия</a></li>
+                    <li><a href="/trade-in">Программа Trade-in</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Контакты</h3>
+                <a href="tel:88005051307" class="phone">8 (800) 505-13-07</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container-theme footer-bottom-inner">
+            <p>© 2026 Gadget-Bar.ru</p>
+            <div class="footer-bottom-links">
+                <a href="/privacy">Конфиденциальность</a>
+                <a href="/offer">Оферта</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    </body>
+</html>

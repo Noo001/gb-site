@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\BotActionLogs\Pages;
 
 use App\Filament\Resources\BotActionLogs\BotActionLogResource;
-use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\ListRecords;
 
 class ListBotActionLogs extends ListRecords
 {

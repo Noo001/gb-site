@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Regions\Pages;
 
 use App\Filament\Resources\Regions\RegionResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\ListRecords;
 
 class ListRegions extends ListRecords
 {

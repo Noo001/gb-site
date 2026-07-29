@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Redirects\Tables;
 
+use App\Filament\Concerns\HasDefaultTableSettings;
+
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -11,9 +13,11 @@ use Filament\Tables\Table;
 
 class RedirectsTable
 {
+    use HasDefaultTableSettings;
+
     public static function configure(Table $table): Table
     {
-        return $table
+        return self::applyDefaults($table)
             ->columns([
                 TextColumn::make('from_url')
                     ->searchable(),

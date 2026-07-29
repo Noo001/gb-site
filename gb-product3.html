@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="Uv9W4xdZoP5L9QRaeiXpuBkRoCHmqbH7mp0pvGo9">
+    <title>Apple MagSafe Charger 15W — Gadget Bar</title>
+            <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="https://gbsale.ru/css/site.css?v=1785357339">
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('cart', {
+                count: 0,
+                async load() {
+                    try {
+                        const res = await fetch('/api/cart', { credentials: 'include' });
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        this.count = data.count ?? 0;
+                    } catch (e) {}
+                }
+            });
+            Alpine.store('wishlist', {
+                count: 0,
+                async load() {
+                    try {
+                        const res = await fetch('/api/wishlist', { credentials: 'include' });
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        this.count = data.count ?? 0;
+                    } catch (e) {}
+                }
+            });
+        });
+    </script>
+</head>
+<body x-data x-init="$store.cart.load(); $store.wishlist.load()">
+    <header class="site-header">
+    <div class="header-top">
+        <div class="container-theme header-top-inner">
+            <a href="/" class="logo">
+                <img src="/images/original/logo.png" alt="GADGET·BAR" height="32">
+            </a>
+
+            <form action="/catalog" method="GET" class="header-search">
+                <input type="text" name="search" placeholder="Поиск по товарам" class="input">
+                <button type="submit" class="btn btn-primary">Найти</button>
+            </form>
+
+            <div class="header-contacts">
+                <a href="tel:88005051307" class="phone">8 (800) 505-13-07</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-nav">
+        <div class="container-theme header-nav-inner">
+            <nav class="main-nav">
+                <div class="nav-item has-submenu">
+                    <a href="/catalog">Каталог</a>
+                    <div class="submenu">
+                                                    <a href="/catalog/amd/">AMD</a>
+                                                    <a href="/catalog/apple/">Apple</a>
+                                                    <a href="/catalog/dyson/">Dyson</a>
+                                                    <a href="/catalog/garmin/">Garmin</a>
+                                                    <a href="/catalog/intel/">Intel</a>
+                                                    <a href="/catalog/smeg/">SMEG</a>
+                                                    <a href="/catalog/samsung/">Samsung</a>
+                                                    <a href="/catalog/usb-flash-nakopiteli/">USB Flash накопители</a>
+                                                    <a href="/catalog/wi-fi-kamery/">Wi-Fi Камеры</a>
+                                                    <a href="/catalog/adaptery-pitaniia/">Адаптеры питания</a>
+                                                    <a href="/catalog/aksessuary/">Аксессуары</a>
+                                                    <a href="/catalog/videotexnika-eksn-kamery/">Видеотехника / Экшн-Камеры</a>
+                                                    <a href="/catalog/gadzety/">Гаджеты</a>
+                                                    <a href="/catalog/geimpad-dlia-sony-ps5/">Геймпад для Sony PS5</a>
+                                                    <a href="/catalog/geimpad-dlia-xbox-series-xsone/">Геймпад для Xbox series X/S/One</a>
+                                                    <a href="/catalog/geimpady-dlia-nintendo-switch/">Геймпады для Nintendo Switch</a>
+                                                    <a href="/catalog/igrovye-konsoli/">Игровые Консоли</a>
+                                                    <a href="/catalog/kabeli/">Кабели</a>
+                                                    <a href="/catalog/krasota-i-zdorove/">Красота и здоровье</a>
+                                                    <a href="/catalog/kuxonnaia-texnika-i-prinadleznosti/">Кухонная техника и принадлежности</a>
+                                                    <a href="/catalog/nastolnye-lampy/">Настольные лампы</a>
+                                                    <a href="/catalog/nausniki-i-audio/">Наушники и аудио</a>
+                                                    <a href="/catalog/perexodniki/">Переходники</a>
+                                                    <a href="/catalog/periferiia-sony/">Периферия Sony</a>
+                                                    <a href="/catalog/plansety-i-pk/">Планшеты и ПК</a>
+                                                    <a href="/catalog/smart-casy-huawei/">Смарт-часы Huawei</a>
+                                                    <a href="/catalog/smart-casy-xiaomi/">Смарт-часы Xiaomi</a>
+                                                    <a href="/catalog/smart-casy-xiaomi-haylou/">Смарт-часы Xiaomi HAYLOU</a>
+                                                    <a href="/catalog/smartfony/">Смартфоны</a>
+                                                    <a href="/catalog/televizory-i-video/">Телевизоры и видео</a>
+                                                    <a href="/catalog/uborka-doma/">Уборка дома</a>
+                                                    <a href="/catalog/umnyi-dom/">Умный дом</a>
+                                                    <a href="/catalog/fitnes-trekery/">Фитнес трекеры</a>
+                                            </div>
+                </div>
+                                    <a href="/brands" class="nav-item">Бренды</a>
+                                    <a href="/blog" class="nav-item">Статьи</a>
+                                    <a href="/sales" class="nav-item">Акции</a>
+                                    <a href="/installment" class="nav-item">Рассрочка</a>
+                                    <a href="/contacts" class="nav-item">Контакты</a>
+                                <div class="nav-item has-submenu">
+                    <span>Информация</span>
+                    <div class="submenu">
+                                                    <a href="/info/payment">Способы оплаты</a>
+                                                    <a href="/info/delivery">Доставка</a>
+                                                    <a href="/info/warranty">Гарантия</a>
+                                                    <a href="/info/return">Обмен и возврат</a>
+                                            </div>
+                </div>
+            </nav>
+
+            <div class="header-actions">
+                                    <a href="/login" class="action-link">Войти</a>
+                                <a href="/wishlist" class="action-link">
+                    Избранное
+                    <span x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="badge"></span>
+                </a>
+                <a href="/cart" class="action-link">
+                    Корзина
+                    <span x-show="$store.cart.count > 0" x-text="$store.cart.count" class="badge"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <main>
+            <section class="page-section">
+        <div class="container-theme">
+            <nav class="breadcrumbs">
+                        <a href="/">Главная</a>
+            <span>/</span>
+                                <a href="/catalog/apple/originalnye-aksessuary/apple-magsafe-charger/">Apple MagSafe Charger</a>
+            <span>/</span>
+                                <span>Apple MagSafe Charger 15W</span>
+            </nav>
+
+            <div class="product-detail">
+                <div class="product-gallery">
+                                        <div class="product-thumbs">
+                                                    <div class="product-thumb">
+                                <img src="/images/placeholder-product.svg" alt="">
+                            </div>
+                                            </div>
+                    <div class="product-main-image">
+                        <img src="/images/placeholder-product.svg" alt="Apple MagSafe Charger 15W">
+                    </div>
+                </div>
+
+                <div class="product-info" x-data="{
+                    loading: false,
+                    isAuth: false,
+                    async addToCart() {
+                        this.loading = true;
+                        try {
+                            const res = await fetch('/api/cart/items', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                                },
+                                credentials: 'include',
+                                body: JSON.stringify({ product_id: 3, quantity: 1 })
+                            });
+                            const data = await res.json();
+                            if (!res.ok) throw new Error(data.message || 'Ошибка');
+                            if (Alpine.store('cart')) Alpine.store('cart').count = data.count ?? 0;
+                            alert('Товар добавлен в корзину');
+                        } catch (e) {
+                            alert(e.message);
+                        } finally {
+                            this.loading = false;
+                        }
+                    },
+                    async toggleWishlist() {
+                        if (!this.isAuth) {
+                            window.location.href = '/login';
+                            return;
+                        }
+                        this.loading = true;
+                        try {
+                            const res = await fetch('/api/wishlist', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                                },
+                                credentials: 'include',
+                                body: JSON.stringify({ product_id: 3 })
+                            });
+                            const data = await res.json();
+                            if (!res.ok) throw new Error(data.message || 'Ошибка');
+                            if (Alpine.store('wishlist')) Alpine.store('wishlist').count = data.count ?? 0;
+                            alert('Добавлено в избранное');
+                        } catch (e) {
+                            alert(e.message);
+                        } finally {
+                            this.loading = false;
+                        }
+                    }
+                }">
+                    <div class="product-info-header">
+                        <h1>Apple MagSafe Charger 15W</h1>
+                        <div class="product-info-actions">
+                            <button type="button" class="btn btn-outline btn-wishlist" @click="toggleWishlist" :disabled="loading">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                                        <div class="product-buy-box">
+                        <div class="product-buy-price">4 990 ₽</div>
+                        <div class="product-buy-stock">В наличии</div>
+                        <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
+                            <span x-show="!loading">В корзину</span>
+                            <span x-show="loading">Добавляем...</span>
+                        </button>
+                    </div>
+
+                                            <div class="product-offers">
+                            <h2>Предложения</h2>
+                            <ul>
+                                                                    <li>
+                                        <span>Apple MagSafe Charger 15W</span>
+                                        <span class="text-muted"></span>
+                                    </li>
+                                                            </ul>
+                        </div>
+                    
+                                            <a href="/catalog/apple/originalnye-aksessuary/apple-magsafe-charger/" class="btn btn-outline">Все товары Apple MagSafe Charger</a>
+                                    </div>
+            </div>
+
+            <div class="product-tabs">
+                <div class="product-tab-content">
+                    <h2>Описание Apple MagSafe Charger 15W</h2>
+                    <div class="product-description">
+                        Описание товара появится позже.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <footer class="site-footer">
+    <div class="container-theme footer-inner">
+        <p class="footer-disclaimer">
+            Гарантия на товар и гарантийное обслуживание предоставляется в соответствии с Гражданским кодексом Российской Федерации (ГК РФ) и Законом Российской Федерации от 7 февраля 1992 г. № 2300-1 "О защите прав потребителей".
+        </p>
+
+        <div class="footer-columns">
+            <div>
+                <h3>Интернет-магазин</h3>
+                <ul>
+                    <li><a href="/catalog">Каталог</a></li>
+                    <li><a href="/sales">Акции</a></li>
+                    <li><a href="/brands">Бренды</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Компания</h3>
+                <ul>
+                    <li><a href="/stores">Магазины</a></li>
+                    <li><a href="/review">Оставить отзыв</a></li>
+                    <li><a href="/company">О компании</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Информация</h3>
+                <ul>
+                    <li><a href="/info/payment">Способы оплаты</a></li>
+                    <li><a href="/info/delivery">Доставка</a></li>
+                    <li><a href="/info/warranty">Гарантия</a></li>
+                    <li><a href="/trade-in">Программа Trade-in</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Контакты</h3>
+                <a href="tel:88005051307" class="phone">8 (800) 505-13-07</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container-theme footer-bottom-inner">
+            <p>© 2026 Gadget-Bar.ru</p>
+            <div class="footer-bottom-links">
+                <a href="/privacy">Конфиденциальность</a>
+                <a href="/offer">Оферта</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    </body>
+</html>

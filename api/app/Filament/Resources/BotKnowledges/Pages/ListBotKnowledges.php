@@ -4,7 +4,7 @@ namespace App\Filament\Resources\BotKnowledges\Pages;
 
 use App\Filament\Resources\BotKnowledges\BotKnowledgeResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\ListRecords;
 
 class ListBotKnowledges extends ListRecords
 {

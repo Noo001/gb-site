@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\BotKnowledges\Tables;
 
+use App\Filament\Concerns\HasDefaultTableSettings;
+
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -12,9 +14,11 @@ use Filament\Tables\Table;
 
 class BotKnowledgesTable
 {
+    use HasDefaultTableSettings;
+
     public static function configure(Table $table): Table
     {
-        return $table
+        return self::applyDefaults($table)
             ->columns([
                 TextColumn::make('type')
                     ->badge(),

@@ -4,7 +4,7 @@ namespace App\Filament\Resources\SeoMetadata\Pages;
 
 use App\Filament\Resources\SeoMetadata\SeoMetadataResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\ListRecords;
 
 class ListSeoMetadata extends ListRecords
 {

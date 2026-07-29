@@ -4,7 +4,7 @@ namespace App\Filament\Resources\BotTradeInPrices\Pages;
 
 use App\Filament\Resources\BotTradeInPrices\BotTradeInPriceResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\ListRecords;
 
 class ListBotTradeInPrices extends ListRecords
 {

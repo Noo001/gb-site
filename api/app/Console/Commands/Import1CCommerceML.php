@@ -129,6 +129,12 @@ class Import1CCommerceML extends Command
             foreach ($xml->Классификатор->Склады->Склад ?? [] as $storage) {
                 $id = (string) $storage->Ид;
                 $name = (string) $storage->Наименование;
+
+                // Пропускаем служебные/тестовые склады из 1С.
+                if (\App\Models\Store::resolveType($name) === \App\Models\Store::TYPE_SERVICE) {
+                    continue;
+                }
+
                 $parts = array_map('trim', explode(',', $name, 2));
                 $this->storages[$id] = [
                     'external_id' => $id,

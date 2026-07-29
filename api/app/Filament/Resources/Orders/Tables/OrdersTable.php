@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Filament\Concerns\HasDefaultTableSettings;
+
 use App\Models\Order;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -13,9 +15,11 @@ use Filament\Tables\Table;
 
 class OrdersTable
 {
+    use HasDefaultTableSettings;
+
     public static function configure(Table $table): Table
     {
-        return $table
+        return self::applyDefaults($table)
             ->columns([
                 TextColumn::make('id')
                     ->label('№')

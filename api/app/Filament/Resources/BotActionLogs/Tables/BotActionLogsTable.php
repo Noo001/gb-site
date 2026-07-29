@@ -2,14 +2,18 @@
 
 namespace App\Filament\Resources\BotActionLogs\Tables;
 
+use App\Filament\Concerns\HasDefaultTableSettings;
+
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class BotActionLogsTable
 {
+    use HasDefaultTableSettings;
+
     public static function configure(Table $table): Table
     {
-        return $table
+        return self::applyDefaults($table)
             ->columns([
                 TextColumn::make('created_at')
                     ->dateTime()

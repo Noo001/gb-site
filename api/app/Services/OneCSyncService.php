@@ -315,11 +315,23 @@ class OneCSyncService
         }
     }
 
-    public function applyStore(string $externalId, ?array $data = null): Store
+    public function applyStore(string $externalId, ?array $data = null): ?Store
     {
+        $name = $data['name'] ?? null;
+
+        // Не создаём и не обновляем служебные/тестовые склады из 1С.
+        if ($name && Store::resolveType($name) === Store::TYPE_SERVICE) {
+            // Если такой склад уже есть — деактивируем, чтобы не мешал в списках.
+            $existing = Store::where('external_id', $externalId)->first();
+            if ($existing) {
+                $existing->update(['is_active' => false, 'type' => Store::TYPE_SERVICE]);
+            }
+            return null;
+        }
+
         $store = Store::firstOrNew(['external_id' => $externalId]);
 
-        $store->name = $data['name'] ?? ($store->name ?: $externalId);
+        $store->name = $name ?: ($store->name ?: $externalId);
         $store->address = $data['address'] ?? $store->address;
         $store->is_active = $data['is_active'] ?? ($store->is_active ?? true);
         $store->sort = $data['sort'] ?? ($store->sort ?? 0);

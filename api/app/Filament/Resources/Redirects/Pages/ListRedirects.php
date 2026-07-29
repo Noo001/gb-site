@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Redirects\Pages;
 
 use App\Filament\Resources\Redirects\RedirectResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\ListRecords;
 
 class ListRedirects extends ListRecords
 {

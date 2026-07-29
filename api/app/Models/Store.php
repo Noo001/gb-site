@@ -11,9 +11,14 @@ class Store extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const TYPE_STORE = 'store';
+    public const TYPE_DEPARTMENT = 'department';
+    public const TYPE_SERVICE = 'service';
+
     protected $fillable = [
         'external_id',
         'name',
+        'type',
         'city',
         'address',
         'phone',
@@ -31,6 +36,46 @@ class Store extends Model
         'is_active' => 'boolean',
         'sort' => 'integer',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::saving(function (Store $store) {
+            $store->type = self::resolveType($store->name);
+        });
+    }
+
+    /**
+     * Определяем тип склада по названию:
+     * - service: РЦ, Брак, Уценка, Склад приема, placeholder-склады, тестовые.
+     * - department: подразделения 1С.
+     * - store: обычный магазин/склад.
+     */
+    public static function resolveType(?string $name): string
+    {
+        if ($name === null) {
+            return self::TYPE_STORE;
+        }
+
+        $lower = mb_strtolower($name);
+
+        $serviceMarkers = [
+            'тест', 'test', '>>выберите склад<<', 'брак', 'уценка',
+            'склад приема', 'склад приёма', 'рц ', 'распределительный центр',
+        ];
+        foreach ($serviceMarkers as $marker) {
+            if (str_contains($lower, $marker)) {
+                return self::TYPE_SERVICE;
+            }
+        }
+
+        if (str_starts_with($lower, '(подразделение)')) {
+            return self::TYPE_DEPARTMENT;
+        }
+
+        return self::TYPE_STORE;
+    }
 
     public function prices(): HasMany
     {

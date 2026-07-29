@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Categories\Tables;
 
+use App\Filament\Concerns\HasDefaultTableSettings;
+
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -15,9 +17,11 @@ use Filament\Tables\Table;
 
 class CategoriesTable
 {
+    use HasDefaultTableSettings;
+
     public static function configure(Table $table): Table
     {
-        return $table
+        return self::applyDefaults($table)
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')
                     ->collection('image')
