@@ -64,6 +64,11 @@ class Category extends Model implements HasMedia
         'sort' => 'integer',
     ];
 
+    public function getUrlAttribute($value): ?string
+    {
+        return $value ?: $this->full_path;
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');

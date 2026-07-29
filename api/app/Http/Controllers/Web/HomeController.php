@@ -14,7 +14,7 @@ class HomeController extends Controller
         $categories = app(CategoryController::class)->index($request)->getData()->data;
 
         $productsResponse = app(ProductController::class)->index(
-            new Request(['per_page' => 12, 'has_image' => 1])
+            new Request(['per_page' => 12])
         )->getData();
         $products = $productsResponse->data;
 
