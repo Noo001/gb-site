@@ -1,5 +1,9 @@
 # Контекст текущей сессии — синхронный обмен 1С УНФ 3.0 → Единая база
 
+> **Ассистент:** женский род, зовут Кимико.
+
+> **Последнее обновление:** 29.07.2026 — роли в админке, сверка с 1С, доработка конфигуратора ПК.
+
 > Файл создан для быстрого входа в задачу после очистки контекста разговора.
 > Обновлён 25.07.2026 после рабочей сессии по подпискам.
 
@@ -118,5 +122,23 @@
 - SSH: `mastak97_gbsale@gbsale.ru` (пароль в `.env.secrets`, ключ `SSH_PASSWORD`), PHP: `/usr/local/bin/php8.4`, путь `~/api` (домашняя = `/home/m/mastak97/gbsale.ru`).
 - БД сайта напрямую снаружи недоступна (только из сети Beget) — запросы через SSH. Рабочий способ выполнить PHP на сервере: `docker run --rm -v "C:/repos/gb-site:/work" -e SSHPASS alpine` + `apk add sshpass openssh-client`, скрипт заливать `ssh ... "cat > /tmp/x.php" < /work/local.php`, выполнять `php8.4 /tmp/x.php` (bootstrap Laravel внутри скрипта: vendor/autoload + bootstrap/app + Kernel::bootstrap). `tinker --execute` с вложенным эскейпингом — боль, не использовать.
 - На машине разработки: Docker (контейнер alpine+sshpass для SSH), PHP 8.4.22 (`/c/php84`), Composer, Python 3.12, Node 24.
+
+## Состояние на 29.07.2026 — RBAC, сверка с 1С, доработка конфигуратора ПК
+
+- **Ассистент:** женский род, зовут Кимико.
+- **Роли в админке (`spatie/laravel-permission`)**: созданы `superadmin`, `manager`, `content`, `bot-operator`, `1c-operator`. Раздел `/admin` теперь доступен только пользователям с ролью. Меню сгруппировано: Каталог, Сайт, Бот, Настройки. Первый суперадмин создаётся через `InitialAdminSeeder` (`INITIAL_ADMIN_EMAIL` / `INITIAL_ADMIN_PASSWORD` в `.env`).
+- **Сотрудники**: новый ресурс `Настройки → Сотрудники` — создание/редактирование пользователей и назначение ролей.
+- **Команда сверки с 1С**: `php artisan reconcile:1c`. Сравнивает `products`/`offers`/`prices`/`stocks` с индексом 1С (`bot_products`). Находит товары без `uuid_1c`, товары, отсутствующие в индексе 1С, расхождения цен и остатков. Флаги: `--dry-run`, `--deactivate-missing`, `--cleanup-logs`. Запланирована в cron на 03:00.
+- **Важно:** локально данных не было, поэтому реальные расхождения на проде пока неизвестны. Для диагностики запустить на сервере:
+  ```bash
+  php8.4 artisan reconcile:1c --dry-run
+  ```
+  После проверки — применить:
+  ```bash
+  php8.4 artisan reconcile:1c --deactivate-missing --cleanup-logs
+  ```
+- **Конфигуратор ПК**: для мультивыборных слотов (RAM, storage, extra) добавлены кнопки `+` / `−` для изменения количества. Итоговая сумма и заказ учитывают quantity. Автоподбор по бюджету и заявка менеджеру оставлены как есть (уже были реализованы ранее).
+- **Тесты**: добавлены `AdminRolesTest`, `Reconcile1CTest`, тест quantity в `PcConfiguratorTest`. Все feature-тесты проходят (61 warning из-за отсутствия `.env` в тестовом контейнере, не failure).
+- **Commit:** `919bfb7` — не запушен. Перед деплоем добавить в `api/.env` на сервере `INITIAL_ADMIN_EMAIL` и `INITIAL_ADMIN_PASSWORD`, выполнить `migrate --force` и `db:seed` для `RolesAndPermissionsSeeder` + `InitialAdminSeeder`.
 - Тесты: `cd api && /c/php84/php.exe artisan test` (33 зелёных).
 - После деплоя на сервере: `git pull && php8.4 artisan config:cache` (+ `route:cache` при новых маршрутах!).
