@@ -64,8 +64,9 @@
                                     <div class="pc-parts" x-show="!loadingParts && !partsEmpty">
                                         <template x-for="part in parts" :key="part.id">
                                             <button type="button" class="pc-part"
-                                                    :class="{ 'pc-part--selected': isSelected(slot, part) }"
+                                                    :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }"
                                                     @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
                                                 <span class="pc-part-name" x-text="part.name"></span>
                                                 <span class="pc-part-meta">
                                                     <template x-for="chip in chips(part)" :key="chip">
@@ -76,7 +77,7 @@
                                                     <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
                                                     <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
                                                 </span>
-                                                <template x-if="isMulti(slot.id) && isSelected(slot, part)">
+                                                <template x-if="isMulti(slot.id)">
                                                     <span class="pc-part-qty" @click.stop>
                                                         <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
                                                         <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
@@ -575,9 +576,7 @@
                 if (this.isMulti(slot.id)) {
                     const list = this.build[slot.id] || [];
                     const idx = list.findIndex(p => p.id === part.id);
-                    if (idx >= 0) {
-                        list.splice(idx, 1);
-                    } else {
+                    if (idx < 0) {
                         list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
                     }
                     if (list.length) this.build[slot.id] = list;
@@ -606,7 +605,15 @@
                 if (!this.isMulti(slot.id)) return;
                 const list = this.build[slot.id] || [];
                 const idx = list.findIndex(p => p.id === part.id);
-                if (idx < 0) return;
+                if (idx < 0) {
+                    if (delta > 0) {
+                        list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
+                        if (list.length) this.build[slot.id] = list;
+                        this.saveBuild();
+                        this.parts = this.parts.map(p => ({ ...p }));
+                    }
+                    return;
+                }
                 const next = list[idx].qty + delta;
                 if (next <= 0) {
                     list.splice(idx, 1);

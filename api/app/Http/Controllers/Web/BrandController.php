@@ -11,32 +11,44 @@ class BrandController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = app(CategoryController::class)->index($request)->getData()->data;
-        $brands = array_filter($categories, fn ($c) => str_starts_with($c->full_path ?? '', '/brands/'));
+        $brands = \App\Models\Product::query()
+            ->forCatalog()
+            ->whereNotNull('brand')
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand')
+            ->map(fn (string $name) => (object) [
+                'name' => $name,
+                'slug' => \Illuminate\Support\Str::slug($name),
+                'url' => '/brands/' . \Illuminate\Support\Str::slug($name),
+            ])
+            ->values();
 
         return view('brands.index', compact('brands'));
     }
 
     public function show(Request $request, string $slug)
     {
-        $categories = app(CategoryController::class)->index($request)->getData()->data;
-        $brand = null;
+        $brands = \App\Models\Product::query()
+            ->forCatalog()
+            ->whereNotNull('brand')
+            ->distinct()
+            ->pluck('brand');
 
-        foreach ($categories as $category) {
-            foreach ($category->children ?? [] as $child) {
-                if ($child->slug === $slug) {
-                    $brand = $child;
-                    break 2;
-                }
-            }
-        }
+        $brandName = $brands->first(fn ($name) => \Illuminate\Support\Str::slug($name) === $slug);
 
-        if (! $brand) {
+        if (! $brandName) {
             return redirect('/brands');
         }
 
+        $brand = (object) [
+            'name' => $brandName,
+            'slug' => $slug,
+            'url' => '/brands/' . $slug,
+        ];
+
         $products = app(ProductController::class)->index(
-            new Request(['brand' => $brand->name, 'per_page' => 24])
+            new Request(['brand' => $brandName, 'per_page' => 24])
         )->getData();
 
         $breadcrumbs = [

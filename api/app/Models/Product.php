@@ -56,18 +56,44 @@ class Product extends Model implements HasMedia
 
     public function defaultOffer(): ?Offer
     {
-        return $this->offers()->first();
+        return $this->offers->first();
     }
 
     public function currentPrice(): ?Price
     {
         $offer = $this->defaultOffer();
-        return $offer ? $offer->prices()->first() : null;
+        return $offer ? $offer->prices->first() : null;
+    }
+
+    public function minPrice(): ?float
+    {
+        $prices = $this->offers->flatMap(fn (Offer $offer) => $offer->prices);
+        if ($prices->isEmpty()) {
+            return null;
+        }
+
+        return (float) $prices->min('price');
+    }
+
+    public function totalStock(): float
+    {
+        return (float) $this->offers->flatMap(fn (Offer $offer) => $offer->stocks)->sum('quantity');
     }
 
     public function currentStock(): ?Stock
     {
         $offer = $this->defaultOffer();
-        return $offer ? $offer->stocks()->first() : null;
+        return $offer ? $offer->stocks->first() : null;
+    }
+
+    public function scopeForCatalog($query)
+    {
+        return $query->where('is_active', true)
+            ->whereHas('category', fn ($q) => $q->forCatalog());
+    }
+
+    public function isForCatalog(): bool
+    {
+        return $this->is_active && $this->category && ! $this->category->isService();
     }
 }

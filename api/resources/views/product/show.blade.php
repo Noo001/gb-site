@@ -88,8 +88,13 @@
                         </div>
                     </div>
 
+                    @php
+                        $detailPrice = $product->price ?? null;
+                        $detailStock = $product->stock ?? 0;
+                    @endphp
                     <div class="product-buy-box">
-                        <div class="product-buy-price">Цена по запросу</div>
+                        <div class="product-buy-price">{{ $detailPrice !== null ? number_format($detailPrice, 0, '.', ' ') . ' ₽' : 'Цена по запросу' }}</div>
+                        <div class="product-buy-stock">{{ $detailStock > 0 ? 'В наличии' : 'Под заказ' }}</div>
                         <button type="button" class="btn btn-primary btn-cart" @click="addToCart" :disabled="loading">
                             <span x-show="!loading">В корзину</span>
                             <span x-show="loading">Добавляем...</span>

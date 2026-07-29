@@ -67,12 +67,16 @@ $image = $product->images[0] ?? $product->category?->image ?? '/images/placehold
             <div class="product-card-brand">{{ $product->brand }}</div>
         @endif
 
-        <div class="product-card-price">Цена по запросу</div>
+        @php
+            $cardPrice = $product->price ?? null;
+            $cardStock = $product->stock ?? 0;
+        @endphp
+        <div class="product-card-price">{{ $cardPrice !== null ? number_format($cardPrice, 0, '.', ' ') . ' ₽' : 'Цена по запросу' }}</div>
         <div class="product-card-bonus"><span>GB</span> + 0 бонусов</div>
         <div class="product-card-name">{{ $product->name }}</div>
         <div class="product-card-stock">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            В наличии
+            {{ $cardStock > 0 ? 'В наличии' : 'Под заказ' }}
         </div>
     </a>
 

@@ -48,12 +48,13 @@ class AuthController extends Controller
     public function accessCheck(Request $request)
     {
         if ($request->input('password') === PasswordGate::PASSWORD) {
+            $cookie = cookie(PasswordGate::COOKIE_NAME, PasswordGate::COOKIE_VALUE, 60 * 24 * 30, '/', null, false, false, false, 'Lax');
+
             if ($request->expectsJson()) {
-                return response()->json(['success' => true]);
+                return response()->json(['success' => true])->withCookie($cookie);
             }
-            // Legacy server-side session fallback (kept for non-JS clients).
-            session(['site_access_granted' => true]);
-            return redirect()->intended(route('home'));
+
+            return redirect()->intended(route('home'))->withCookie($cookie);
         }
 
         if ($request->expectsJson()) {

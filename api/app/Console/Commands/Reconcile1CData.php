@@ -32,9 +32,11 @@ class Reconcile1CData extends Command
             'products_1c_active' => BotProduct::where('is_active', true)->count(),
             'without_uuid_1c' => 0,
             'not_found_in_1c' => 0,
+            'in_service_categories' => 0,
             'price_mismatch' => 0,
             'stock_mismatch' => 0,
             'deactivated' => 0,
+            'service_deactivated' => 0,
             'logs_deleted' => 0,
         ];
 
@@ -87,6 +89,20 @@ class Reconcile1CData extends Command
             }
         }
 
+        // Товары в служебных категориях 1С (Б/У, На удаление, Витринные образцы и т.п.).
+        $serviceCategoryIds = \App\Models\Category::query()
+            ->whereIn('name', \App\Models\Category::SERVICE_NAMES)
+            ->pluck('id')
+            ->toArray();
+
+        $inServiceCategories = Product::query()
+            ->where('is_active', true)
+            ->whereIn('category_id', $serviceCategoryIds)
+            ->select(['id', 'name', 'sku', 'category_id'])
+            ->get();
+
+        $report['in_service_categories'] = $inServiceCategories->count();
+
         // Деактивация мусора.
         if ($deactivateMissing && ! $dryRun) {
             $toDeactivate = Product::query()
@@ -99,6 +115,11 @@ class Reconcile1CData extends Command
 
             Product::whereIn('id', $toDeactivate)->update(['is_active' => false]);
             $report['deactivated'] = $toDeactivate->count();
+
+            // Деактивируем товары в служебных категориях.
+            $serviceIds = $inServiceCategories->pluck('id');
+            Product::whereIn('id', $serviceIds)->update(['is_active' => false]);
+            $report['service_deactivated'] = $serviceIds->count();
         }
 
         // Очистка старых логов.
@@ -122,9 +143,11 @@ class Reconcile1CData extends Command
                 ['Активных в индексе 1С', $report['products_1c_active']],
                 ['Без uuid_1c (мусор/демо)', $report['without_uuid_1c']],
                 ['Не найдены в 1С', $report['not_found_in_1c']],
+                ['В служебных категориях', $report['in_service_categories']],
                 ['Расхождения цен', $report['price_mismatch']],
                 ['Расхождения остатков', $report['stock_mismatch']],
-                ['Деактивировано', $report['deactivated']],
+                ['Деактивировано (нет в 1С)', $report['deactivated']],
+                ['Деактивировано (служебные категории)', $report['service_deactivated']],
                 ['Удалено логов старше 30д', $report['logs_deleted']],
             ]
         );

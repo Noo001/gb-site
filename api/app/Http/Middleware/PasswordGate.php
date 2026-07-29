@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 class PasswordGate
 {
     public const PASSWORD = '111';
+    public const COOKIE_NAME = 'site_access';
+    public const COOKIE_VALUE = 'granted';
 
     public function handle(Request $request, Closure $next): Response
     {
@@ -20,9 +22,11 @@ class PasswordGate
             return $next($request);
         }
 
-        // Client-side gate: the user must visit with ?site_access=granted after
-        // entering the password. sessionStorage is checked by the gate page JS.
-        if ($request->query('site_access') === 'granted') {
+        if ($request->cookie(self::COOKIE_NAME) === self::COOKIE_VALUE) {
+            return $next($request);
+        }
+
+        if ($request->query(self::COOKIE_NAME) === self::COOKIE_VALUE) {
             return $next($request);
         }
 

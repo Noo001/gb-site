@@ -14,6 +14,35 @@ class Category extends Model implements HasMedia
 {
     use HasFactory, SoftDeletes, InteractsWithMedia;
 
+    /**
+     * Служебные категории 1С, которые не должны быть видны в каталоге сайта.
+     */
+    public const SERVICE_NAMES = [
+        'На удаление',
+        'Для заказа',
+        'Переклейка',
+        'Б/У',
+        'Витринные образцы',
+        'Обменные устройства',
+        'Внутренее',
+        'Ремонт',
+        'Подписки',
+        'Модульная замена',
+        'Номенклатуры для ремонта',
+        'Компонентный ремонт / ПО / Чистки',
+        'Подарочная упаковка',
+        'Кресла и стулья',
+        'Очки',
+        'Игрушки',
+        'Товары для ванной',
+        'Товары для животных',
+        'Товары для ухода за одеждой',
+        'Климат / Климатические установки',
+        'Безопасная сеть',
+        'ВЫГОДНЫЕ ПРЕДЛОЖЕНИЯ',
+        'Аскессуары для роботов-пылесосов',
+    ];
+
     protected $fillable = [
         'parent_id',
         'external_id',
@@ -53,5 +82,16 @@ class Category extends Model implements HasMedia
     public function seoMetadata()
     {
         return $this->morphOne(SeoMetadata::class, 'entity');
+    }
+
+    public function scopeForCatalog($query)
+    {
+        return $query->where('is_active', true)
+            ->whereNotIn('name', self::SERVICE_NAMES);
+    }
+
+    public function isService(): bool
+    {
+        return in_array($this->name, self::SERVICE_NAMES, true);
     }
 }

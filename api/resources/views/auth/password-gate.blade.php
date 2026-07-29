@@ -91,12 +91,24 @@
 
     <script>
         (function () {
+            const COOKIE_NAME = 'site_access';
+            const COOKIE_VALUE = 'granted';
             const STORAGE_KEY = 'site_access_granted';
 
-            // If the flag is already in sessionStorage, redirect with the access marker.
-            if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+            function setCookie(name, value, days) {
+                const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+                document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/; SameSite=Lax';
+            }
+
+            function hasAccess() {
+                return document.cookie.split(';').some(c => c.trim().startsWith(COOKIE_NAME + '=' + COOKIE_VALUE));
+            }
+
+            // If the flag is already in cookie, redirect without the query marker.
+            if (hasAccess() || sessionStorage.getItem(STORAGE_KEY) === '1') {
+                setCookie(COOKIE_NAME, COOKIE_VALUE, 30);
                 const url = new URL(window.location.href);
-                url.searchParams.set('site_access', 'granted');
+                url.searchParams.delete('site_access');
                 window.location.replace(url.toString());
                 return;
             }
@@ -124,9 +136,10 @@
                     .then(response => response.json().then(data => ({ ok: response.ok, data })))
                     .then(({ ok, data }) => {
                         if (ok && data.success) {
+                            setCookie(COOKIE_NAME, COOKIE_VALUE, 30);
                             sessionStorage.setItem(STORAGE_KEY, '1');
                             const url = new URL(window.location.href);
-                            url.searchParams.set('site_access', 'granted');
+                            url.searchParams.delete('site_access');
                             window.location.replace(url.toString());
                         } else {
                             throw new Error(data.message || 'Неверный пароль.');

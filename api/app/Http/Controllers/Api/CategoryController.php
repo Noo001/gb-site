@@ -11,16 +11,21 @@ class CategoryController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $roots = Category::query()
-            ->whereNull('parent_id')
-            ->where('is_active', true)
-            ->orderBy('sort')
-            ->orderBy('name')
-            ->with([
-                'media',
-                'children' => fn ($q) => $q->where('is_active', true)->orderBy('sort')->orderBy('name')->with('media'),
-            ])
-            ->get();
+        $cacheKey = 'category_tree_for_catalog';
+        $ttl = now()->addHour();
+
+        $roots = \Illuminate\Support\Facades\Cache::remember($cacheKey, $ttl, function () {
+            return Category::query()
+                ->whereNull('parent_id')
+                ->forCatalog()
+                ->orderBy('sort')
+                ->orderBy('name')
+                ->with([
+                    'media',
+                    'children' => fn ($q) => $q->forCatalog()->orderBy('sort')->orderBy('name')->with('media'),
+                ])
+                ->get();
+        });
 
         return response()->json([
             'data' => $roots->map(fn (Category $c) => $this->treeNode($c)),
@@ -42,11 +47,11 @@ class CategoryController extends Controller
             ->orWhere('full_path', $path)
             ->with([
                 'parent',
-                'children' => fn ($q) => $q->where('is_active', true)->orderBy('sort')->orderBy('name'),
+                'children' => fn ($q) => $q->forCatalog()->orderBy('sort')->orderBy('name'),
             ])
             ->first();
 
-        if (! $category) {
+        if (! $category || $category->isService()) {
             return response()->json(['message' => 'Category not found'], 404);
         }
 
@@ -90,7 +95,12 @@ class CategoryController extends Controller
 
         $products = $category->products()
             ->where('is_active', true)
-            ->with('media')
+            ->with([
+                'media',
+                'offers' => fn ($q) => $q->where('is_active', true)->orderBy('sort'),
+                'offers.prices',
+                'offers.stocks',
+            ])
             ->orderBy('name')
             ->paginate($request->integer('per_page', 24));
 
@@ -112,6 +122,8 @@ class CategoryController extends Controller
                 'image' => $categoryImage,
             ],
             'images' => $p->getMedia('images')->map(fn ($m) => $m->getUrl())->values(),
+            'price' => $p->minPrice(),
+            'stock' => $p->totalStock(),
         ]);
 
         return response()->json($products);

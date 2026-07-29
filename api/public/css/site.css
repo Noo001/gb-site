@@ -1183,6 +1183,13 @@ button {
 .product-buy-price {
     font-size: 1.75rem;
     font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.product-buy-stock {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #16a34a;
     margin-bottom: 1rem;
 }
 
@@ -1772,6 +1779,24 @@ button {
 .pc-part--selected {
     border-color: #e879f9;
     box-shadow: 0 0 14px rgba(232, 121, 249, 0.25);
+}
+
+.pc-part--multi {
+    position: relative;
+}
+
+.pc-part-multi-badge {
+    position: absolute;
+    top: -0.4rem;
+    right: 0.5rem;
+    background: #22d3ee;
+    color: #0a0e16;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
 }
 
 .pc-part-name {

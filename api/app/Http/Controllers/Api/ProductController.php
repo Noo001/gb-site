@@ -12,8 +12,14 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Product::query()
-            ->where('is_active', true)
-            ->with(['category.media', 'media'])
+            ->forCatalog()
+            ->with([
+                'category.media',
+                'media',
+                'offers' => fn ($q) => $q->where('is_active', true)->orderBy('sort'),
+                'offers.prices',
+                'offers.stocks',
+            ])
             ->orderBy('name');
 
         $perPage = $request->integer('per_page', 24);
@@ -57,6 +63,8 @@ class ProductController extends Controller
                 'image' => $p->category->getFirstMediaUrl('image') ?: null,
             ] : null,
             'images' => $p->getMedia('images')->map(fn ($m) => $m->getUrl())->values(),
+            'price' => $p->minPrice(),
+            'stock' => $p->totalStock(),
         ]);
 
         return response()->json($paginator);
@@ -71,10 +79,12 @@ class ProductController extends Controller
                 'category.media',
                 'media',
                 'offers' => fn ($q) => $q->where('is_active', true)->orderBy('sort'),
+                'offers.prices',
+                'offers.stocks',
             ])
             ->first();
 
-        if (! $product) {
+        if (! $product || ! $product->isForCatalog()) {
             return response()->json(['message' => 'Product not found'], 404);
         }
 
@@ -102,6 +112,8 @@ class ProductController extends Controller
                 'image' => $product->category->getFirstMediaUrl('image') ?: null,
             ] : null,
             'images' => $product->getMedia('images')->map(fn ($m) => $m->getUrl()),
+            'price' => $product->minPrice(),
+            'stock' => $product->totalStock(),
             'offers' => $product->offers->map(fn ($offer) => [
                 'id' => $offer->id,
                 'name' => $offer->name,

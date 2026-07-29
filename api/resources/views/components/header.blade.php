@@ -1,5 +1,12 @@
 @php
-$categories = \App\Models\Category::whereNull('parent_id')->orderBy('name')->get();
+$categories = \Illuminate\Support\Facades\Cache::remember('category_tree_for_catalog_header', now()->addHour(), function () {
+    return \App\Models\Category::query()
+        ->whereNull('parent_id')
+        ->forCatalog()
+        ->orderBy('sort')
+        ->orderBy('name')
+        ->get();
+});
 $topLinks = [
     ['name' => 'Бренды', 'href' => '/brands'],
     ['name' => 'Статьи', 'href' => '/blog'],
