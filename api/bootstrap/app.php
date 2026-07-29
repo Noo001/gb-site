@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: ['*']);
-        $middleware->encryptCookies(except: ['cart_session_id']);
+        $middleware->encryptCookies(except: ['cart_session_id', 'site_access']);
         $middleware->web(\App\Http\Middleware\EnsureCartSession::class);
         // Глобально, а не в web-группе: иначе заглушка не срабатывает на 404
         // (при отсутствии маршрута групповые middleware не выполняются).
