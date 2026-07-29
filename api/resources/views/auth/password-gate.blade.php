@@ -104,12 +104,24 @@
                 return document.cookie.split(';').some(c => c.trim().startsWith(COOKIE_NAME + '=' + COOKIE_VALUE));
             }
 
-            // If the flag is already in cookie, redirect without the query marker.
-            if (hasAccess() || sessionStorage.getItem(STORAGE_KEY) === '1') {
+            // If the flag is already in cookie, we are done. Strip the legacy query marker only once.
+            if (hasAccess()) {
+                const url = new URL(window.location.href);
+                if (url.searchParams.has('site_access')) {
+                    url.searchParams.delete('site_access');
+                    window.location.replace(url.toString());
+                }
+                return;
+            }
+
+            // Legacy sessionStorage migration: set cookie and continue without reload if possible.
+            if (sessionStorage.getItem(STORAGE_KEY) === '1') {
                 setCookie(COOKIE_NAME, COOKIE_VALUE, 30);
                 const url = new URL(window.location.href);
-                url.searchParams.delete('site_access');
-                window.location.replace(url.toString());
+                if (url.searchParams.has('site_access')) {
+                    url.searchParams.delete('site_access');
+                    window.location.replace(url.toString());
+                }
                 return;
             }
 
