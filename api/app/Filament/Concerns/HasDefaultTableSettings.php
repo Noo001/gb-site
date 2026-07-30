@@ -10,7 +10,7 @@ trait HasDefaultTableSettings
     {
         return $table
             ->paginationPageOptions([10, 25, 50, 100, 200])
-            ->defaultPaginationPageOption(fn () => session('filament.records_per_page', 200))
+            ->defaultPaginationPageOption(200)
             ->persistSearchInSession()
             ->persistFiltersInSession()
             ->persistSortInSession()
