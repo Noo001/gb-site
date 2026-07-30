@@ -87,4 +87,5 @@ migrate-output.html
 
 # Temporary smoke-test artifacts
 /tests/admin-smoke.spec.js
+/tests/site-smoke.spec.js
 /tests/screenshots/
