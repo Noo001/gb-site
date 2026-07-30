@@ -13,7 +13,6 @@ trait HasDefaultTableSettings
             ->defaultPaginationPageOption(200)
             ->persistSearchInSession()
             ->persistFiltersInSession()
-            ->persistSortInSession()
-            ->persistColumnToggleInSession();
+            ->persistSortInSession();
     }
 }
