@@ -74,3 +74,13 @@ deploy/beget/.env.local
 # Temporary local secrets file (ignored during launch phase)
 .env.secrets
 deploy/beget/.env.beget
+
+# Temporary deployment/server diagnostic scripts
+check-*.php
+copy-*.php
+find-*.php
+migrate-*.php
+test-*.php
+view-*.php
+clear-cache.php
+migrate-output.html
