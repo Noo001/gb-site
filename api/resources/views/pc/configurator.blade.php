@@ -172,26 +172,37 @@
 
                                         {{-- Передняя панель с вентиляторами, USB и кнопкой --}}
                                         <rect x="20" y="20" width="90" height="780" rx="16" fill="#1f2937" stroke="#4b5563" stroke-width="1" />
-                                        <g transform="translate(65,170)">
+                                        {{-- Вентиляционная сетка --}}
+                                        <g fill="#0f172a" opacity="0.7">
+                                            <circle cx="40" cy="600" r="3" /><circle cx="50" cy="600" r="3" /><circle cx="60" cy="600" r="3" /><circle cx="70" cy="600" r="3" /><circle cx="80" cy="600" r="3" />
+                                            <circle cx="40" cy="615" r="3" /><circle cx="50" cy="615" r="3" /><circle cx="60" cy="615" r="3" /><circle cx="70" cy="615" r="3" /><circle cx="80" cy="615" r="3" />
+                                            <circle cx="40" cy="630" r="3" /><circle cx="50" cy="630" r="3" /><circle cx="60" cy="630" r="3" /><circle cx="70" cy="630" r="3" /><circle cx="80" cy="630" r="3" />
+                                            <circle cx="40" cy="645" r="3" /><circle cx="50" cy="645" r="3" /><circle cx="60" cy="645" r="3" /><circle cx="70" cy="645" r="3" /><circle cx="80" cy="645" r="3" />
+                                            <circle cx="40" cy="660" r="3" /><circle cx="50" cy="660" r="3" /><circle cx="60" cy="660" r="3" /><circle cx="70" cy="660" r="3" /><circle cx="80" cy="660" r="3" />
+                                        </g>
+                                        {{-- Кнопка питания --}}
+                                        <circle cx="65" cy="80" r="8" fill="#111827" stroke="#4b5563" stroke-width="2" />
+                                        <circle cx="65" cy="80" r="4" fill="#0cc0df" opacity="0.7" filter="url(#pcGlow)" />
+                                        {{-- USB/Audio порты --}}
+                                        <rect x="45" y="105" width="40" height="10" rx="2" fill="#111827" stroke="#4b5563" stroke-width="1" />
+                                        <rect x="45" y="122" width="40" height="10" rx="2" fill="#111827" stroke="#4b5563" stroke-width="1" />
+                                        <circle cx="55" cy="110" r="2" fill="#9ca3af" /><circle cx="75" cy="110" r="2" fill="#9ca3af" />
+                                        <circle cx="55" cy="127" r="2" fill="#9ca3af" /><circle cx="75" cy="127" r="2" fill="#9ca3af" />
+                                        {{-- Передние вентиляторы --}}
+                                        <g transform="translate(65,190)">
                                             <circle r="28" fill="#111827" stroke="#4b5563" stroke-width="2" />
                                             <g class="pc-fan-blades"><path d="M0 0 q0 -24 0 -24" /><path d="M0 0 q0 -24 0 -24" transform="rotate(45)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(90)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(135)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(180)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(225)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(270)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(315)" /></g>
-                                            <circle r="8" fill="#0cc0df" opacity="0.7" filter="url(#pcGlow)" />
                                         </g>
-                                        <g transform="translate(65,330)">
+                                        <g transform="translate(65,350)">
                                             <circle r="28" fill="#111827" stroke="#4b5563" stroke-width="2" />
                                             <g class="pc-fan-blades"><path d="M0 0 q0 -24 0 -24" /><path d="M0 0 q0 -24 0 -24" transform="rotate(45)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(90)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(135)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(180)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(225)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(270)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(315)" /></g>
-                                            <circle r="8" fill="#e879f9" opacity="0.6" filter="url(#pcGlow)" />
                                         </g>
-                                        <g transform="translate(65,490)">
+                                        <g transform="translate(65,510)">
                                             <circle r="28" fill="#111827" stroke="#4b5563" stroke-width="2" />
                                             <g class="pc-fan-blades"><path d="M0 0 q0 -24 0 -24" /><path d="M0 0 q0 -24 0 -24" transform="rotate(45)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(90)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(135)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(180)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(225)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(270)" /><path d="M0 0 q0 -24 0 -24" transform="rotate(315)" /></g>
-                                            <circle r="8" fill="#0cc0df" opacity="0.6" filter="url(#pcGlow)" />
                                         </g>
-                                        <rect x="42" y="62" width="44" height="10" rx="2" fill="#111827" stroke="#4b5563" />
-                                        <rect x="42" y="78" width="44" height="10" rx="2" fill="#111827" stroke="#4b5563" />
-                                        <circle class="pc-led" cx="64" cy="110" r="7" fill="#0cc0df" filter="url(#pcGlow)" />
-                                        <rect x="42" y="660" width="44" height="8" rx="1" fill="#111827" stroke="#4b5563" />
-                                        <rect x="42" y="676" width="44" height="8" rx="1" fill="#111827" stroke="#4b5563" />
+                                        {{-- RGB-полоска на передней панели --}}
+                                        <rect x="35" y="710" width="60" height="4" rx="2" fill="url(#pcRgb)" opacity="0.5" filter="url(#pcGlow)" />
 
                                         {{-- Внутренняя камера с подсветкой --}}
                                         <rect x="44" y="44" width="512" height="792" rx="10" fill="#111827" />
@@ -379,14 +390,8 @@
                                             <text class="pc-slot-label" x="470" y="695" x-show="build['extra']" x-text="shortName('extra')"></text>
                                         </g>
 
-                                        {{-- RGB-подсветка --}}
-                                        <rect class="pc-rgb" x="44" y="830" width="512" height="6" rx="3" fill="url(#pcRgb)" opacity="0.8" filter="url(#pcGlow)" />
-                                        <rect class="pc-rgb" x="44" y="44" width="6" height="792" rx="3" fill="url(#pcRgb)" opacity="0.6" filter="url(#pcGlow)" />
-                                        <rect class="pc-rgb" x="44" y="44" width="512" height="6" rx="3" fill="url(#pcRgb)" opacity="0.6" filter="url(#pcGlow)" />
-
-                                        {{-- Стеклянная боковая панель --}}
-                                        <rect class="pc-glass" x="44" y="44" width="512" height="792" rx="10" fill="url(#pcGlassGrad)" stroke="rgba(255,255,255,0.18)" stroke-width="2" />
-                                        <path class="pc-glass-glare" d="M44 44 L240 44 L44 420 Z" />
+                                        {{-- Тонкая стеклянная рамка --}}
+                                        <rect class="pc-glass" x="44" y="44" width="512" height="792" rx="10" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5" />
                                     </svg>
                                 </div>
                                 <div class="pc-case-face pc-case-face--back"></div>

@@ -2039,41 +2039,44 @@ button {
     width: var(--pc-w);
     height: var(--pc-h);
     transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(calc(var(--pc-d) / 2));
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    background:
+        linear-gradient(180deg, transparent 8%, rgba(75,85,99,0.25) 8%, rgba(75,85,99,0.25) 10%, transparent 10%),
+        linear-gradient(180deg, transparent 92%, rgba(75,85,99,0.25) 92%, rgba(75,85,99,0.25) 94%, transparent 94%),
+        linear-gradient(135deg, #1f2937 0%, #111827 100%);
     border-radius: 18px;
 }
 
-.pc-case-face--left {
-    width: var(--pc-d);
-    height: var(--pc-h);
-    transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(calc(var(--pc-w) / 2));
-    background: linear-gradient(180deg, #374151 0%, #1f2937 100%);
-    border-radius: 18px;
-}
-
+.pc-case-face--left,
 .pc-case-face--right {
     width: var(--pc-d);
     height: var(--pc-h);
-    transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(calc(var(--pc-w) / 2));
-    background: linear-gradient(180deg, #374151 0%, #1f2937 100%);
+    background:
+        radial-gradient(circle at 25% 8%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
+        radial-gradient(circle at 75% 8%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
+        radial-gradient(circle at 25% 92%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
+        radial-gradient(circle at 75% 92%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
+        linear-gradient(180deg, #374151 0%, #1f2937 100%);
     border-radius: 18px;
 }
 
-.pc-case-face--top {
-    width: var(--pc-w);
-    height: var(--pc-d);
-    transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(calc(var(--pc-h) / 2));
-    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-    border-radius: 18px;
-}
+.pc-case-face--left { transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(calc(var(--pc-w) / 2)); }
+.pc-case-face--right { transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(calc(var(--pc-w) / 2)); }
 
+.pc-case-face--top,
 .pc-case-face--bottom {
     width: var(--pc-w);
     height: var(--pc-d);
-    transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(calc(var(--pc-h) / 2));
-    background: linear-gradient(135deg, #111827 0%, #030712 100%);
+    background:
+        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
+        radial-gradient(circle at 40% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
+        radial-gradient(circle at 60% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
+        radial-gradient(circle at 80% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
+        linear-gradient(135deg, #374151 0%, #1f2937 100%);
     border-radius: 18px;
 }
+
+.pc-case-face--top { transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(calc(var(--pc-h) / 2)); }
+.pc-case-face--bottom { transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(calc(var(--pc-h) / 2)); }
 
 .pc-case-svg {
     width: 100%;
