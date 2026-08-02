@@ -2466,8 +2466,17 @@ button {
 }
 
 .pc-auto-build {
-    max-width: 720px;
+    max-width: 1000px;
     margin: 0 auto;
+}
+
+.pc-auto-intro,
+.pc-auto-form,
+.pc-auto-result,
+.pc-auto-fallback {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .pc-auto-intro {
