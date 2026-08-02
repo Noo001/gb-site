@@ -89,3 +89,13 @@ migrate-output.html
 /tests/admin-smoke.spec.js
 /tests/site-smoke.spec.js
 /tests/screenshots/
+
+# Local PC configurator test artifacts
+pc3d*.png
+pc3dv*.png
+screenshot_pc*.js
+test3d*.html
+test3d*.png
+test_*.js
+dump_pc3d.js
+pc3d_dump.html
