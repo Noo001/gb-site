@@ -2378,8 +2378,8 @@ button {
 }
 
 .pc-fan-blades path {
-    fill: #7dd3fc;
-    stroke: rgba(255,255,255,0.3);
+    fill: #bae6fd;
+    stroke: rgba(255,255,255,0.4);
     stroke-width: 0.5;
 }
 
@@ -2394,17 +2394,17 @@ button {
 }
 
 .pc-rgb {
-    opacity: 0.75;
+    opacity: 0.9;
 }
 
 .pc-glass {
     fill: url(#pcGlassGrad);
-    stroke: rgba(255, 255, 255, 0.18);
+    stroke: rgba(255, 255, 255, 0.14);
     stroke-width: 2;
 }
 
 .pc-glass-glare {
-    fill: rgba(255, 255, 255, 0.05);
+    fill: rgba(255, 255, 255, 0.04);
     pointer-events: none;
 }
 

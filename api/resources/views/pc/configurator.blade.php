@@ -109,29 +109,29 @@
                                     <svg class="pc-case-svg" viewBox="0 0 600 820" xmlns="http://www.w3.org/2000/svg" aria-label="Схема системного блока">
                                         <defs>
                                             <linearGradient id="pcCaseBody" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0" stop-color="#0f172a" />
-                                                <stop offset="1" stop-color="#1e293b" />
+                                                <stop offset="0" stop-color="#1e293b" />
+                                                <stop offset="1" stop-color="#2d3748" />
                                             </linearGradient>
                                             <linearGradient id="pcGlassGrad" x1="0" y1="0" x2="1" y2="1">
-                                                <stop offset="0" stop-color="rgba(255,255,255,0.18)" />
-                                                <stop offset="0.5" stop-color="rgba(255,255,255,0.05)" />
-                                                <stop offset="1" stop-color="rgba(255,255,255,0.12)" />
+                                                <stop offset="0" stop-color="rgba(255,255,255,0.10)" />
+                                                <stop offset="0.5" stop-color="rgba(255,255,255,0.02)" />
+                                                <stop offset="1" stop-color="rgba(255,255,255,0.06)" />
                                             </linearGradient>
                                             <linearGradient id="pcMb" x1="0" y1="0" x2="1" y2="1">
-                                                <stop offset="0" stop-color="#1e4a20" />
-                                                <stop offset="1" stop-color="#112e12" />
+                                                <stop offset="0" stop-color="#225a24" />
+                                                <stop offset="1" stop-color="#153d17" />
                                             </linearGradient>
                                             <linearGradient id="pcGpuGrad" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0" stop-color="#52525b" />
-                                                <stop offset="1" stop-color="#3f3f46" />
-                                            </linearGradient>
-                                            <linearGradient id="pcRamGrad" x1="0" y1="0" x2="0" y2="1">
                                                 <stop offset="0" stop-color="#6b7280" />
                                                 <stop offset="1" stop-color="#52525b" />
                                             </linearGradient>
+                                            <linearGradient id="pcRamGrad" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0" stop-color="#9ca3af" />
+                                                <stop offset="1" stop-color="#6b7280" />
+                                            </linearGradient>
                                             <linearGradient id="pcPsuGrad" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0" stop-color="#6b7280" />
-                                                <stop offset="1" stop-color="#4b5563" />
+                                                <stop offset="0" stop-color="#9ca3af" />
+                                                <stop offset="1" stop-color="#6b7280" />
                                             </linearGradient>
                                             <linearGradient id="pcMetalGrad" x1="0" y1="0" x2="1" y2="1">
                                                 <stop offset="0" stop-color="#9ca3af" />
@@ -143,12 +143,12 @@
                                                 <stop offset="1" stop-color="#0cc0df" />
                                             </linearGradient>
                                             <linearGradient id="pcInternalLight" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0" stop-color="rgba(12,192,223,0.14)" />
-                                                <stop offset="1" stop-color="rgba(12,192,223,0.04)" />
+                                                <stop offset="0" stop-color="rgba(12,192,223,0.22)" />
+                                                <stop offset="1" stop-color="rgba(12,192,223,0.08)" />
                                             </linearGradient>
                                             <linearGradient id="pcTopLight" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0" stop-color="rgba(12,192,223,0.18)" />
-                                                <stop offset="1" stop-color="rgba(12,192,223,0.02)" />
+                                                <stop offset="0" stop-color="rgba(12,192,223,0.28)" />
+                                                <stop offset="1" stop-color="rgba(12,192,223,0.04)" />
                                             </linearGradient>
                                             <filter id="pcGlow" x="-50%" y="-50%" width="200%" height="200%">
                                                 <feGaussianBlur stdDeviation="5" result="coloredBlur" />
@@ -194,7 +194,7 @@
                                         <rect x="42" y="676" width="44" height="8" rx="1" fill="#111827" stroke="#4b5563" />
 
                                         {{-- Внутренняя камера с подсветкой --}}
-                                        <rect x="44" y="44" width="512" height="792" rx="10" fill="#0b1220" />
+                                        <rect x="44" y="44" width="512" height="792" rx="10" fill="#162032" />
                                         <rect x="44" y="44" width="512" height="792" rx="10" fill="url(#pcInternalLight)" />
 
                                         {{-- Верхняя подсветка внутри --}}
@@ -363,10 +363,10 @@
                                             <rect x="365" y="645" width="45" height="30" rx="2" fill="#111827" stroke="#374151" />
                                             <text x="387" y="665" fill="#9ca3af" font-size="10" text-anchor="middle" font-family="Arial" font-weight="700">PSU</text>
                                             {{-- Кабели --}}
-                                            <path d="M170 650 C170 700 450 300 470 285" fill="none" stroke="#1f2937" stroke-width="5" opacity="0.75" />
-                                            <path d="M190 650 C190 680 230 140 230 117" fill="none" stroke="#1f2937" stroke-width="4" opacity="0.75" />
-                                            <path d="M350 650 C350 690 470 370 470 360" fill="none" stroke="#1f2937" stroke-width="4" opacity="0.75" />
-                                            <path d="M300 650 C300 700 450 535 470 526" fill="none" stroke="#1f2937" stroke-width="3" opacity="0.75" />
+                                            <path d="M170 650 C170 700 450 300 470 285" fill="none" stroke="#6b7280" stroke-width="5" opacity="0.7" />
+                                            <path d="M190 650 C190 680 230 140 230 117" fill="none" stroke="#6b7280" stroke-width="4" opacity="0.7" />
+                                            <path d="M350 650 C350 690 470 370 470 360" fill="none" stroke="#6b7280" stroke-width="4" opacity="0.7" />
+                                            <path d="M300 650 C300 700 450 535 470 526" fill="none" stroke="#6b7280" stroke-width="3" opacity="0.7" />
                                             <text class="pc-slot-label" x="290" y="710" x-show="build['psu']" x-text="shortName('psu')"></text>
                                         </g>
 
