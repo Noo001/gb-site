@@ -6,6 +6,7 @@ set -e
 
 PROJECT_DIR="${PROJECT_DIR:-$HOME/gb-site}"
 API_DIR="$PROJECT_DIR/api"
+PUBLIC_DIR="$PROJECT_DIR/public_html"
 PHP_BIN="${PHP_BIN:-$(command -v php || echo /usr/local/bin/php)}"
 COMPOSER_BIN="${COMPOSER_BIN:-$(command -v composer || echo $HOME/composer)}"
 
@@ -14,7 +15,18 @@ $PHP_BIN -v
 
 echo "==> Installing dependencies"
 cd "$API_DIR"
-$COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction
+$PHP_BIN $COMPOSER_BIN install --no-dev --optimize-autoloader --no-interaction
+
+# Sync public assets to the web root (Beget uses public_html, not a symlink to api/public)
+if [ -d "$PUBLIC_DIR" ]; then
+    echo "==> Syncing public assets to $PUBLIC_DIR"
+    for asset in css js fonts images; do
+        if [ -d "$API_DIR/public/$asset" ]; then
+            rm -rf "$PUBLIC_DIR/$asset"
+            cp -r "$API_DIR/public/$asset" "$PUBLIC_DIR/$asset"
+        fi
+    done
+fi
 
 echo "==> Setting up .env"
 if [ ! -f "$API_DIR/.env" ]; then
