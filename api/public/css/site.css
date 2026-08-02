@@ -1990,15 +1990,16 @@ button {
     perspective: 900px;
     display: flex;
     justify-content: center;
-    padding: 1rem 0;
+    padding: 0;
 }
 
 .pc-case-3d {
     width: 100%;
-    max-width: 500px;
+    max-width: 620px;
     transition: transform 0.6s ease;
     transform-style: preserve-3d;
     will-change: transform;
+    filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.08));
 }
 
 .pc-case-svg {
@@ -2008,9 +2009,9 @@ button {
 }
 
 .pc-slot .pc-shape {
-    fill: rgba(12, 192, 223, 0.03);
-    stroke: #d1d5db;
-    stroke-width: 1.5;
+    fill: rgba(12, 192, 223, 0.08);
+    stroke: #9ca3af;
+    stroke-width: 2;
     stroke-dasharray: 5 4;
     transition: fill 0.35s, stroke 0.35s, filter 0.35s;
 }
@@ -2026,31 +2027,31 @@ button {
 .pc-slot--active .pc-shape {
     stroke: var(--accent);
     stroke-dasharray: none;
-    fill: rgba(12, 192, 223, 0.06);
+    fill: rgba(12, 192, 223, 0.14);
     animation: pcSlotPulse 1.4s ease-in-out infinite;
 }
 
 .pc-slot--selected .pc-shape {
-    fill: rgba(12, 192, 223, 0.10);
+    fill: rgba(12, 192, 223, 0.18);
     stroke: var(--accent);
     stroke-dasharray: none;
-    filter: drop-shadow(0 0 4px rgba(12, 192, 223, 0.3));
+    filter: drop-shadow(0 0 6px rgba(12, 192, 223, 0.4));
 }
 
 .pc-slot--selected.pc-slot-case .pc-shape {
-    fill: rgba(12, 192, 223, 0.06);
+    fill: rgba(12, 192, 223, 0.12);
     stroke: var(--accent);
-    filter: drop-shadow(0 0 4px rgba(12, 192, 223, 0.3));
+    filter: drop-shadow(0 0 6px rgba(12, 192, 223, 0.4));
 }
 
 .pc-slot-label {
     fill: var(--foreground);
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 700;
     text-anchor: middle;
     paint-order: stroke;
     stroke: #fff;
-    stroke-width: 3px;
+    stroke-width: 4px;
     pointer-events: none;
 }
 
@@ -2273,55 +2274,56 @@ button {
 /* --- PC Configurator: детализация корпуса и ховеры --- */
 
 .pc-slot .pc-case-body {
-    fill: #f3f4f6;
+    fill: #e5e7eb;
 }
 
 .pc-slot .pc-mb {
-    fill: #e5e7eb;
+    fill: #d1d5db;
 }
 
 .pc-slot .pc-psu {
-    fill: #e5e7eb;
+    fill: #d1d5db;
 }
 
 .pc-slot .pc-gpu {
-    fill: #f3f4f6;
+    fill: #e5e7eb;
 }
 
 .pc-slot--selected.pc-slot-case .pc-case-body {
-    fill: #eefcfd;
+    fill: #e8f9fb;
 }
 
 .pc-detail {
-    fill: #f3f4f6;
-    stroke: #d1d5db;
-    stroke-width: 1;
-}
-
-.pc-detail-line {
-    fill: none;
+    fill: #e5e7eb;
     stroke: #9ca3af;
     stroke-width: 1.5;
 }
 
+.pc-detail-line {
+    fill: none;
+    stroke: #6b7280;
+    stroke-width: 2;
+}
+
 .pc-trace {
     fill: none;
-    stroke: rgba(12, 192, 223, 0.25);
-    stroke-width: 1;
+    stroke: rgba(12, 192, 223, 0.5);
+    stroke-width: 1.5;
 }
 
 .pc-io {
-    fill: #e5e7eb;
+    fill: #d1d5db;
 }
 
 .pc-notch {
     fill: var(--accent);
-    opacity: 0.7;
+    opacity: 0.9;
 }
 
 .pc-fan-ring {
     fill: #fff;
-    stroke: #d1d5db;
+    stroke: #9ca3af;
+    stroke-width: 1.5;
 }
 
 .pc-fan-blades {
@@ -2331,7 +2333,7 @@ button {
 }
 
 .pc-fan-blades path {
-    fill: rgba(12, 192, 223, 0.25);
+    fill: rgba(12, 192, 223, 0.45);
     stroke: none;
 }
 
@@ -2340,14 +2342,14 @@ button {
 }
 
 .pc-glass {
-    fill: rgba(255, 255, 255, 0.45);
-    stroke: rgba(0, 0, 0, 0.05);
-    stroke-width: 1;
+    fill: rgba(255, 255, 255, 0.55);
+    stroke: rgba(0, 0, 0, 0.1);
+    stroke-width: 1.5;
     pointer-events: none;
 }
 
 .pc-glass-glare {
-    fill: rgba(255, 255, 255, 0.2);
+    fill: rgba(255, 255, 255, 0.35);
     pointer-events: none;
 }
 
@@ -2357,9 +2359,9 @@ button {
 }
 
 .pc-foot {
-    fill: #e5e7eb;
-    stroke: #d1d5db;
-    stroke-width: 1;
+    fill: #d1d5db;
+    stroke: #9ca3af;
+    stroke-width: 1.5;
 }
 
 .pc-slot {
