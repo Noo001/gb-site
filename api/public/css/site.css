@@ -1991,17 +1991,17 @@ button {
     display: flex;
     justify-content: center;
     padding: 2rem 0;
-    min-height: 720px;
+    min-height: 780px;
+    filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.16));
 }
 
 .pc-case-3d {
-    width: 420px;
-    height: 585px;
+    width: 500px;
+    height: 700px;
     position: relative;
     transform-style: preserve-3d;
     transition: transform 0.6s ease;
     will-change: transform;
-    filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.14));
 }
 
 .pc-case-face {
@@ -2014,53 +2014,53 @@ button {
 }
 
 .pc-case-face--front {
-    width: 420px;
-    height: 585px;
-    transform: translateX(-50%) translateY(-50%) translateZ(45px);
+    width: 500px;
+    height: 700px;
+    transform: translateX(-50%) translateY(-50%) translateZ(55px);
     background: transparent;
     border: none;
     overflow: hidden;
-    border-radius: 15px;
+    border-radius: 18px;
 }
 
 .pc-case-face--back {
-    width: 420px;
-    height: 585px;
-    transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(45px);
+    width: 500px;
+    height: 700px;
+    transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(55px);
     background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
-    border-radius: 15px;
+    border-radius: 18px;
 }
 
 .pc-case-face--left {
-    width: 90px;
-    height: 585px;
-    transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(210px);
+    width: 110px;
+    height: 700px;
+    transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(250px);
     background: linear-gradient(180deg, #e5e7eb 0%, #c8cdd5 100%);
-    border-radius: 15px;
+    border-radius: 18px;
 }
 
 .pc-case-face--right {
-    width: 90px;
-    height: 585px;
-    transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(210px);
+    width: 110px;
+    height: 700px;
+    transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(250px);
     background: linear-gradient(180deg, #d1d5db 0%, #9ca3af 100%);
-    border-radius: 15px;
+    border-radius: 18px;
 }
 
 .pc-case-face--top {
-    width: 420px;
-    height: 90px;
-    transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(292.5px);
+    width: 500px;
+    height: 110px;
+    transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(350px);
     background: linear-gradient(135deg, #f3f4f6 0%, #d1d5db 100%);
-    border-radius: 15px;
+    border-radius: 18px;
 }
 
 .pc-case-face--bottom {
-    width: 420px;
-    height: 90px;
-    transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(292.5px);
+    width: 500px;
+    height: 110px;
+    transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(350px);
     background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
-    border-radius: 15px;
+    border-radius: 18px;
 }
 
 .pc-case-svg {
@@ -2070,9 +2070,9 @@ button {
 }
 
 .pc-slot .pc-shape {
-    fill: rgba(12, 192, 223, 0.18);
-    stroke: #4b5563;
-    stroke-width: 2;
+    fill: rgba(12, 192, 223, 0.22);
+    stroke: #374151;
+    stroke-width: 2.5;
     stroke-dasharray: 5 4;
     transition: fill 0.35s, stroke 0.35s, filter 0.35s;
 }
@@ -2088,21 +2088,21 @@ button {
 .pc-slot--active .pc-shape {
     stroke: var(--accent);
     stroke-dasharray: none;
-    fill: rgba(12, 192, 223, 0.26);
+    fill: rgba(12, 192, 223, 0.32);
     animation: pcSlotPulse 1.4s ease-in-out infinite;
 }
 
 .pc-slot--selected .pc-shape {
-    fill: rgba(12, 192, 223, 0.30);
+    fill: rgba(12, 192, 223, 0.38);
     stroke: var(--accent);
     stroke-dasharray: none;
-    filter: drop-shadow(0 0 6px rgba(12, 192, 223, 0.4));
+    filter: drop-shadow(0 0 8px rgba(12, 192, 223, 0.5));
 }
 
 .pc-slot--selected.pc-slot-case .pc-shape {
-    fill: rgba(12, 192, 223, 0.22);
+    fill: rgba(12, 192, 223, 0.30);
     stroke: var(--accent);
-    filter: drop-shadow(0 0 6px rgba(12, 192, 223, 0.4));
+    filter: drop-shadow(0 0 8px rgba(12, 192, 223, 0.5));
 }
 
 .pc-slot-label {
@@ -2310,37 +2310,37 @@ button {
     }
 
     .pc-case-3d {
-        width: 280px;
-        height: 390px;
+        width: 320px;
+        height: 450px;
         transition: none;
         transform: none !important;
     }
 
     .pc-case-face--front,
     .pc-case-face--back {
-        width: 280px;
-        height: 390px;
+        width: 320px;
+        height: 450px;
     }
 
     .pc-case-face--left,
     .pc-case-face--right {
-        width: 60px;
-        height: 390px;
+        width: 70px;
+        height: 450px;
     }
 
-    .pc-case-face--left { transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(140px); }
-    .pc-case-face--right { transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(140px); }
+    .pc-case-face--left { transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(160px); }
+    .pc-case-face--right { transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(160px); }
 
     .pc-case-face--top,
     .pc-case-face--bottom {
-        width: 280px;
-        height: 60px;
+        width: 320px;
+        height: 70px;
     }
 
-    .pc-case-face--top { transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(195px); }
-    .pc-case-face--bottom { transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(195px); }
-    .pc-case-face--front { transform: translateX(-50%) translateY(-50%) translateZ(30px); }
-    .pc-case-face--back { transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(30px); }
+    .pc-case-face--top { transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(225px); }
+    .pc-case-face--bottom { transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(225px); }
+    .pc-case-face--front { transform: translateX(-50%) translateY(-50%) translateZ(35px); }
+    .pc-case-face--back { transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(35px); }
 
     .pc-parts {
         grid-template-columns: 1fr;
@@ -2382,21 +2382,21 @@ button {
 }
 
 .pc-detail {
-    fill: #d1d5db;
-    stroke: #4b5563;
-    stroke-width: 1.5;
+    fill: #fff;
+    stroke: #374151;
+    stroke-width: 2;
 }
 
 .pc-detail-line {
     fill: none;
     stroke: #374151;
-    stroke-width: 2;
+    stroke-width: 2.5;
 }
 
 .pc-trace {
     fill: none;
-    stroke: rgba(12, 192, 223, 0.7);
-    stroke-width: 1.5;
+    stroke: rgba(12, 192, 223, 0.85);
+    stroke-width: 2;
 }
 
 .pc-io {
@@ -2410,8 +2410,8 @@ button {
 
 .pc-fan-ring {
     fill: #fff;
-    stroke: #4b5563;
-    stroke-width: 1.5;
+    stroke: #374151;
+    stroke-width: 2;
 }
 
 .pc-fan-blades {
@@ -2421,7 +2421,7 @@ button {
 }
 
 .pc-fan-blades path {
-    fill: rgba(12, 192, 223, 0.65);
+    fill: rgba(12, 192, 223, 0.75);
     stroke: none;
 }
 
@@ -2430,14 +2430,14 @@ button {
 }
 
 .pc-glass {
-    fill: rgba(255, 255, 255, 0.55);
+    fill: rgba(255, 255, 255, 0.35);
     stroke: rgba(0, 0, 0, 0.15);
     stroke-width: 1.5;
     pointer-events: none;
 }
 
 .pc-glass-glare {
-    fill: rgba(255, 255, 255, 0.40);
+    fill: rgba(255, 255, 255, 0.25);
     pointer-events: none;
 }
 

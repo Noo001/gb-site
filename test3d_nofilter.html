@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html><head><style>
+body { margin:0; background:#f5f5f5; display:flex; justify-content:center; align-items:center; height:100vh; }
+.scene { perspective: 1400px; width: 420px; height: 585px; display:flex; justify-content:center; padding:2rem 0; min-height:720px; }
+.cube { width: 420px; height: 585px; position: relative; transform-style: preserve-3d; transform: rotateY(17deg) rotateX(-5deg); transition: transform 0.6s ease; will-change: transform; }
+.face { position: absolute; top: 50%; left: 50%; backface-visibility: visible; box-sizing: border-box; border: 2px solid #6b7280; }
+.front { width: 420px; height: 585px; transform: translateX(-50%) translateY(-50%) translateZ(45px); background: transparent; border: none; overflow: hidden; border-radius: 15px; }
+.back { width: 420px; height: 585px; transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(45px); background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%); border-radius: 15px; }
+.left { width: 90px; height: 585px; transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(210px); background: linear-gradient(180deg, #e5e7eb 0%, #c8cdd5 100%); border-radius: 15px; }
+.right { width: 90px; height: 585px; transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(210px); background: linear-gradient(180deg, #d1d5db 0%, #9ca3af 100%); border-radius: 15px; }
+.top { width: 420px; height: 90px; transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(292.5px); background: linear-gradient(135deg, #f3f4f6 0%, #d1d5db 100%); border-radius: 15px; }
+.bottom { width: 420px; height: 90px; transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(292.5px); background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%); border-radius: 15px; }
+.pc-case-svg { width: 100%; height: 100%; display: block; }
+.pc-slot .pc-shape { fill: rgba(12, 192, 223, 0.18); stroke: #4b5563; stroke-width: 2; stroke-dasharray: 5 4; }
+.pc-slot .pc-case-body { fill: #f3f4f6; }
+.pc-detail { fill: #fff; stroke: #4b5563; stroke-width: 1.5; }
+.pc-trace { stroke: #9ca3af; stroke-width: 1.5; fill: none; }
+.pc-glass { fill: rgba(255, 255, 255, 0.55); stroke: rgba(0, 0, 0, 0.15); stroke-width: 1; pointer-events: none; }
+.pc-glass-glare { fill: rgba(255, 255, 255, 0.40); pointer-events: none; }
+.pc-led { fill: url(#pcLedGrad); }
+</style></head>
+<body>
+<div class="scene">
+<div class="cube">
+<div class="face front">
+<svg class="pc-case-svg" viewBox="90 70 280 390" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="pcLedGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#e879f9"/></linearGradient></defs>
+<g class="pc-slot pc-slot-case" data-slot="case"><rect class="pc-shape pc-case-body" x="90" y="70" width="280" height="390" rx="10"/><rect class="pc-led" x="99" y="82" width="4" height="366" rx="2"/></g>
+<g class="pc-slot" data-slot="motherboard"><rect class="pc-shape pc-mb" x="120" y="100" width="175" height="245" rx="4"/><rect class="pc-detail pc-io" x="125" y="105" width="22" height="48" rx="2"/><line class="pc-trace" x1="212" y1="130" x2="290" y2="130"/><line class="pc-trace" x1="212" y1="215" x2="292" y2="215"/></g>
+<rect class="pc-glass" x="105" y="85" width="240" height="350" rx="6"/>
+</svg>
+</div>
+<div class="face back"></div>
+<div class="face left"></div>
+<div class="face right"></div>
+<div class="face top"></div>
+<div class="face bottom"></div>
+</div>
+</div>
+</body></html>

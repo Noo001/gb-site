@@ -1,0 +1,1703 @@
+<!DOCTYPE html><html lang="ru"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="ZshkFl9SJc6tg357UML9CRNm56OaSBRUf2af5Qms">
+    <title>Сборка ПК — конфигуратор | Gadget Bar</title>
+            <meta name="description" content="Соберите компьютер онлайн: подбор совместимых комплектующих по шагам — корпус, процессор, материнская плата, видеокарта, память, накопитель, блок питания.">
+            <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="https://gbsale.ru/css/site.css?v=1785709485">
+        <script defer="" src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('cart', {
+                count: 0,
+                async load() {
+                    try {
+                        const res = await fetch('/api/cart', { credentials: 'include' });
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        this.count = data.count ?? 0;
+                    } catch (e) {}
+                }
+            });
+            Alpine.store('wishlist', {
+                count: 0,
+                async load() {
+                    try {
+                        const res = await fetch('/api/wishlist', { credentials: 'include' });
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        this.count = data.count ?? 0;
+                    } catch (e) {}
+                }
+            });
+        });
+    </script>
+</head>
+<body x-data="" x-init="$store.cart.load(); $store.wishlist.load()">
+    <header class="site-header">
+    <div class="header-top">
+        <div class="container-theme header-top-inner">
+            <a href="/" class="logo">
+                <img src="/images/original/logo.png" alt="GADGET·BAR" height="32">
+            </a>
+
+            <form action="/catalog" method="GET" class="header-search">
+                <input type="text" name="search" placeholder="Поиск по товарам" class="input">
+                <button type="submit" class="btn btn-primary">Найти</button>
+            </form>
+
+            <div class="header-contacts">
+                <a href="tel:88005051307" class="phone">8 (800) 505-13-07</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-nav">
+        <div class="container-theme header-nav-inner">
+            <nav class="main-nav">
+                <div class="nav-item has-submenu">
+                    <a href="/catalog">Каталог</a>
+                    <div class="submenu">
+                                                    <a href="/catalog/amd/">AMD</a>
+                                                    <a href="/catalog/apple/">Apple</a>
+                                                    <a href="/catalog/dyson/">Dyson</a>
+                                                    <a href="/catalog/garmin/">Garmin</a>
+                                                    <a href="/catalog/intel/">Intel</a>
+                                                    <a href="/catalog/smeg/">SMEG</a>
+                                                    <a href="/catalog/samsung/">Samsung</a>
+                                                    <a href="/catalog/usb-flash-nakopiteli/">USB Flash накопители</a>
+                                                    <a href="/catalog/wi-fi-kamery/">Wi-Fi Камеры</a>
+                                                    <a href="/catalog/adaptery-pitaniia/">Адаптеры питания</a>
+                                                    <a href="/catalog/aksessuary/">Аксессуары</a>
+                                                    <a href="/catalog/videotexnika-eksn-kamery/">Видеотехника / Экшн-Камеры</a>
+                                                    <a href="/catalog/gadzety/">Гаджеты</a>
+                                                    <a href="/catalog/geimpad-dlia-sony-ps5/">Геймпад для Sony PS5</a>
+                                                    <a href="/catalog/geimpad-dlia-xbox-series-xsone/">Геймпад для Xbox series X/S/One</a>
+                                                    <a href="/catalog/geimpady-dlia-nintendo-switch/">Геймпады для Nintendo Switch</a>
+                                                    <a href="/catalog/igrovye-konsoli/">Игровые Консоли</a>
+                                                    <a href="/catalog/kabeli/">Кабели</a>
+                                                    <a href="/catalog/krasota-i-zdorove/">Красота и здоровье</a>
+                                                    <a href="/catalog/kuxonnaia-texnika-i-prinadleznosti/">Кухонная техника и принадлежности</a>
+                                                    <a href="/catalog/nastolnye-lampy/">Настольные лампы</a>
+                                                    <a href="/catalog/nausniki-i-audio/">Наушники и аудио</a>
+                                                    <a href="/catalog/perexodniki/">Переходники</a>
+                                                    <a href="/catalog/periferiia-sony/">Периферия Sony</a>
+                                                    <a href="/catalog/plansety-i-pk/">Планшеты и ПК</a>
+                                                    <a href="/catalog/smart-casy-huawei/">Смарт-часы Huawei</a>
+                                                    <a href="/catalog/smart-casy-xiaomi/">Смарт-часы Xiaomi</a>
+                                                    <a href="/catalog/smart-casy-xiaomi-haylou/">Смарт-часы Xiaomi HAYLOU</a>
+                                                    <a href="/catalog/smartfony/">Смартфоны</a>
+                                                    <a href="/catalog/televizory-i-video/">Телевизоры и видео</a>
+                                                    <a href="/catalog/uborka-doma/">Уборка дома</a>
+                                                    <a href="/catalog/umnyi-dom/">Умный дом</a>
+                                                    <a href="/catalog/fitnes-trekery/">Фитнес трекеры</a>
+                                            </div>
+                </div>
+                                    <a href="/brands" class="nav-item">Бренды</a>
+                                    <a href="/blog" class="nav-item">Статьи</a>
+                                    <a href="/sales" class="nav-item">Акции</a>
+                                    <a href="/installment" class="nav-item">Рассрочка</a>
+                                    <a href="/contacts" class="nav-item">Контакты</a>
+                                <div class="nav-item has-submenu">
+                    <span>Информация</span>
+                    <div class="submenu">
+                                                    <a href="/info/payment">Способы оплаты</a>
+                                                    <a href="/info/delivery">Доставка</a>
+                                                    <a href="/info/warranty">Гарантия</a>
+                                                    <a href="/info/return">Обмен и возврат</a>
+                                            </div>
+                </div>
+            </nav>
+
+            <div class="header-actions">
+                                    <a href="/login" class="action-link">Войти</a>
+                                <a href="/wishlist" class="action-link">
+                    Избранное
+                    <span x-show="$store.wishlist.count &gt; 0" x-text="$store.wishlist.count" class="badge" style="display: none;">0</span>
+                </a>
+                <a href="/cart" class="action-link">
+                    Корзина
+                    <span x-show="$store.cart.count &gt; 0" x-text="$store.cart.count" class="badge" style="display: none;">0</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <main>
+            <section class="pc-section" x-data="pcConfigurator(null)" x-init="init()">
+        <div class="container-theme">
+            <div class="pc-hero">
+                <h1 class="pc-title">Конфигуратор ПК</h1>
+                <p class="pc-subtitle">Соберите систему по шагам — покажем только совместимые комплектующие</p>
+            </div>
+
+                            <div class="pc-demo-banner">ДЕМО-РЕЖИМ: тестовые данные</div>
+            
+            
+            <div class="pc-mode-tabs" x-show="!orderId">
+                <button type="button" class="pc-mode-tab pc-mode-tab--active" :class="{ &quot;pc-mode-tab--active&quot;: mode === &quot;manual&quot; }" @click="mode = &quot;manual&quot;">Собрать самому</button>
+                <button type="button" class="pc-mode-tab" :class="{ &quot;pc-mode-tab--active&quot;: mode === &quot;auto&quot; }" @click="mode = &quot;auto&quot;">Автоподбор по бюджету</button>
+            </div>
+
+            
+            <div class="pc-success" x-show="orderId" style="display: none;">
+                <div class="pc-success-icon">✓</div>
+                <h2>Заявка №<span x-text="orderId"></span> принята</h2>
+                <p>Менеджер свяжется с вами для подтверждения сборки.</p>
+                <button type="button" class="pc-success-btn" @click="orderId = null">Собрать новую конфигурацию</button>
+            </div>
+
+            <div x-show="mode === 'manual' &amp;&amp; !orderId">
+                <div class="pc-layout">
+                    
+                    <div class="pc-wizard">
+                        <div class="pc-parts-loading" x-show="loadingSlots" style="display: none;">Загружаем конфигуратор…</div>
+
+                        <template x-for="(slot, index) in slots" :key="slot.id">
+                            <div class="pc-step" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1"></span>
+                                    <span class="pc-step-title" x-text="slot.title"></span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template>
+                            </div>
+                        </template><div class="pc-step pc-step--active" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1">1</span>
+                                    <span class="pc-step-title" x-text="slot.title">Корпус</span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)" style="display: none;"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon" style="display: none;">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done" style="display: none;">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt" style="display: none;">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template><div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts" style="display: none;">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty" style="display: none;">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty" style="">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template><button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)" style="display: none;">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name">Корпус Zalman Z3 Mid Tower</span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template><span class="pc-chip" x-text="chip">ATX,mATX</span><span class="pc-chip" x-text="chip">кулер до 160 мм</span>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)">5&nbsp;900 ₽</span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)">в наличии: 5</span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button><button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)" style="display: none;">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name">Корпус AeroCool Mini Tower</span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template><span class="pc-chip" x-text="chip">mATX,Mini-ITX</span><span class="pc-chip" x-text="chip">кулер до 145 мм</span>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)">4&nbsp;900 ₽</span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)">в наличии: 5</span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button><button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)" style="display: none;">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name">Корпус Lian Li Full Tower</span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template><span class="pc-chip" x-text="chip">ATX,E-ATX,mATX</span><span class="pc-chip" x-text="chip">кулер до 170 мм</span>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)">8&nbsp;900 ₽</span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)">в наличии: 5</span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty" style="">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)" style="display: none;">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)" style="display: none;">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                            </div><div class="pc-step" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1">2</span>
+                                    <span class="pc-step-title" x-text="slot.title">Процессор</span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)" style="display: none;"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon" style="display: none;">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done" style="display: none;">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt" style="display: none;">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template>
+                            </div><div class="pc-step" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1">3</span>
+                                    <span class="pc-step-title" x-text="slot.title">Кулер</span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)" style="display: none;"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon" style="display: none;">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done" style="display: none;">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt" style="display: none;">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template>
+                            </div><div class="pc-step" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1">4</span>
+                                    <span class="pc-step-title" x-text="slot.title">Материнская плата</span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)" style="display: none;"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon" style="display: none;">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done" style="display: none;">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt" style="display: none;">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template>
+                            </div><div class="pc-step" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1">5</span>
+                                    <span class="pc-step-title" x-text="slot.title">Видеокарта</span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)" style="display: none;"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon" style="display: none;">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done" style="display: none;">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt" style="display: none;">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template>
+                            </div><div class="pc-step" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1">6</span>
+                                    <span class="pc-step-title" x-text="slot.title">Память</span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)" style="display: none;"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon" style="display: none;">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done" style="display: none;">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt" style="display: none;">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template>
+                            </div><div class="pc-step" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1">7</span>
+                                    <span class="pc-step-title" x-text="slot.title">Накопитель</span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)" style="display: none;"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon" style="display: none;">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done" style="display: none;">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt" style="display: none;">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template>
+                            </div><div class="pc-step" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1">8</span>
+                                    <span class="pc-step-title" x-text="slot.title">Блок питания</span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)" style="display: none;"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon" style="display: none;">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done" style="display: none;">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt" style="display: none;">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template>
+                            </div><div class="pc-step" :class="{
+                                     'pc-step--active': activeSlot === slot.id,
+                                     'pc-step--done': !!build[slot.id],
+                                     'pc-step--soon': slot.empty
+                                 }">
+                                <button type="button" class="pc-step-head" @click="selectStep(slot)">
+                                    <span class="pc-step-num" x-text="index + 1">9</span>
+                                    <span class="pc-step-title" x-text="slot.title">Необязательное</span>
+                                    <span class="pc-step-chosen" x-show="build[slot.id]" x-text="shortName(slot.id)" style="display: none;"></span>
+                                    <span class="pc-step-state">
+                                        <span x-show="slot.empty" class="pc-badge pc-badge--soon" style="display: none;">Скоро</span>
+                                        <span x-show="!slot.empty &amp;&amp; build[slot.id]" class="pc-badge pc-badge--done" style="display: none;">✓</span>
+                                        <span x-show="!slot.empty &amp;&amp; !build[slot.id] &amp;&amp; !slot.required" class="pc-badge pc-badge--opt">опц.</span>
+                                    </span>
+                                </button>
+
+                                <template x-if="activeSlot === slot.id &amp;&amp; !slot.empty">
+                                <div class="pc-step-body">
+                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+
+                                    <div class="pc-parts-empty" x-show="!loadingParts &amp;&amp; partsEmpty">
+                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                    </div>
+
+                                    <div class="pc-parts" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <template x-for="part in parts" :key="part.id">
+                                            <button type="button" class="pc-part" :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }" @click="choose(slot, part)">
+                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                <span class="pc-part-name" x-text="part.name"></span>
+                                                <span class="pc-part-meta">
+                                                    <template x-for="chip in chips(part)" :key="chip">
+                                                        <span class="pc-chip" x-text="chip"></span>
+                                                    </template>
+                                                </span>
+                                                <span class="pc-part-footer">
+                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                </span>
+                                                <template x-if="isMulti(slot.id)">
+                                                    <span class="pc-part-qty" @click.stop="">
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                    </span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+
+                                    <div class="pc-step-actions" x-show="!loadingParts &amp;&amp; !partsEmpty">
+                                        <button type="button" class="pc-skip-btn" x-show="!slot.required &amp;&amp; !hasSlotItems(slot.id)" @click="skipStep(slot)">Пропустить шаг</button>
+                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) &amp;&amp; hasSlotItems(slot.id)" @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                    </div>
+                                </div>
+                                </template>
+                            </div>
+                    </div>
+
+                    
+                    <div class="pc-case-panel">
+                        <div class="pc-case-scene">
+                            <div class="pc-case-3d" :style="caseStyle()" style="transform: rotateY(-18deg) rotateX(10deg); transform-origin: 50% 50%;">
+                                <div class="pc-case-face pc-case-face--front">
+                                    <svg class="pc-case-svg" viewBox="90 70 280 390" xmlns="http://www.w3.org/2000/svg" aria-label="Схема системного блока">
+                                        <defs>
+                                            <linearGradient id="pcLedGrad" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0" stop-color="#22d3ee"></stop>
+                                                <stop offset="1" stop-color="#e879f9"></stop>
+                                            </linearGradient>
+                                            <linearGradient id="pcGlassGrad" x1="0" y1="0" x2="1" y2="1">
+                                                <stop offset="0" stop-color="#7dd3fc" stop-opacity="0.12"></stop>
+                                                <stop offset="1" stop-color="#7dd3fc" stop-opacity="0.03"></stop>
+                                            </linearGradient>
+                                        </defs>
+
+                                        
+                                        <g class="pc-slot pc-slot-case pc-slot--active" data-slot="case" :class="slotClass('case')" @mouseenter="hoveredSlot = 'case'" @mouseleave="hoveredSlot = null" @click="activateSlot('case')">
+                                            <rect class="pc-shape pc-case-body" x="90" y="70" width="280" height="390" rx="10"></rect>
+                                            <rect class="pc-led" x="99" y="82" width="4" height="366" rx="2"></rect>
+                                            <text class="pc-slot-label" x="230" y="448" x-show="build['case']" x-text="shortName('case')" style="display: none;"></text>
+                                        </g>
+
+                                        
+                                        <g class="pc-slot" data-slot="motherboard" :class="slotClass('motherboard')" @mouseenter="hoveredSlot = 'motherboard'" @mouseleave="hoveredSlot = null" @click="activateSlot('motherboard')">
+                                            <rect class="pc-shape pc-mb" x="120" y="100" width="175" height="245" rx="4"></rect>
+                                            <rect class="pc-detail pc-io" x="125" y="105" width="22" height="48" rx="2"></rect>
+                                            <line class="pc-trace" x1="212" y1="130" x2="290" y2="130"></line>
+                                            <line class="pc-trace" x1="212" y1="215" x2="292" y2="215"></line>
+                                            <line class="pc-trace" x1="132" y1="220" x2="132" y2="335"></line>
+                                            <line class="pc-trace" x1="190" y1="290" x2="290" y2="290"></line>
+                                            <text class="pc-slot-label" x="160" y="368" x-show="build['motherboard']" x-text="shortName('motherboard')" style="display: none;"></text>
+                                        </g>
+
+                                        
+                                        <g class="pc-slot" data-slot="cpu" :class="slotClass('cpu')" @mouseenter="hoveredSlot = 'cpu'" @mouseleave="hoveredSlot = null" @click="activateSlot('cpu')">
+                                            <rect class="pc-shape" x="150" y="120" width="52" height="52" rx="4"></rect>
+                                            <rect class="pc-detail" x="158" y="128" width="36" height="36" rx="2"></rect>
+                                            <polygon class="pc-notch" points="152,122 159,122 152,129"></polygon>
+                                            <text class="pc-slot-label" x="176" y="192" x-show="build['cpu']" x-text="shortName('cpu')" style="display: none;"></text>
+                                        </g>
+
+                                        
+                                        <g class="pc-slot" data-slot="cooler" :class="slotClass('cooler')" @mouseenter="hoveredSlot = 'cooler'" @mouseleave="hoveredSlot = null" @click="activateSlot('cooler')">
+                                            <rect class="pc-shape pc-cooler" x="144" y="112" width="64" height="68" rx="3"></rect>
+                                            <line class="pc-detail-line" x1="148" y1="124" x2="204" y2="124"></line>
+                                            <line class="pc-detail-line" x1="148" y1="136" x2="204" y2="136"></line>
+                                            <line class="pc-detail-line" x1="148" y1="148" x2="204" y2="148"></line>
+                                            <line class="pc-detail-line" x1="148" y1="160" x2="204" y2="160"></line>
+                                            <circle class="pc-detail pc-fan-ring" cx="176" cy="146" r="16"></circle>
+                                            <g class="pc-fan-blades">
+                                                <path d="M176 146 q8 -7 3 -16"></path>
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(60 176 146)"></path>
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(120 176 146)"></path>
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(180 176 146)"></path>
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(240 176 146)"></path>
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(300 176 146)"></path>
+                                            </g>
+                                            <circle class="pc-detail" cx="176" cy="146" r="5"></circle>
+                                            <text class="pc-slot-label" x="206" y="104" style="text-anchor: end; display: none;" x-show="build['cooler']" x-text="shortName('cooler')"></text>
+                                        </g>
+
+                                        
+                                        <g class="pc-slot" data-slot="ram" :class="slotClass('ram')" @mouseenter="hoveredSlot = 'ram'" @mouseleave="hoveredSlot = null" @click="activateSlot('ram')">
+                                            <rect class="pc-shape" x="250" y="112" width="11" height="95" rx="2"></rect>
+                                            <rect class="pc-shape" x="267" y="112" width="11" height="95" rx="2"></rect>
+                                            <rect class="pc-detail" x="252" y="117" width="7" height="22"></rect>
+                                            <rect class="pc-detail" x="252" y="144" width="7" height="22"></rect>
+                                            <rect class="pc-detail" x="252" y="171" width="7" height="22"></rect>
+                                            <rect class="pc-detail" x="269" y="117" width="7" height="22"></rect>
+                                            <rect class="pc-detail" x="269" y="144" width="7" height="22"></rect>
+                                            <rect class="pc-detail" x="269" y="171" width="7" height="22"></rect>
+                                            <text class="pc-slot-label" x="252" y="104" style="text-anchor: start; display: none;" x-show="build['ram']" x-text="shortName('ram')"></text>
+                                        </g>
+
+                                        
+                                        <g class="pc-slot" data-slot="gpu" :class="slotClass('gpu')" @mouseenter="hoveredSlot = 'gpu'" @mouseleave="hoveredSlot = null" @click="activateSlot('gpu')">
+                                            <rect class="pc-shape pc-gpu" x="125" y="230" width="190" height="38" rx="4"></rect>
+                                            <rect class="pc-detail" x="125" y="268" width="190" height="5"></rect>
+                                            <circle class="pc-detail pc-fan-ring" cx="165" cy="249" r="12"></circle>
+                                            <line class="pc-detail-line" x1="165" y1="240" x2="165" y2="258"></line>
+                                            <line class="pc-detail-line" x1="156" y1="249" x2="174" y2="249"></line>
+                                            <line class="pc-detail-line" x1="159" y1="243" x2="171" y2="255"></line>
+                                            <line class="pc-detail-line" x1="171" y1="243" x2="159" y2="255"></line>
+                                            <circle class="pc-detail pc-fan-ring" cx="215" cy="249" r="12"></circle>
+                                            <line class="pc-detail-line" x1="215" y1="240" x2="215" y2="258"></line>
+                                            <line class="pc-detail-line" x1="206" y1="249" x2="224" y2="249"></line>
+                                            <line class="pc-detail-line" x1="209" y1="243" x2="221" y2="255"></line>
+                                            <line class="pc-detail-line" x1="221" y1="243" x2="209" y2="255"></line>
+                                            <text class="pc-slot-label" x="210" y="296" x-show="build['gpu']" x-text="shortName('gpu')" style="display: none;"></text>
+                                        </g>
+
+                                        
+                                        <g class="pc-slot" data-slot="storage" :class="slotClass('storage')" @mouseenter="hoveredSlot = 'storage'" @mouseleave="hoveredSlot = null" @click="activateSlot('storage')">
+                                            <rect class="pc-shape" x="125" y="308" width="60" height="14" rx="2"></rect>
+                                            <rect class="pc-detail" x="130" y="311" width="20" height="8"></rect>
+                                            <rect class="pc-detail" x="154" y="311" width="13" height="8"></rect>
+                                            <text class="pc-slot-label" x="155" y="340" x-show="build['storage']" x-text="shortName('storage')" style="display: none;"></text>
+                                        </g>
+
+                                        
+                                        <g class="pc-slot" data-slot="extra" :class="slotClass('extra')" @mouseenter="hoveredSlot = 'extra'" @mouseleave="hoveredSlot = null" @click="activateSlot('extra')">
+                                            <circle class="pc-shape" cx="258" cy="322" r="20"></circle>
+                                            <g class="pc-fan-blades">
+                                                <path d="M258 322 q9 -8 3 -18"></path>
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(60 258 322)"></path>
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(120 258 322)"></path>
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(180 258 322)"></path>
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(240 258 322)"></path>
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(300 258 322)"></path>
+                                            </g>
+                                            <circle class="pc-detail" cx="258" cy="322" r="5"></circle>
+                                            <text class="pc-slot-label" x="258" y="352" x-show="build['extra']" x-text="shortName('extra')" style="display: none;"></text>
+                                        </g>
+
+                                        
+                                        <g class="pc-slot" data-slot="psu" :class="slotClass('psu')" @mouseenter="hoveredSlot = 'psu'" @mouseleave="hoveredSlot = null" @click="activateSlot('psu')">
+                                            <rect class="pc-shape pc-psu" x="115" y="375" width="190" height="65" rx="6"></rect>
+                                            <circle class="pc-detail-line" cx="160" cy="407" r="15"></circle>
+                                            <circle class="pc-detail-line" cx="160" cy="407" r="9"></circle>
+                                            <circle class="pc-detail-line" cx="160" cy="407" r="3"></circle>
+                                            <text class="pc-slot-label" x="210" y="455" x-show="build['psu']" x-text="shortName('psu')" style="display: none;"></text>
+                                        </g>
+
+                                        
+                                        <rect class="pc-glass" x="105" y="85" width="240" height="350" rx="6"></rect>
+                                        <polygon class="pc-glass-glare" points="105,225 190,85 235,85 105,330"></polygon>
+                                    </svg>
+                                </div>
+                                <div class="pc-case-face pc-case-face--back"></div>
+                                <div class="pc-case-face pc-case-face--top"></div>
+                                <div class="pc-case-face pc-case-face--bottom"></div>
+                                <div class="pc-case-face pc-case-face--left"></div>
+                                <div class="pc-case-face pc-case-face--right"></div>
+                            </div>
+                        </div>
+                        <div class="pc-case-hint" x-text="hint"></div>
+                    </div>
+                </div>
+
+                
+                <div class="pc-summary">
+                    <div class="pc-total">
+                        <span class="pc-total-label">Итого</span>
+                        <span class="pc-total-value" x-text="fmtPrice(total)">0 ₽</span>
+                        <button type="button" class="pc-reset-btn" @click="reset()" x-show="hasBuild" style="display: none;">Сбросить сборку</button>
+                    </div>
+
+                    <form class="pc-order-form" @submit.prevent="submit()">
+                        <div class="pc-field">
+                            <label class="pc-label" for="pc-name">Имя</label>
+                            <input class="pc-input" id="pc-name" type="text" x-model="form.name" required="" maxlength="255" placeholder="Как к вам обращаться">
+                        </div>
+                        <div class="pc-field">
+                            <label class="pc-label" for="pc-phone">Телефон</label>
+                            <input class="pc-input" id="pc-phone" type="tel" x-model="form.phone" required="" maxlength="18" placeholder="+7 (___) ___-__-__" @focus="phoneFocus()" @input="phoneMask($event)">
+                        </div>
+                        <button type="submit" class="pc-submit-btn" :disabled="!canSubmit || submitting" x-text="submitting ? 'Отправляем…' : 'Оформить заявку'" disabled="disabled">Оформить заявку</button>
+                    </form>
+
+                    <div class="pc-form-error" x-show="error" x-text="error" style="display: none;"></div>
+                </div>
+            </div>
+
+            
+            <div class="pc-auto-build" x-show="mode === &quot;auto&quot; &amp;&amp; !orderId" style="display: none;">
+                <div class="pc-auto-intro">
+                    <h2 class="pc-auto-title">Подберём конфигурацию под бюджет</h2>
+                    <p class="pc-auto-subtitle">Укажите сумму и цель — мы сами соберём совместимые комплектующие. Если не получится, заявку получит менеджер.</p>
+                </div>
+
+                <form class="pc-auto-form" @submit.prevent="runAutoBuild()">
+                    <div class="pc-field">
+                        <label class="pc-label" for="pc-budget">Бюджет, ₽</label>
+                        <input class="pc-input" id="pc-budget" type="number" min="1000" step="100" x-model="autoForm.budget" required="" placeholder="Например, 100000">
+                    </div>
+                    <div class="pc-field">
+                        <label class="pc-label" for="pc-purpose">Для чего ПК</label>
+                        <select class="pc-input pc-select" id="pc-purpose" x-model="autoForm.purpose">
+                            <option value="">Не важно</option>
+                            <option value="games">Игры</option>
+                            <option value="work">Работа / учёба</option>
+                            <option value="office">Офис</option>
+                        </select>
+                    </div>
+                    <div class="pc-field">
+                        <label class="pc-label" for="pc-wishes">Пожелания</label>
+                        <textarea class="pc-input pc-textarea" id="pc-wishes" rows="3" x-model="autoForm.wishes" maxlength="2000" placeholder="Например, хочу тихий корпус, SSD 1 ТБ"></textarea>
+                    </div>
+                    <button type="submit" class="pc-submit-btn" :disabled="autoLoading || !autoForm.budget" x-text="autoLoading ? &quot;Подбираем…&quot; : &quot;Подобрать конфигурацию&quot;" disabled="disabled">Подобрать конфигурацию</button>
+                </form>
+
+                <div class="pc-parts-loading" x-show="autoLoading" style="display: none;">Подбираем конфигурацию…</div>
+
+                
+                <div class="pc-auto-result" x-show="!autoLoading &amp;&amp; autoBuild" style="display: none;">
+                    <h3 class="pc-auto-result-title">Подобранная конфигурация</h3>
+                    <div class="pc-auto-items">
+                        <template x-for="(item, slot) in autoBuild?.items" :key="slot">
+                            <div class="pc-auto-item">
+                                <span class="pc-auto-item-slot" x-text="slotTitle(slot)"></span>
+                                <span class="pc-auto-item-name" x-text="item.name"></span>
+                                <span class="pc-auto-item-price" x-text="fmtPrice(item.price)"></span>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="pc-auto-total">
+                        <span>Итого</span>
+                        <span x-text="fmtPrice(autoBuild?.total)">Цена по запросу</span>
+                    </div>
+                    <form class="pc-order-form" @submit.prevent="submitAutoBuildOrder()">
+                        <div class="pc-field">
+                            <label class="pc-label" for="pc-auto-name">Имя</label>
+                            <input class="pc-input" id="pc-auto-name" type="text" x-model="form.name" required="" maxlength="255" placeholder="Как к вам обращаться">
+                        </div>
+                        <div class="pc-field">
+                            <label class="pc-label" for="pc-auto-phone">Телефон</label>
+                            <input class="pc-input" id="pc-auto-phone" type="tel" x-model="form.phone" required="" maxlength="18" placeholder="+7 (___) ___-__-__" @focus="phoneFocus()" @input="phoneMask($event)">
+                        </div>
+                        <button type="submit" class="pc-submit-btn" :disabled="!canAutoSubmit || submitting" x-text="submitting ? &quot;Отправляем…&quot; : &quot;Оформить заявку на эту сборку&quot;" disabled="disabled">Оформить заявку на эту сборку</button>
+                    </form>
+                    <button type="button" class="pc-reset-btn" @click="resetAutoBuild()">Подобрать заново</button>
+                </div>
+
+                
+                <div class="pc-auto-fallback" x-show="!autoLoading &amp;&amp; autoError" style="display: none;">
+                    <div class="pc-auto-fallback-icon">🛠</div>
+                    <h3>Не удалось подобрать в автоматическом режиме</h3>
+                    <p x-text="autoError"></p>
+                    <p>Оставьте заявку — менеджер подберёт комплектующие вручную.</p>
+
+                    <form class="pc-order-form" @submit.prevent="submitManagerRequest()">
+                        <div class="pc-field">
+                            <label class="pc-label" for="pc-fallback-name">Имя</label>
+                            <input class="pc-input" id="pc-fallback-name" type="text" x-model="form.name" required="" maxlength="255" placeholder="Как к вам обращаться">
+                        </div>
+                        <div class="pc-field">
+                            <label class="pc-label" for="pc-fallback-phone">Телефон</label>
+                            <input class="pc-input" id="pc-fallback-phone" type="tel" x-model="form.phone" required="" maxlength="18" placeholder="+7 (___) ___-__-__" @focus="phoneFocus()" @input="phoneMask($event)">
+                        </div>
+                        <div class="pc-field">
+                            <label class="pc-label" for="pc-fallback-budget">Бюджет, ₽</label>
+                            <input class="pc-input" id="pc-fallback-budget" type="number" x-model="autoForm.budget" readonly="">
+                        </div>
+                        <div class="pc-field">
+                            <label class="pc-label" for="pc-fallback-purpose">Цель</label>
+                            <input class="pc-input" id="pc-fallback-purpose" type="text" :value="purposeLabel(autoForm.purpose)" readonly="">
+                        </div>
+                        <div class="pc-field">
+                            <label class="pc-label" for="pc-fallback-wishes">Пожелания</label>
+                            <textarea class="pc-input pc-textarea" id="pc-fallback-wishes" rows="3" x-model="autoForm.wishes" maxlength="2000" readonly=""></textarea>
+                        </div>
+                        <button type="submit" class="pc-submit-btn" :disabled="!canFallbackSubmit || submitting" x-text="submitting ? &quot;Отправляем…&quot; : &quot;Отправить заявку менеджеру&quot;" disabled="disabled">Отправить заявку менеджеру</button>
+                    </form>
+                    <button type="button" class="pc-reset-btn" @click="resetAutoBuild()">Попробовать другой бюджет</button>
+                </div>
+
+                <div class="pc-form-error" x-show="error" x-text="error" style="display: none;"></div>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <footer class="site-footer">
+    <div class="container-theme footer-inner">
+        <p class="footer-disclaimer">
+            Гарантия на товар и гарантийное обслуживание предоставляется в соответствии с Гражданским кодексом Российской Федерации (ГК РФ) и Законом Российской Федерации от 7 февраля 1992 г. № 2300-1 "О защите прав потребителей".
+        </p>
+
+        <div class="footer-columns">
+            <div>
+                <h3>Интернет-магазин</h3>
+                <ul>
+                    <li><a href="/catalog">Каталог</a></li>
+                    <li><a href="/sales">Акции</a></li>
+                    <li><a href="/brands">Бренды</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Компания</h3>
+                <ul>
+                    <li><a href="/stores">Магазины</a></li>
+                    <li><a href="/review">Оставить отзыв</a></li>
+                    <li><a href="/company">О компании</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Информация</h3>
+                <ul>
+                    <li><a href="/info/payment">Способы оплаты</a></li>
+                    <li><a href="/info/delivery">Доставка</a></li>
+                    <li><a href="/info/warranty">Гарантия</a></li>
+                    <li><a href="/trade-in">Программа Trade-in</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Контакты</h3>
+                <a href="tel:88005051307" class="phone">8 (800) 505-13-07</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container-theme footer-bottom-inner">
+            <p>© 2026 Gadget-Bar.ru</p>
+            <div class="footer-bottom-links">
+                <a href="/privacy">Конфиденциальность</a>
+                <a href="/offer">Оферта</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('pcConfigurator', (city) => ({
+            city: city || null,
+            mode: 'manual',
+            slots: [],
+            activeSlot: null,
+            build: {},
+            parts: [],
+            partsEmpty: false,
+            loadingSlots: true,
+            loadingParts: false,
+            form: { name: '', phone: '' },
+            submitting: false,
+            error: '',
+            orderId: null,
+            isMobile: false,
+            hoveredSlot: null,
+            autoForm: { budget: '', purpose: '', wishes: '' },
+            autoBuild: null,
+            autoError: '',
+            autoLoading: false,
+
+            init() {
+                const mq = window.matchMedia('(max-width: 767px)');
+                this.isMobile = mq.matches;
+                mq.addEventListener('change', (e) => { this.isMobile = e.matches; });
+
+                try {
+                    const saved = JSON.parse(localStorage.getItem('pc_build') || '{}');
+                    if (saved && typeof saved === 'object') this.build = this.migrateBuild(saved);
+                } catch (e) { this.build = {}; }
+
+                this.loadSlots();
+            },
+
+            async loadSlots() {
+                this.loadingSlots = true;
+                try {
+                    const res = await fetch('/api/pc/slots', { headers: { 'Accept': 'application/json' } });
+                    const data = await res.json();
+                    this.slots = data.data || [];
+                } catch (e) {
+                    this.error = 'Не удалось загрузить конфигуратор. Обновите страницу.';
+                } finally {
+                    this.loadingSlots = false;
+                }
+
+                if (this.slots.length && !this.activeSlot) {
+                    const next = this.slots.find(s => !s.empty && !this.build[s.id]) || this.slots.find(s => !s.empty);
+                    if (next) {
+                        this.activeSlot = next.id;
+                        this.loadParts();
+                    }
+                }
+            },
+
+            selectStep(slot) {
+                if (slot.empty) return;
+                if (this.activeSlot === slot.id) {
+                    this.activeSlot = null;
+                    this.parts = [];
+                    return;
+                }
+                this.activeSlot = slot.id;
+                this.loadParts();
+            },
+
+            activateSlot(slotId) {
+                const slot = this.slots.find(s => s.id === slotId);
+                if (slot) this.selectStep(slot);
+            },
+
+            get hint() {
+                if (!this.hoveredSlot) return '';
+                const slot = this.slots.find(s => s.id === this.hoveredSlot);
+                if (!slot) return '';
+                if (slot.empty) return slot.title + ' — скоро в продаже';
+                const chosen = this.build[slot.id];
+                if (!chosen) return slot.title;
+                if (Array.isArray(chosen)) {
+                    if (!chosen.length) return slot.title;
+                    return slot.title + ': ' + chosen.map(p => {
+                        const qty = p.qty || 1;
+                        return qty > 1 ? `${p.name} ×${qty}` : p.name;
+                    }).join(', ');
+                }
+                return slot.title + ': ' + chosen.name;
+            },
+
+            isMulti(slotId) {
+                return ['ram', 'storage', 'extra'].includes(slotId);
+            },
+
+            hasSlotItems(slotId) {
+                const val = this.build[slotId];
+                if (!val) return false;
+                if (Array.isArray(val)) return val.length > 0;
+                return true;
+            },
+
+            isSelected(slot, part) {
+                const val = this.build[slot.id];
+                if (!val) return false;
+                if (Array.isArray(val)) return val.some(p => p.id === part.id);
+                return val.id === part.id;
+            },
+
+            migrateBuild(saved) {
+                const out = {};
+                for (const [slot, val] of Object.entries(saved)) {
+                    if (!val) continue;
+                    if (this.isMulti(slot)) {
+                        if (Array.isArray(val)) {
+                            out[slot] = val.filter(p => p && p.id).map(p => ({ ...p, qty: p.qty || 1 }));
+                        } else if (val.id) {
+                            out[slot] = [{ ...val, qty: val.qty || 1 }];
+                        }
+                    } else {
+                        if (Array.isArray(val)) out[slot] = val[0] || null;
+                        else out[slot] = val;
+                    }
+                }
+                return out;
+            },
+
+            skipStep(slot) {
+                const next = this.slots.find(s => !s.empty && !this.build[s.id] && s.id !== slot.id
+                    && this.slots.indexOf(s) > this.slots.indexOf(slot));
+                if (next) {
+                    this.activeSlot = next.id;
+                    this.loadParts();
+                } else {
+                    this.activeSlot = null;
+                    this.parts = [];
+                }
+            },
+
+            buildIds() {
+                const ids = {};
+                for (const [slot, val] of Object.entries(this.build)) {
+                    if (!val) continue;
+                    if (Array.isArray(val)) ids[slot] = val.map(p => p.id);
+                    else ids[slot] = val.id;
+                }
+                return ids;
+            },
+
+            async loadParts() {
+                if (!this.activeSlot) return;
+                this.loadingParts = true;
+                this.parts = [];
+                this.partsEmpty = false;
+                try {
+                    const params = new URLSearchParams({
+                        slot: this.activeSlot,
+                        build: JSON.stringify(this.buildIds()),
+                    });
+                    const res = await fetch('/api/pc/parts?' + params.toString(), {
+                        headers: { 'Accept': 'application/json' },
+                    });
+                    const data = await res.json();
+                    this.parts = data.data || [];
+                    this.partsEmpty = !data.empty && this.parts.length === 0;
+                } catch (e) {
+                    this.error = 'Не удалось загрузить комплектующие.';
+                } finally {
+                    this.loadingParts = false;
+                }
+            },
+
+            choose(slot, part) {
+                if (this.isMulti(slot.id)) {
+                    const list = this.build[slot.id] || [];
+                    const idx = list.findIndex(p => p.id === part.id);
+                    const max = this.maxMultiQty(slot, part, idx >= 0 ? part.id : null);
+                    if (idx < 0) {
+                        if (max >= 1) {
+                            list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
+                        }
+                    } else if (list[idx].qty < max) {
+                        list[idx].qty += 1;
+                    }
+                    if (list.length) this.build[slot.id] = list;
+                    else delete this.build[slot.id];
+                } else {
+                    const saved = { id: part.id, name: part.name, price: part.price };
+                    if (slot.id === 'motherboard' && part.attributes && part.attributes.memory_slots) {
+                        saved.memory_slots = parseInt(part.attributes.memory_slots, 10) || null;
+                    }
+                    this.build[slot.id] = saved;
+                }
+                this.saveBuild();
+
+                if (this.isMulti(slot.id)) {
+                    this.parts = this.parts.map(p => ({ ...p }));
+                    return;
+                }
+
+                this.advanceSlot(slot);
+            },
+
+            maxMultiQty(slot, part, excludePartId = null) {
+                const stock = Math.max(1, Math.floor(part.stock || 1));
+                if (slot.id !== 'ram') return stock;
+                const mb = this.build['motherboard'];
+                const slots = mb && mb.memory_slots ? parseInt(mb.memory_slots, 10) : null;
+                if (!slots || isNaN(slots)) return stock;
+                const list = this.build['ram'] || [];
+                const used = list.reduce((sum, p) => sum + (p.id === excludePartId ? 0 : (p.qty || 1)), 0);
+                return Math.max(0, Math.min(stock, slots - used));
+            },
+
+            qtyOf(slot, part) {
+                if (!this.isMulti(slot.id)) return 1;
+                const list = this.build[slot.id] || [];
+                const item = list.find(p => p.id === part.id);
+                return item ? item.qty : 0;
+            },
+
+            changeQty(slot, part, delta) {
+                if (!this.isMulti(slot.id)) return;
+                const list = this.build[slot.id] || [];
+                const idx = list.findIndex(p => p.id === part.id);
+                const max = this.maxMultiQty(slot, part, idx >= 0 ? part.id : null);
+                if (idx < 0) {
+                    if (delta > 0 && max >= 1) {
+                        list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
+                        if (list.length) this.build[slot.id] = list;
+                        this.saveBuild();
+                        this.parts = this.parts.map(p => ({ ...p }));
+                    }
+                    return;
+                }
+                const next = list[idx].qty + delta;
+                if (next <= 0) {
+                    list.splice(idx, 1);
+                    if (!list.length) delete this.build[slot.id];
+                } else if (next <= max) {
+                    list[idx].qty = next;
+                }
+                this.saveBuild();
+                this.parts = this.parts.map(p => ({ ...p }));
+            },
+
+            advanceSlot(slot) {
+                const idx = this.slots.indexOf(slot);
+                const next = this.slots.slice(idx + 1).find(s => !s.empty && !this.hasSlotItems(s.id))
+                    || this.slots.find(s => !s.empty && !this.hasSlotItems(s.id));
+                if (next) {
+                    this.activeSlot = next.id;
+                    this.loadParts();
+                } else {
+                    this.activeSlot = null;
+                    this.parts = [];
+                }
+            },
+
+            saveBuild() {
+                localStorage.setItem('pc_build', JSON.stringify(this.build));
+            },
+
+            reset() {
+                this.build = {};
+                localStorage.removeItem('pc_build');
+                this.error = '';
+                const first = this.slots.find(s => !s.empty);
+                this.activeSlot = first ? first.id : null;
+                this.parts = [];
+                if (this.activeSlot) this.loadParts();
+            },
+
+            get hasBuild() {
+                return Object.keys(this.build).length > 0;
+            },
+
+            get total() {
+                return Object.values(this.build).reduce((sum, val) => {
+                    if (Array.isArray(val)) return sum + val.reduce((s, p) => s + (p.price || 0) * (p.qty || 1), 0);
+                    return sum + (val.price || 0);
+                }, 0);
+            },
+
+            get canSubmit() {
+                if (!this.form.name.trim() || !this.form.phone.trim()) return false;
+                if (!this.hasBuild) return false;
+                return this.slots
+                    .filter(s => s.required && !s.empty)
+                    .every(s => this.hasSlotItems(s.id));
+            },
+
+            chips(part) {
+                const a = part.attributes || {};
+                const out = [];
+                if (a.socket) out.push(a.socket);
+                if (a.memory_type) out.push(a.memory_type);
+                if (a.form_factor) out.push(a.form_factor);
+                if (a.gpu_chip) out.push(a.gpu_chip);
+                if (a.vram_gb) out.push(a.vram_gb + ' ГБ');
+                if (a.module_gb) out.push(a.module_gb + ' ГБ');
+                if (a.tdp_w) out.push(a.tdp_w + ' Вт');
+                if (a.wattage) out.push(a.wattage + ' Вт');
+                if (a.psu_w) out.push('БП от ' + a.psu_w + ' Вт');
+                if (a.height_mm) out.push(a.height_mm + ' мм');
+                if (a.cooler_clearance_mm) out.push('кулер до ' + a.cooler_clearance_mm + ' мм');
+                return out.slice(0, 3);
+            },
+
+            fmtPrice(price) {
+                if (price === null || price === undefined) return 'Цена по запросу';
+                return new Intl.NumberFormat('ru-RU').format(Math.round(price)) + ' ₽';
+            },
+
+            shortName(slotId) {
+                const val = this.build[slotId];
+                if (!val) return '';
+                if (Array.isArray(val)) {
+                    if (!val.length) return '';
+                    const totalQty = val.reduce((s, p) => s + (p.qty || 1), 0);
+                    const first = val[0].name;
+                    const suffix = totalQty > 1 ? ` ×${totalQty}` : '';
+                    const extra = val.length > 1 ? ' + ещё ' + (val.length - 1) : '';
+                    const base = first.length > 12 ? first.slice(0, 11) + '…' : first;
+                    return base + suffix + extra;
+                }
+                return val.name.length > 12 ? val.name.slice(0, 11) + '…' : val.name;
+            },
+
+            slotClass(slotId) {
+                const slot = this.slots.find(s => s.id === slotId);
+                return {
+                    'pc-slot--selected': this.hasSlotItems(slotId),
+                    'pc-slot--active': this.activeSlot === slotId,
+                    'pc-slot--soon': slot ? slot.empty : false,
+                };
+            },
+
+            caseStyle() {
+                if (this.isMobile) return '';
+                const poses = {
+                    case:        { t: 'rotateY(-18deg) rotateX(10deg)', o: '50% 50%' },
+                    cpu:         { t: 'rotateY(-26deg) rotateX(14deg) scale(1.08)', o: '31% 28%' },
+                    cooler:      { t: 'rotateY(-26deg) rotateX(14deg) scale(1.08)', o: '31% 27%' },
+                    motherboard: { t: 'rotateY(-20deg) rotateX(10deg) scale(1.06)', o: '37% 43%' },
+                    gpu:         { t: 'rotateY(22deg) rotateX(-12deg) scale(1.08)', o: '38% 48%' },
+                    ram:         { t: 'rotateY(-28deg) rotateX(10deg) scale(1.08)', o: '48% 31%' },
+                    storage:     { t: 'rotateY(18deg) rotateX(-14deg) scale(1.07)', o: '28% 61%' },
+                    psu:         { t: 'rotateY(14deg) rotateX(-20deg) scale(1.06)', o: '38% 78%' },
+                    extra:       { t: 'rotateY(-16deg) rotateX(-16deg) scale(1.07)', o: '46% 62%' },
+                };
+                const base = { t: 'rotateY(-18deg) rotateX(10deg)', o: '50% 50%' };
+                const pose = (this.activeSlot && poses[this.activeSlot]) || base;
+                return 'transform: ' + pose.t + '; transform-origin: ' + pose.o + ';';
+            },
+
+            phoneFocus() {
+                if (!this.form.phone) this.form.phone = '+7 (';
+            },
+
+            // Маска +7 (XXX) XXX-XX-XX: 7/8 в начале заменяются на +7,
+            // остальные цифры (макс. 10) встают по формату плейсхолдера.
+            phoneMask(event) {
+                let digits = event.target.value.replace(/\D/g, '');
+                if (digits.startsWith('8') || digits.startsWith('7')) digits = digits.slice(1);
+                digits = digits.slice(0, 10);
+                if (!digits.length) { this.form.phone = ''; return; }
+                let out = '+7 (' + digits.slice(0, 3);
+                if (digits.length >= 3) out += ') ';
+                if (digits.length > 3) out += digits.slice(3, 6);
+                if (digits.length > 6) out += '-' + digits.slice(6, 8);
+                if (digits.length > 8) out += '-' + digits.slice(8, 10);
+                this.form.phone = out;
+            },
+
+            slotTitle(slotId) {
+                const slot = this.slots.find(s => s.id === slotId);
+                return slot ? slot.title : slotId;
+            },
+
+            purposeLabel(purpose) {
+                const map = { games: 'Игры', work: 'Работа / учёба', office: 'Офис' };
+                return map[purpose] || 'Не важно';
+            },
+
+            get canAutoSubmit() {
+                return this.form.name.trim() && this.form.phone.trim() && this.autoBuild;
+            },
+
+            get canFallbackSubmit() {
+                return this.form.name.trim() && this.form.phone.trim();
+            },
+
+            resetAutoBuild() {
+                this.autoBuild = null;
+                this.autoError = '';
+                this.error = '';
+            },
+
+            async runAutoBuild() {
+                if (this.autoLoading) return;
+                this.autoLoading = true;
+                this.autoBuild = null;
+                this.autoError = '';
+                this.error = '';
+
+                try {
+                    const res = await fetch('/api/pc/auto-build', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            budget: Number(this.autoForm.budget),
+                            purpose: this.autoForm.purpose || null,
+                            wishes: this.autoForm.wishes.trim() || null,
+                        }),
+                    });
+                    const data = await res.json();
+
+                    if (res.status === 200 && data.success && data.data) {
+                        this.autoBuild = data.data;
+                        this.build = {};
+                        for (const [slot, item] of Object.entries(data.data.items)) {
+                            const base = { id: item.id, name: item.name, price: item.price };
+                            this.build[slot] = this.isMulti(slot) ? [base] : base;
+                        }
+                        this.saveBuild();
+                    } else if (res.status === 422) {
+                        const details = data.errors ? Object.values(data.errors).flat().join(' ') : '';
+                        this.error = (data.message || 'Проверьте данные формы.') + (details ? ' ' + details : '');
+                    } else {
+                        this.autoError = data.reason || 'Не удалось подобрать конфигурацию в указанный бюджет.';
+                    }
+                } catch (e) {
+                    this.error = 'Ошибка сети. Проверьте подключение и попробуйте ещё раз.';
+                } finally {
+                    this.autoLoading = false;
+                }
+            },
+
+            buildItems() {
+                const items = [];
+                for (const val of Object.values(this.build)) {
+                    if (Array.isArray(val)) {
+                        for (const p of val) items.push({ product_id: p.id, quantity: p.qty || 1 });
+                    } else if (val) {
+                        items.push({ product_id: val.id, quantity: 1 });
+                    }
+                }
+                return items;
+            },
+
+            async submitAutoBuildOrder() {
+                if (!this.canAutoSubmit || this.submitting) return;
+                this.submitting = true;
+                this.error = '';
+                try {
+                    const res = await fetch('/pc/build', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify({
+                            customer_name: this.form.name.trim(),
+                            customer_phone: this.form.phone.trim(),
+                            customer_city: this.city,
+                            items: this.buildItems(),
+                        }),
+                    });
+                    const data = await res.json();
+                    if (res.status === 201 && data.success) {
+                        this.orderId = data.order_id;
+                        this.build = {};
+                        this.autoBuild = null;
+                        this.autoForm = { budget: '', purpose: '', wishes: '' };
+                        localStorage.removeItem('pc_build');
+                        this.form = { name: '', phone: '' };
+                        this.activeSlot = null;
+                        this.parts = [];
+                    } else if (res.status === 422) {
+                        const details = data.errors ? Object.values(data.errors).flat().join(' ') : '';
+                        this.error = (data.message || 'Проверьте данные формы.') + (details ? ' ' + details : '');
+                    } else {
+                        this.error = 'Не удалось отправить заявку. Попробуйте позже.';
+                    }
+                } catch (e) {
+                    this.error = 'Ошибка сети. Проверьте подключение и попробуйте ещё раз.';
+                } finally {
+                    this.submitting = false;
+                }
+            },
+
+            async submitManagerRequest() {
+                if (!this.canFallbackSubmit || this.submitting) return;
+                this.submitting = true;
+                this.error = '';
+                try {
+                    const res = await fetch('/pc/manager-request', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify({
+                            customer_name: this.form.name.trim(),
+                            customer_phone: this.form.phone.trim(),
+                            customer_city: this.city,
+                            budget: this.autoForm.budget ? Number(this.autoForm.budget) : null,
+                            purpose: this.purposeLabel(this.autoForm.purpose),
+                            wishes: this.autoForm.wishes.trim() || null,
+                        }),
+                    });
+                    const data = await res.json();
+                    if (res.status === 201 && data.success) {
+                        this.orderId = data.order_id;
+                        this.build = {};
+                        this.autoBuild = null;
+                        this.autoError = '';
+                        this.autoForm = { budget: '', purpose: '', wishes: '' };
+                        localStorage.removeItem('pc_build');
+                        this.form = { name: '', phone: '' };
+                    } else if (res.status === 422) {
+                        const details = data.errors ? Object.values(data.errors).flat().join(' ') : '';
+                        this.error = (data.message || 'Проверьте данные формы.') + (details ? ' ' + details : '');
+                    } else {
+                        this.error = 'Не удалось отправить заявку. Попробуйте позже.';
+                    }
+                } catch (e) {
+                    this.error = 'Ошибка сети. Проверьте подключение и попробуйте ещё раз.';
+                } finally {
+                    this.submitting = false;
+                }
+            },
+
+            async submit() {
+                if (!this.canSubmit || this.submitting) return;
+                this.submitting = true;
+                this.error = '';
+                try {
+                    const res = await fetch('/pc/build', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify({
+                            customer_name: this.form.name.trim(),
+                            customer_phone: this.form.phone.trim(),
+                            customer_city: this.city,
+                            items: this.buildItems(),
+                        }),
+                    });
+                    const data = await res.json();
+                    if (res.status === 201 && data.success) {
+                        this.orderId = data.order_id;
+                        this.build = {};
+                        localStorage.removeItem('pc_build');
+                        this.form = { name: '', phone: '' };
+                        this.activeSlot = null;
+                        this.parts = [];
+                    } else if (res.status === 422) {
+                        const details = data.errors ? Object.values(data.errors).flat().join(' ') : '';
+                        this.error = (data.message || 'Проверьте данные формы.') + (details ? ' ' + details : '');
+                    } else {
+                        this.error = 'Не удалось отправить заявку. Попробуйте позже.';
+                    }
+                } catch (e) {
+                    this.error = 'Ошибка сети. Проверьте подключение и попробуйте ещё раз.';
+                } finally {
+                    this.submitting = false;
+                }
+            },
+        }));
+    });
+</script>
+
+
+</body></html>
