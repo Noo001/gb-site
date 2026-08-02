@@ -101,171 +101,150 @@
                         </template>
                     </div>
 
-                    {{-- Схематичный корпус с 3D --}}
+                    {{-- Схематичный корпус настоящим 3D-кубом --}}
                     <div class="pc-case-panel">
                         <div class="pc-case-scene">
                             <div class="pc-case-3d" :style="caseStyle()">
-                                <svg class="pc-case-svg" viewBox="0 0 560 520" xmlns="http://www.w3.org/2000/svg" aria-label="Схема системного блока">
-                                    <defs>
-                                        <linearGradient id="pcCaseGrad" x1="0" y1="0" x2="1" y2="1">
-                                            <stop offset="0" stop-color="#1d2635" />
-                                            <stop offset="0.5" stop-color="#121a27" />
-                                            <stop offset="1" stop-color="#0a0e16" />
-                                        </linearGradient>
-                                        <linearGradient id="pcTopGrad" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0" stop-color="#2a3648" />
-                                            <stop offset="1" stop-color="#1a2333" />
-                                        </linearGradient>
-                                        <linearGradient id="pcSideGrad" x1="0" y1="0" x2="1" y2="0">
-                                            <stop offset="0" stop-color="#0d131c" />
-                                            <stop offset="1" stop-color="#080c12" />
-                                        </linearGradient>
-                                        <linearGradient id="pcPcbGrad" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0" stop-color="#132130" />
-                                            <stop offset="1" stop-color="#0c141d" />
-                                        </linearGradient>
-                                        <linearGradient id="pcPsuGrad" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0" stop-color="#171f2c" />
-                                            <stop offset="1" stop-color="#0d1219" />
-                                        </linearGradient>
-                                        <linearGradient id="pcLedGrad" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="0" stop-color="#22d3ee" />
-                                            <stop offset="1" stop-color="#e879f9" />
-                                        </linearGradient>
-                                        <linearGradient id="pcGlassGrad" x1="0" y1="0" x2="1" y2="1">
-                                            <stop offset="0" stop-color="#7dd3fc" stop-opacity="0.09" />
-                                            <stop offset="1" stop-color="#7dd3fc" stop-opacity="0.02" />
-                                        </linearGradient>
-                                    </defs>
+                                <div class="pc-case-face pc-case-face--front">
+                                    <svg class="pc-case-svg" viewBox="90 70 280 390" xmlns="http://www.w3.org/2000/svg" aria-label="Схема системного блока">
+                                        <defs>
+                                            <linearGradient id="pcLedGrad" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0" stop-color="#22d3ee" />
+                                                <stop offset="1" stop-color="#e879f9" />
+                                            </linearGradient>
+                                            <linearGradient id="pcGlassGrad" x1="0" y1="0" x2="1" y2="1">
+                                                <stop offset="0" stop-color="#7dd3fc" stop-opacity="0.12" />
+                                                <stop offset="1" stop-color="#7dd3fc" stop-opacity="0.03" />
+                                            </linearGradient>
+                                        </defs>
 
-                                    {{-- Корпус: 3 грани (верх/бок/фронт) + LED + ножки --}}
-                                    <g class="pc-slot pc-slot-case" data-slot="case" :class="slotClass('case')"
-                                       @mouseenter="hoveredSlot = 'case'" @mouseleave="hoveredSlot = null" @click="activateSlot('case')">
-                                        <polygon class="pc-shape pc-case-top" points="90,70 150,35 430,35 370,70" />
-                                        <polygon class="pc-shape pc-case-side" points="370,70 430,35 430,425 370,460" />
-                                        <line class="pc-detail-line" x1="384" y1="130" x2="418" y2="104" />
-                                        <line class="pc-detail-line" x1="384" y1="160" x2="418" y2="134" />
-                                        <line class="pc-detail-line" x1="384" y1="190" x2="418" y2="164" />
-                                        <rect class="pc-shape pc-case-body" x="90" y="70" width="280" height="390" rx="10" />
-                                        <rect class="pc-led" x="99" y="82" width="4" height="366" rx="2" />
-                                        <rect class="pc-foot" x="120" y="460" width="32" height="12" rx="3" />
-                                        <rect class="pc-foot" x="310" y="460" width="32" height="12" rx="3" />
-                                        <text class="pc-slot-label" x="230" y="498" x-show="build['case']" x-text="shortName('case')"></text>
-                                    </g>
-
-                                    {{-- Материнская плата: текстура дорожек + IO-панель --}}
-                                    <g class="pc-slot" data-slot="motherboard" :class="slotClass('motherboard')"
-                                       @mouseenter="hoveredSlot = 'motherboard'" @mouseleave="hoveredSlot = null" @click="activateSlot('motherboard')">
-                                        <rect class="pc-shape pc-mb" x="120" y="100" width="175" height="245" rx="4" />
-                                        <rect class="pc-detail pc-io" x="125" y="105" width="22" height="48" rx="2" />
-                                        <line class="pc-trace" x1="212" y1="130" x2="290" y2="130" />
-                                        <line class="pc-trace" x1="212" y1="215" x2="292" y2="215" />
-                                        <line class="pc-trace" x1="132" y1="220" x2="132" y2="335" />
-                                        <line class="pc-trace" x1="190" y1="290" x2="290" y2="290" />
-                                        <text class="pc-slot-label" x="160" y="368" x-show="build['motherboard']" x-text="shortName('motherboard')"></text>
-                                    </g>
-
-                                    {{-- Процессор: heatspreader + насечка --}}
-                                    <g class="pc-slot" data-slot="cpu" :class="slotClass('cpu')"
-                                       @mouseenter="hoveredSlot = 'cpu'" @mouseleave="hoveredSlot = null" @click="activateSlot('cpu')">
-                                        <rect class="pc-shape" x="150" y="120" width="52" height="52" rx="4" />
-                                        <rect class="pc-detail" x="158" y="128" width="36" height="36" rx="2" />
-                                        <polygon class="pc-notch" points="152,122 159,122 152,129" />
-                                        <text class="pc-slot-label" x="176" y="192" x-show="build['cpu']" x-text="shortName('cpu')"></text>
-                                    </g>
-
-                                    {{-- Кулер: башня с рёбрами и вентилятором над процессором --}}
-                                    <g class="pc-slot" data-slot="cooler" :class="slotClass('cooler')"
-                                       @mouseenter="hoveredSlot = 'cooler'" @mouseleave="hoveredSlot = null" @click="activateSlot('cooler')">
-                                        <rect class="pc-shape pc-cooler" x="144" y="112" width="64" height="68" rx="3" />
-                                        <line class="pc-detail-line" x1="148" y1="124" x2="204" y2="124" />
-                                        <line class="pc-detail-line" x1="148" y1="136" x2="204" y2="136" />
-                                        <line class="pc-detail-line" x1="148" y1="148" x2="204" y2="148" />
-                                        <line class="pc-detail-line" x1="148" y1="160" x2="204" y2="160" />
-                                        <circle class="pc-detail pc-fan-ring" cx="176" cy="146" r="16" />
-                                        <g class="pc-fan-blades">
-                                            <path d="M176 146 q8 -7 3 -16" />
-                                            <path d="M176 146 q8 -7 3 -16" transform="rotate(60 176 146)" />
-                                            <path d="M176 146 q8 -7 3 -16" transform="rotate(120 176 146)" />
-                                            <path d="M176 146 q8 -7 3 -16" transform="rotate(180 176 146)" />
-                                            <path d="M176 146 q8 -7 3 -16" transform="rotate(240 176 146)" />
-                                            <path d="M176 146 q8 -7 3 -16" transform="rotate(300 176 146)" />
+                                        {{-- Корпус: фронтальная панель --}}
+                                        <g class="pc-slot pc-slot-case" data-slot="case" :class="slotClass('case')"
+                                           @mouseenter="hoveredSlot = 'case'" @mouseleave="hoveredSlot = null" @click="activateSlot('case')">
+                                            <rect class="pc-shape pc-case-body" x="90" y="70" width="280" height="390" rx="10" />
+                                            <rect class="pc-led" x="99" y="82" width="4" height="366" rx="2" />
+                                            <text class="pc-slot-label" x="230" y="448" x-show="build['case']" x-text="shortName('case')"></text>
                                         </g>
-                                        <circle class="pc-detail" cx="176" cy="146" r="5" />
-                                        <text class="pc-slot-label" x="206" y="104" style="text-anchor: end" x-show="build['cooler']" x-text="shortName('cooler')"></text>
-                                    </g>
 
-                                    {{-- Память: 2 планки с чипами --}}
-                                    <g class="pc-slot" data-slot="ram" :class="slotClass('ram')"
-                                       @mouseenter="hoveredSlot = 'ram'" @mouseleave="hoveredSlot = null" @click="activateSlot('ram')">
-                                        <rect class="pc-shape" x="250" y="112" width="11" height="95" rx="2" />
-                                        <rect class="pc-shape" x="267" y="112" width="11" height="95" rx="2" />
-                                        <rect class="pc-detail" x="252" y="117" width="7" height="22" />
-                                        <rect class="pc-detail" x="252" y="144" width="7" height="22" />
-                                        <rect class="pc-detail" x="252" y="171" width="7" height="22" />
-                                        <rect class="pc-detail" x="269" y="117" width="7" height="22" />
-                                        <rect class="pc-detail" x="269" y="144" width="7" height="22" />
-                                        <rect class="pc-detail" x="269" y="171" width="7" height="22" />
-                                        <text class="pc-slot-label" x="252" y="104" style="text-anchor: start" x-show="build['ram']" x-text="shortName('ram')"></text>
-                                    </g>
-
-                                    {{-- Видеокарта: 2 вентилятора + backplate --}}
-                                    <g class="pc-slot" data-slot="gpu" :class="slotClass('gpu')"
-                                       @mouseenter="hoveredSlot = 'gpu'" @mouseleave="hoveredSlot = null" @click="activateSlot('gpu')">
-                                        <rect class="pc-shape pc-gpu" x="125" y="230" width="190" height="38" rx="4" />
-                                        <rect class="pc-detail" x="125" y="268" width="190" height="5" />
-                                        <circle class="pc-detail pc-fan-ring" cx="165" cy="249" r="12" />
-                                        <line class="pc-detail-line" x1="165" y1="240" x2="165" y2="258" />
-                                        <line class="pc-detail-line" x1="156" y1="249" x2="174" y2="249" />
-                                        <line class="pc-detail-line" x1="159" y1="243" x2="171" y2="255" />
-                                        <line class="pc-detail-line" x1="171" y1="243" x2="159" y2="255" />
-                                        <circle class="pc-detail pc-fan-ring" cx="215" cy="249" r="12" />
-                                        <line class="pc-detail-line" x1="215" y1="240" x2="215" y2="258" />
-                                        <line class="pc-detail-line" x1="206" y1="249" x2="224" y2="249" />
-                                        <line class="pc-detail-line" x1="209" y1="243" x2="221" y2="255" />
-                                        <line class="pc-detail-line" x1="221" y1="243" x2="209" y2="255" />
-                                        <text class="pc-slot-label" x="210" y="296" x-show="build['gpu']" x-text="shortName('gpu')"></text>
-                                    </g>
-
-                                    {{-- Накопитель: M.2 планка с чипами --}}
-                                    <g class="pc-slot" data-slot="storage" :class="slotClass('storage')"
-                                       @mouseenter="hoveredSlot = 'storage'" @mouseleave="hoveredSlot = null" @click="activateSlot('storage')">
-                                        <rect class="pc-shape" x="125" y="308" width="60" height="14" rx="2" />
-                                        <rect class="pc-detail" x="130" y="311" width="20" height="8" />
-                                        <rect class="pc-detail" x="154" y="311" width="13" height="8" />
-                                        <text class="pc-slot-label" x="155" y="340" x-show="build['storage']" x-text="shortName('storage')"></text>
-                                    </g>
-
-                                    {{-- Охлаждение (extra): вентилятор с вращающимися лопастями --}}
-                                    <g class="pc-slot" data-slot="extra" :class="slotClass('extra')"
-                                       @mouseenter="hoveredSlot = 'extra'" @mouseleave="hoveredSlot = null" @click="activateSlot('extra')">
-                                        <circle class="pc-shape" cx="258" cy="322" r="20" />
-                                        <g class="pc-fan-blades">
-                                            <path d="M258 322 q9 -8 3 -18" />
-                                            <path d="M258 322 q9 -8 3 -18" transform="rotate(60 258 322)" />
-                                            <path d="M258 322 q9 -8 3 -18" transform="rotate(120 258 322)" />
-                                            <path d="M258 322 q9 -8 3 -18" transform="rotate(180 258 322)" />
-                                            <path d="M258 322 q9 -8 3 -18" transform="rotate(240 258 322)" />
-                                            <path d="M258 322 q9 -8 3 -18" transform="rotate(300 258 322)" />
+                                        {{-- Материнская плата: текстура дорожек + IO-панель --}}
+                                        <g class="pc-slot" data-slot="motherboard" :class="slotClass('motherboard')"
+                                           @mouseenter="hoveredSlot = 'motherboard'" @mouseleave="hoveredSlot = null" @click="activateSlot('motherboard')">
+                                            <rect class="pc-shape pc-mb" x="120" y="100" width="175" height="245" rx="4" />
+                                            <rect class="pc-detail pc-io" x="125" y="105" width="22" height="48" rx="2" />
+                                            <line class="pc-trace" x1="212" y1="130" x2="290" y2="130" />
+                                            <line class="pc-trace" x1="212" y1="215" x2="292" y2="215" />
+                                            <line class="pc-trace" x1="132" y1="220" x2="132" y2="335" />
+                                            <line class="pc-trace" x1="190" y1="290" x2="290" y2="290" />
+                                            <text class="pc-slot-label" x="160" y="368" x-show="build['motherboard']" x-text="shortName('motherboard')"></text>
                                         </g>
-                                        <circle class="pc-detail" cx="258" cy="322" r="5" />
-                                        <text class="pc-slot-label" x="258" y="352" x-show="build['extra']" x-text="shortName('extra')"></text>
-                                    </g>
 
-                                    {{-- Блок питания: решётка вентилятора --}}
-                                    <g class="pc-slot" data-slot="psu" :class="slotClass('psu')"
-                                       @mouseenter="hoveredSlot = 'psu'" @mouseleave="hoveredSlot = null" @click="activateSlot('psu')">
-                                        <rect class="pc-shape pc-psu" x="115" y="375" width="190" height="65" rx="6" />
-                                        <circle class="pc-detail-line" cx="160" cy="407" r="15" />
-                                        <circle class="pc-detail-line" cx="160" cy="407" r="9" />
-                                        <circle class="pc-detail-line" cx="160" cy="407" r="3" />
-                                        <text class="pc-slot-label" x="210" y="455" x-show="build['psu']" x-text="shortName('psu')"></text>
-                                    </g>
+                                        {{-- Процессор: heatspreader + насечка --}}
+                                        <g class="pc-slot" data-slot="cpu" :class="slotClass('cpu')"
+                                           @mouseenter="hoveredSlot = 'cpu'" @mouseleave="hoveredSlot = null" @click="activateSlot('cpu')">
+                                            <rect class="pc-shape" x="150" y="120" width="52" height="52" rx="4" />
+                                            <rect class="pc-detail" x="158" y="128" width="36" height="36" rx="2" />
+                                            <polygon class="pc-notch" points="152,122 159,122 152,129" />
+                                            <text class="pc-slot-label" x="176" y="192" x-show="build['cpu']" x-text="shortName('cpu')"></text>
+                                        </g>
 
-                                    {{-- Стеклянная панель поверх (не перехватывает события) --}}
-                                    <rect class="pc-glass" x="105" y="85" width="240" height="350" rx="6" />
-                                    <polygon class="pc-glass-glare" points="105,225 190,85 235,85 105,330" />
-                                </svg>
+                                        {{-- Кулер: башня с рёбрами и вентилятором над процессором --}}
+                                        <g class="pc-slot" data-slot="cooler" :class="slotClass('cooler')"
+                                           @mouseenter="hoveredSlot = 'cooler'" @mouseleave="hoveredSlot = null" @click="activateSlot('cooler')">
+                                            <rect class="pc-shape pc-cooler" x="144" y="112" width="64" height="68" rx="3" />
+                                            <line class="pc-detail-line" x1="148" y1="124" x2="204" y2="124" />
+                                            <line class="pc-detail-line" x1="148" y1="136" x2="204" y2="136" />
+                                            <line class="pc-detail-line" x1="148" y1="148" x2="204" y2="148" />
+                                            <line class="pc-detail-line" x1="148" y1="160" x2="204" y2="160" />
+                                            <circle class="pc-detail pc-fan-ring" cx="176" cy="146" r="16" />
+                                            <g class="pc-fan-blades">
+                                                <path d="M176 146 q8 -7 3 -16" />
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(60 176 146)" />
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(120 176 146)" />
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(180 176 146)" />
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(240 176 146)" />
+                                                <path d="M176 146 q8 -7 3 -16" transform="rotate(300 176 146)" />
+                                            </g>
+                                            <circle class="pc-detail" cx="176" cy="146" r="5" />
+                                            <text class="pc-slot-label" x="206" y="104" style="text-anchor: end" x-show="build['cooler']" x-text="shortName('cooler')"></text>
+                                        </g>
+
+                                        {{-- Память: 2 планки с чипами --}}
+                                        <g class="pc-slot" data-slot="ram" :class="slotClass('ram')"
+                                           @mouseenter="hoveredSlot = 'ram'" @mouseleave="hoveredSlot = null" @click="activateSlot('ram')">
+                                            <rect class="pc-shape" x="250" y="112" width="11" height="95" rx="2" />
+                                            <rect class="pc-shape" x="267" y="112" width="11" height="95" rx="2" />
+                                            <rect class="pc-detail" x="252" y="117" width="7" height="22" />
+                                            <rect class="pc-detail" x="252" y="144" width="7" height="22" />
+                                            <rect class="pc-detail" x="252" y="171" width="7" height="22" />
+                                            <rect class="pc-detail" x="269" y="117" width="7" height="22" />
+                                            <rect class="pc-detail" x="269" y="144" width="7" height="22" />
+                                            <rect class="pc-detail" x="269" y="171" width="7" height="22" />
+                                            <text class="pc-slot-label" x="252" y="104" style="text-anchor: start" x-show="build['ram']" x-text="shortName('ram')"></text>
+                                        </g>
+
+                                        {{-- Видеокарта: 2 вентилятора + backplate --}}
+                                        <g class="pc-slot" data-slot="gpu" :class="slotClass('gpu')"
+                                           @mouseenter="hoveredSlot = 'gpu'" @mouseleave="hoveredSlot = null" @click="activateSlot('gpu')">
+                                            <rect class="pc-shape pc-gpu" x="125" y="230" width="190" height="38" rx="4" />
+                                            <rect class="pc-detail" x="125" y="268" width="190" height="5" />
+                                            <circle class="pc-detail pc-fan-ring" cx="165" cy="249" r="12" />
+                                            <line class="pc-detail-line" x1="165" y1="240" x2="165" y2="258" />
+                                            <line class="pc-detail-line" x1="156" y1="249" x2="174" y2="249" />
+                                            <line class="pc-detail-line" x1="159" y1="243" x2="171" y2="255" />
+                                            <line class="pc-detail-line" x1="171" y1="243" x2="159" y2="255" />
+                                            <circle class="pc-detail pc-fan-ring" cx="215" cy="249" r="12" />
+                                            <line class="pc-detail-line" x1="215" y1="240" x2="215" y2="258" />
+                                            <line class="pc-detail-line" x1="206" y1="249" x2="224" y2="249" />
+                                            <line class="pc-detail-line" x1="209" y1="243" x2="221" y2="255" />
+                                            <line class="pc-detail-line" x1="221" y1="243" x2="209" y2="255" />
+                                            <text class="pc-slot-label" x="210" y="296" x-show="build['gpu']" x-text="shortName('gpu')"></text>
+                                        </g>
+
+                                        {{-- Накопитель: M.2 планка с чипами --}}
+                                        <g class="pc-slot" data-slot="storage" :class="slotClass('storage')"
+                                           @mouseenter="hoveredSlot = 'storage'" @mouseleave="hoveredSlot = null" @click="activateSlot('storage')">
+                                            <rect class="pc-shape" x="125" y="308" width="60" height="14" rx="2" />
+                                            <rect class="pc-detail" x="130" y="311" width="20" height="8" />
+                                            <rect class="pc-detail" x="154" y="311" width="13" height="8" />
+                                            <text class="pc-slot-label" x="155" y="340" x-show="build['storage']" x-text="shortName('storage')"></text>
+                                        </g>
+
+                                        {{-- Охлаждение (extra): вентилятор с вращающимися лопастями --}}
+                                        <g class="pc-slot" data-slot="extra" :class="slotClass('extra')"
+                                           @mouseenter="hoveredSlot = 'extra'" @mouseleave="hoveredSlot = null" @click="activateSlot('extra')">
+                                            <circle class="pc-shape" cx="258" cy="322" r="20" />
+                                            <g class="pc-fan-blades">
+                                                <path d="M258 322 q9 -8 3 -18" />
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(60 258 322)" />
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(120 258 322)" />
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(180 258 322)" />
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(240 258 322)" />
+                                                <path d="M258 322 q9 -8 3 -18" transform="rotate(300 258 322)" />
+                                            </g>
+                                            <circle class="pc-detail" cx="258" cy="322" r="5" />
+                                            <text class="pc-slot-label" x="258" y="352" x-show="build['extra']" x-text="shortName('extra')"></text>
+                                        </g>
+
+                                        {{-- Блок питания: решётка вентилятора --}}
+                                        <g class="pc-slot" data-slot="psu" :class="slotClass('psu')"
+                                           @mouseenter="hoveredSlot = 'psu'" @mouseleave="hoveredSlot = null" @click="activateSlot('psu')">
+                                            <rect class="pc-shape pc-psu" x="115" y="375" width="190" height="65" rx="6" />
+                                            <circle class="pc-detail-line" cx="160" cy="407" r="15" />
+                                            <circle class="pc-detail-line" cx="160" cy="407" r="9" />
+                                            <circle class="pc-detail-line" cx="160" cy="407" r="3" />
+                                            <text class="pc-slot-label" x="210" y="455" x-show="build['psu']" x-text="shortName('psu')"></text>
+                                        </g>
+
+                                        {{-- Стеклянная панель поверх (не перехватывает события) --}}
+                                        <rect class="pc-glass" x="105" y="85" width="240" height="350" rx="6" />
+                                        <polygon class="pc-glass-glare" points="105,225 190,85 235,85 105,330" />
+                                    </svg>
+                                </div>
+                                <div class="pc-case-face pc-case-face--back"></div>
+                                <div class="pc-case-face pc-case-face--top"></div>
+                                <div class="pc-case-face pc-case-face--bottom"></div>
+                                <div class="pc-case-face pc-case-face--left"></div>
+                                <div class="pc-case-face pc-case-face--right"></div>
                             </div>
                         </div>
                         <div class="pc-case-hint" x-text="hint"></div>
