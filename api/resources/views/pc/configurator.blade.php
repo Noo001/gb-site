@@ -576,8 +576,13 @@
                 if (this.isMulti(slot.id)) {
                     const list = this.build[slot.id] || [];
                     const idx = list.findIndex(p => p.id === part.id);
+                    const stock = Math.max(1, Math.floor(part.stock || 1));
                     if (idx < 0) {
-                        list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
+                        if (stock >= 1) {
+                            list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
+                        }
+                    } else if (list[idx].qty < stock) {
+                        list[idx].qty += 1;
                     }
                     if (list.length) this.build[slot.id] = list;
                     else delete this.build[slot.id];
@@ -605,8 +610,9 @@
                 if (!this.isMulti(slot.id)) return;
                 const list = this.build[slot.id] || [];
                 const idx = list.findIndex(p => p.id === part.id);
+                const stock = Math.max(1, Math.floor(part.stock || 1));
                 if (idx < 0) {
-                    if (delta > 0) {
+                    if (delta > 0 && stock >= 1) {
                         list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
                         if (list.length) this.build[slot.id] = list;
                         this.saveBuild();
@@ -618,7 +624,7 @@
                 if (next <= 0) {
                     list.splice(idx, 1);
                     if (!list.length) delete this.build[slot.id];
-                } else {
+                } else if (next <= stock) {
                     list[idx].qty = next;
                 }
                 this.saveBuild();
