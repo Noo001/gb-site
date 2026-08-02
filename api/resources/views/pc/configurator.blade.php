@@ -576,18 +576,22 @@
                 if (this.isMulti(slot.id)) {
                     const list = this.build[slot.id] || [];
                     const idx = list.findIndex(p => p.id === part.id);
-                    const stock = Math.max(1, Math.floor(part.stock || 1));
+                    const max = this.maxMultiQty(slot, part, idx >= 0 ? part.id : null);
                     if (idx < 0) {
-                        if (stock >= 1) {
+                        if (max >= 1) {
                             list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
                         }
-                    } else if (list[idx].qty < stock) {
+                    } else if (list[idx].qty < max) {
                         list[idx].qty += 1;
                     }
                     if (list.length) this.build[slot.id] = list;
                     else delete this.build[slot.id];
                 } else {
-                    this.build[slot.id] = { id: part.id, name: part.name, price: part.price };
+                    const saved = { id: part.id, name: part.name, price: part.price };
+                    if (slot.id === 'motherboard' && part.attributes && part.attributes.memory_slots) {
+                        saved.memory_slots = parseInt(part.attributes.memory_slots, 10) || null;
+                    }
+                    this.build[slot.id] = saved;
                 }
                 this.saveBuild();
 
@@ -597,6 +601,17 @@
                 }
 
                 this.advanceSlot(slot);
+            },
+
+            maxMultiQty(slot, part, excludePartId = null) {
+                const stock = Math.max(1, Math.floor(part.stock || 1));
+                if (slot.id !== 'ram') return stock;
+                const mb = this.build['motherboard'];
+                const slots = mb && mb.memory_slots ? parseInt(mb.memory_slots, 10) : null;
+                if (!slots || isNaN(slots)) return stock;
+                const list = this.build['ram'] || [];
+                const used = list.reduce((sum, p) => sum + (p.id === excludePartId ? 0 : (p.qty || 1)), 0);
+                return Math.max(0, Math.min(stock, slots - used));
             },
 
             qtyOf(slot, part) {
@@ -610,9 +625,9 @@
                 if (!this.isMulti(slot.id)) return;
                 const list = this.build[slot.id] || [];
                 const idx = list.findIndex(p => p.id === part.id);
-                const stock = Math.max(1, Math.floor(part.stock || 1));
+                const max = this.maxMultiQty(slot, part, idx >= 0 ? part.id : null);
                 if (idx < 0) {
-                    if (delta > 0 && stock >= 1) {
+                    if (delta > 0 && max >= 1) {
                         list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
                         if (list.length) this.build[slot.id] = list;
                         this.saveBuild();
@@ -624,7 +639,7 @@
                 if (next <= 0) {
                     list.splice(idx, 1);
                     if (!list.length) delete this.build[slot.id];
-                } else if (next <= stock) {
+                } else if (next <= max) {
                     list[idx].qty = next;
                 }
                 this.saveBuild();

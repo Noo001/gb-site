@@ -37,11 +37,11 @@ class PcDemoPartsSeeder extends Seeder
             ['slot' => 'cooler', 'name' => 'Кулер be quiet! Pure Rock 2', 'price' => 4900, 'attributes' => ['height_mm' => '155']],
             ['slot' => 'cooler', 'name' => 'Кулер Noctua NH-U12S', 'price' => 7900, 'attributes' => ['height_mm' => '158']],
 
-            // Материнские платы.
-            ['slot' => 'motherboard', 'name' => 'Материнская плата ASUS PRIME B760M-K', 'price' => 12500, 'attributes' => ['socket' => 'LGA1700', 'memory_type' => 'DDR5', 'form_factor' => 'mATX']],
-            ['slot' => 'motherboard', 'name' => 'Материнская плата MSI PRO B760M-A DDR4', 'price' => 11900, 'attributes' => ['socket' => 'LGA1700', 'memory_type' => 'DDR4', 'form_factor' => 'mATX']],
-            ['slot' => 'motherboard', 'name' => 'Материнская плата Gigabyte B650 AORUS ELITE', 'price' => 18900, 'attributes' => ['socket' => 'AM5', 'memory_type' => 'DDR5', 'form_factor' => 'ATX']],
-            ['slot' => 'motherboard', 'name' => 'Материнская плата ASRock B550M Pro4', 'price' => 9900, 'attributes' => ['socket' => 'AM4', 'memory_type' => 'DDR4', 'form_factor' => 'mATX']],
+            // Материнские платы: memory_slots — количество слотов ОЗУ.
+            ['slot' => 'motherboard', 'name' => 'Материнская плата ASUS PRIME B760M-K', 'price' => 12500, 'attributes' => ['socket' => 'LGA1700', 'memory_type' => 'DDR5', 'form_factor' => 'mATX', 'memory_slots' => '2']],
+            ['slot' => 'motherboard', 'name' => 'Материнская плата MSI PRO B760M-A DDR4', 'price' => 11900, 'attributes' => ['socket' => 'LGA1700', 'memory_type' => 'DDR4', 'form_factor' => 'mATX', 'memory_slots' => '4']],
+            ['slot' => 'motherboard', 'name' => 'Материнская плата Gigabyte B650 AORUS ELITE', 'price' => 18900, 'attributes' => ['socket' => 'AM5', 'memory_type' => 'DDR5', 'form_factor' => 'ATX', 'memory_slots' => '4']],
+            ['slot' => 'motherboard', 'name' => 'Материнская плата ASRock B550M Pro4', 'price' => 9900, 'attributes' => ['socket' => 'AM4', 'memory_type' => 'DDR4', 'form_factor' => 'mATX', 'memory_slots' => '4']],
 
             // Видеокарты: psu_w — рекомендуемая мощность БП.
             ['slot' => 'gpu', 'name' => 'Видеокарта GeForce RTX 4060 8GB', 'price' => 38900, 'attributes' => ['gpu_chip' => 'RTX 4060', 'vram_gb' => '8', 'psu_w' => '550']],
