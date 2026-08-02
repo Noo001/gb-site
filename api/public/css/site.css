@@ -2021,6 +2021,15 @@ button {
     border: none;
     overflow: hidden;
     border-radius: 18px;
+    pointer-events: auto;
+}
+
+.pc-case-face--back,
+.pc-case-face--left,
+.pc-case-face--right,
+.pc-case-face--top,
+.pc-case-face--bottom {
+    pointer-events: none;
 }
 
 .pc-case-face--back {
