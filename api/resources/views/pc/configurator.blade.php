@@ -109,13 +109,13 @@
                                     <svg class="pc-case-svg" viewBox="0 0 600 820" xmlns="http://www.w3.org/2000/svg" aria-label="Схема системного блока">
                                         <defs>
                                             <linearGradient id="pcCaseBody" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0" stop-color="#1e293b" />
-                                                <stop offset="1" stop-color="#2d3748" />
+                                                <stop offset="0" stop-color="#111827" />
+                                                <stop offset="1" stop-color="#1f2937" />
                                             </linearGradient>
                                             <linearGradient id="pcGlassGrad" x1="0" y1="0" x2="1" y2="1">
-                                                <stop offset="0" stop-color="rgba(255,255,255,0.10)" />
-                                                <stop offset="0.5" stop-color="rgba(255,255,255,0.02)" />
-                                                <stop offset="1" stop-color="rgba(255,255,255,0.06)" />
+                                                <stop offset="0" stop-color="rgba(255,255,255,0.06)" />
+                                                <stop offset="0.5" stop-color="rgba(255,255,255,0.01)" />
+                                                <stop offset="1" stop-color="rgba(255,255,255,0.04)" />
                                             </linearGradient>
                                             <linearGradient id="pcMb" x1="0" y1="0" x2="1" y2="1">
                                                 <stop offset="0" stop-color="#225a24" />
@@ -143,12 +143,12 @@
                                                 <stop offset="1" stop-color="#0cc0df" />
                                             </linearGradient>
                                             <linearGradient id="pcInternalLight" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0" stop-color="rgba(12,192,223,0.22)" />
-                                                <stop offset="1" stop-color="rgba(12,192,223,0.08)" />
+                                                <stop offset="0" stop-color="rgba(255,255,255,0.08)" />
+                                                <stop offset="1" stop-color="rgba(255,255,255,0.02)" />
                                             </linearGradient>
                                             <linearGradient id="pcTopLight" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0" stop-color="rgba(12,192,223,0.28)" />
-                                                <stop offset="1" stop-color="rgba(12,192,223,0.04)" />
+                                                <stop offset="0" stop-color="rgba(255,255,255,0.10)" />
+                                                <stop offset="1" stop-color="rgba(255,255,255,0.01)" />
                                             </linearGradient>
                                             <filter id="pcGlow" x="-50%" y="-50%" width="200%" height="200%">
                                                 <feGaussianBlur stdDeviation="5" result="coloredBlur" />
@@ -194,7 +194,7 @@
                                         <rect x="42" y="676" width="44" height="8" rx="1" fill="#111827" stroke="#4b5563" />
 
                                         {{-- Внутренняя камера с подсветкой --}}
-                                        <rect x="44" y="44" width="512" height="792" rx="10" fill="#162032" />
+                                        <rect x="44" y="44" width="512" height="792" rx="10" fill="#111827" />
                                         <rect x="44" y="44" width="512" height="792" rx="10" fill="url(#pcInternalLight)" />
 
                                         {{-- Верхняя подсветка внутри --}}
