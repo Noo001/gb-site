@@ -2591,8 +2591,16 @@ button {
 
 .pc-auto-fallback .pc-order-form {
     text-align: left;
-    max-width: 420px;
-    margin: 0 auto;
+    grid-template-columns: 1fr 1fr;
+}
+
+.pc-auto-fallback .pc-order-form .pc-field:last-of-type {
+    grid-column: 1 / -1;
+}
+
+.pc-auto-fallback .pc-order-form .pc-submit-btn {
+    grid-column: 1 / -1;
+    width: 100%;
 }
 
 @media (min-width: 640px) {
