@@ -743,17 +743,17 @@
             caseStyle() {
                 if (this.isMobile) return '';
                 const poses = {
-                    case:        { t: 'rotateY(-4deg) rotateX(2deg)', o: '50% 50%' },
-                    cpu:         { t: 'rotateY(-12deg) rotateX(6deg) scale(1.08)', o: '31% 28%' },
-                    cooler:      { t: 'rotateY(-12deg) rotateX(6deg) scale(1.08)', o: '31% 27%' },
-                    motherboard: { t: 'rotateY(-8deg) rotateX(3deg) scale(1.06)', o: '37% 43%' },
-                    gpu:         { t: 'rotateY(10deg) rotateX(-4deg) scale(1.08)', o: '38% 48%' },
-                    ram:         { t: 'rotateY(-14deg) rotateX(4deg) scale(1.08)', o: '48% 31%' },
-                    storage:     { t: 'rotateY(8deg) rotateX(-6deg) scale(1.07)', o: '28% 61%' },
-                    psu:         { t: 'rotateY(6deg) rotateX(-10deg) scale(1.06)', o: '38% 78%' },
-                    extra:       { t: 'rotateY(-6deg) rotateX(-8deg) scale(1.07)', o: '46% 62%' },
+                    case:        { t: 'rotateY(-18deg) rotateX(10deg)', o: '50% 50%' },
+                    cpu:         { t: 'rotateY(-26deg) rotateX(14deg) scale(1.08)', o: '31% 28%' },
+                    cooler:      { t: 'rotateY(-26deg) rotateX(14deg) scale(1.08)', o: '31% 27%' },
+                    motherboard: { t: 'rotateY(-20deg) rotateX(10deg) scale(1.06)', o: '37% 43%' },
+                    gpu:         { t: 'rotateY(22deg) rotateX(-12deg) scale(1.08)', o: '38% 48%' },
+                    ram:         { t: 'rotateY(-28deg) rotateX(10deg) scale(1.08)', o: '48% 31%' },
+                    storage:     { t: 'rotateY(18deg) rotateX(-14deg) scale(1.07)', o: '28% 61%' },
+                    psu:         { t: 'rotateY(14deg) rotateX(-20deg) scale(1.06)', o: '38% 78%' },
+                    extra:       { t: 'rotateY(-16deg) rotateX(-16deg) scale(1.07)', o: '46% 62%' },
                 };
-                const base = { t: 'rotateY(-6deg) rotateX(3deg)', o: '50% 50%' };
+                const base = { t: 'rotateY(-18deg) rotateX(10deg)', o: '50% 50%' };
                 const pose = (this.activeSlot && poses[this.activeSlot]) || base;
                 return 'transform: ' + pose.t + '; transform-origin: ' + pose.o + ';';
             },
