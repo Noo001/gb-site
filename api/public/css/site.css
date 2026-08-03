@@ -1991,12 +1991,12 @@ button {
     display: flex;
     justify-content: center;
     padding: 2rem 0;
-    min-height: 860px;
+    min-height: 600px;
 }
 
 .pc-case-3d {
     --pc-w: 560px;
-    --pc-h: 760px;
+    --pc-h: 520px;
     --pc-d: 60px;
     width: var(--pc-w);
     height: var(--pc-h);
@@ -2041,9 +2041,9 @@ button {
     height: var(--pc-h);
     transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(calc(var(--pc-d) / 2));
     background:
-        linear-gradient(180deg, transparent 8%, rgba(75,85,99,0.25) 8%, rgba(75,85,99,0.25) 10%, transparent 10%),
-        linear-gradient(180deg, transparent 92%, rgba(75,85,99,0.25) 92%, rgba(75,85,99,0.25) 94%, transparent 94%),
-        linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        linear-gradient(180deg, transparent 8%, rgba(75,85,99,0.15) 8%, rgba(75,85,99,0.15) 10%, transparent 10%),
+        linear-gradient(180deg, transparent 92%, rgba(75,85,99,0.15) 92%, rgba(75,85,99,0.15) 94%, transparent 94%),
+        linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
     border-radius: 18px;
 }
 
@@ -2052,11 +2052,11 @@ button {
     width: var(--pc-d);
     height: var(--pc-h);
     background:
-        radial-gradient(circle at 25% 8%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
-        radial-gradient(circle at 75% 8%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
-        radial-gradient(circle at 25% 92%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
-        radial-gradient(circle at 75% 92%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
-        linear-gradient(180deg, #374151 0%, #1f2937 100%);
+        radial-gradient(circle at 25% 8%, rgba(0,0,0,0.12) 0, rgba(0,0,0,0.12) 2px, transparent 3px),
+        radial-gradient(circle at 75% 8%, rgba(0,0,0,0.12) 0, rgba(0,0,0,0.12) 2px, transparent 3px),
+        radial-gradient(circle at 25% 92%, rgba(0,0,0,0.12) 0, rgba(0,0,0,0.12) 2px, transparent 3px),
+        radial-gradient(circle at 75% 92%, rgba(0,0,0,0.12) 0, rgba(0,0,0,0.12) 2px, transparent 3px),
+        linear-gradient(180deg, #e5e7eb 0%, #d1d5db 100%);
     border-radius: 18px;
 }
 
@@ -2068,11 +2068,11 @@ button {
     width: var(--pc-w);
     height: var(--pc-d);
     background:
-        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
-        radial-gradient(circle at 40% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
-        radial-gradient(circle at 60% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
-        radial-gradient(circle at 80% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
-        linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        radial-gradient(circle at 20% 50%, rgba(0,0,0,0.10) 0, rgba(0,0,0,0.10) 2px, transparent 3px),
+        radial-gradient(circle at 40% 50%, rgba(0,0,0,0.10) 0, rgba(0,0,0,0.10) 2px, transparent 3px),
+        radial-gradient(circle at 60% 50%, rgba(0,0,0,0.10) 0, rgba(0,0,0,0.10) 2px, transparent 3px),
+        radial-gradient(circle at 80% 50%, rgba(0,0,0,0.10) 0, rgba(0,0,0,0.10) 2px, transparent 3px),
+        linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
     border-radius: 18px;
 }
 
@@ -2086,10 +2086,11 @@ button {
 }
 
 .pc-slot .pc-shape {
-    fill: none;
-    stroke: transparent;
-    stroke-width: 2.5;
-    transition: stroke 0.35s, filter 0.35s;
+    fill: rgba(12, 192, 223, 0.08);
+    stroke: #9ca3af;
+    stroke-width: 2;
+    stroke-dasharray: 5 4;
+    transition: fill 0.35s, stroke 0.35s, filter 0.35s;
 }
 
 .pc-slot .pc-shape-inner {
@@ -2103,25 +2104,28 @@ button {
 .pc-slot--active .pc-shape,
 .pc-slot:hover .pc-shape {
     stroke: var(--accent);
-    stroke-width: 3;
+    stroke-dasharray: none;
+    fill: rgba(12, 192, 223, 0.14);
     filter: drop-shadow(0 0 8px rgba(12, 192, 223, 0.55));
+    animation: pcSlotPulse 1.4s ease-in-out infinite;
 }
 
 .pc-slot--selected .pc-shape,
 .pc-slot--selected:hover .pc-shape {
+    fill: rgba(12, 192, 223, 0.18);
     stroke: var(--accent);
-    stroke-width: 3;
+    stroke-dasharray: none;
     filter: drop-shadow(0 0 10px rgba(12, 192, 223, 0.65));
 }
 
 .pc-slot-label {
-    fill: #fff;
+    fill: var(--foreground);
     font-size: 15px;
     font-weight: 700;
     text-anchor: middle;
     paint-order: stroke;
-    stroke: #000;
-    stroke-width: 3px;
+    stroke: #fff;
+    stroke-width: 4px;
     pointer-events: none;
 }
 
@@ -2319,14 +2323,14 @@ button {
     }
 
     .pc-case-scene {
-        min-height: 480px;
+        min-height: 340px;
         padding: 1rem 0;
     }
 
     .pc-case-3d {
         --pc-w: 300px;
-        --pc-h: 420px;
-        --pc-d: 50px;
+        --pc-h: 278px;
+        --pc-d: 32px;
         transition: none;
         transform: none !important;
     }
@@ -2391,9 +2395,8 @@ button {
 }
 
 .pc-fan-blades path {
-    fill: #52525b;
-    stroke: rgba(255,255,255,0.2);
-    stroke-width: 0.5;
+    fill: rgba(12, 192, 223, 0.45);
+    stroke: none;
 }
 
 @keyframes pcFanSpin {
@@ -2411,14 +2414,83 @@ button {
 }
 
 .pc-glass {
-    fill: url(#pcGlassGrad);
-    stroke: rgba(255, 255, 255, 0.14);
-    stroke-width: 2;
+    fill: rgba(255, 255, 255, 0.55);
+    stroke: rgba(0, 0, 0, 0.1);
+    stroke-width: 1.5;
+    pointer-events: none;
 }
 
 .pc-glass-glare {
-    fill: rgba(255, 255, 255, 0.04);
+    fill: rgba(255, 255, 255, 0.35);
     pointer-events: none;
+}
+
+.pc-detail {
+    fill: #e5e7eb;
+    stroke: #9ca3af;
+    stroke-width: 1.5;
+}
+
+.pc-detail-line {
+    fill: none;
+    stroke: #6b7280;
+    stroke-width: 2;
+}
+
+.pc-trace {
+    fill: none;
+    stroke: rgba(12, 192, 223, 0.5);
+    stroke-width: 1.5;
+}
+
+.pc-io {
+    fill: #d1d5db;
+}
+
+.pc-notch {
+    fill: var(--accent);
+    opacity: 0.9;
+}
+
+.pc-fan-ring {
+    fill: #fff;
+    stroke: #9ca3af;
+    stroke-width: 1.5;
+}
+
+.pc-led {
+    fill: var(--accent);
+    pointer-events: none;
+}
+
+.pc-foot {
+    fill: #d1d5db;
+    stroke: #9ca3af;
+    stroke-width: 1.5;
+}
+
+.pc-slot .pc-case-body {
+    fill: #e5e7eb;
+}
+
+.pc-slot .pc-mb {
+    fill: #d1d5db;
+}
+
+.pc-slot .pc-psu {
+    fill: #d1d5db;
+}
+
+.pc-slot .pc-gpu {
+    fill: #e5e7eb;
+}
+
+.pc-slot .pc-cooler {
+    fill: #e5e7eb;
+}
+
+.pc-slot--selected.pc-slot-case .pc-case-body {
+    fill: #e8f9fb;
 }
 
 .pc-slot {
