@@ -1987,108 +1987,34 @@ button {
 }
 
 .pc-case-scene {
-    perspective: 1600px;
+    perspective: 900px;
     display: flex;
     justify-content: center;
-    padding: 2rem 0;
-    min-height: 860px;
-    filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.25));
+    padding: 0;
 }
 
 .pc-case-3d {
-    --pc-w: 560px;
-    --pc-h: 760px;
-    --pc-d: 80px;
-    width: var(--pc-w);
-    height: var(--pc-h);
-    position: relative;
-    transform-style: preserve-3d;
+    width: 100%;
+    max-width: 620px;
     transition: transform 0.6s ease;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
     will-change: transform;
+    filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.08));
 }
-
-.pc-case-face {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    backface-visibility: visible;
-    box-sizing: border-box;
-    border: 2px solid #374151;
-}
-
-.pc-case-face--front {
-    width: var(--pc-w);
-    height: var(--pc-h);
-    transform: translateX(-50%) translateY(-50%) translateZ(calc(var(--pc-d) / 2));
-    background: transparent;
-    border: none;
-    overflow: hidden;
-    border-radius: 18px;
-    pointer-events: auto;
-}
-
-.pc-case-face--back,
-.pc-case-face--left,
-.pc-case-face--right,
-.pc-case-face--top,
-.pc-case-face--bottom {
-    pointer-events: none;
-}
-
-.pc-case-face--back {
-    width: var(--pc-w);
-    height: var(--pc-h);
-    transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(calc(var(--pc-d) / 2));
-    background:
-        linear-gradient(180deg, transparent 8%, rgba(75,85,99,0.25) 8%, rgba(75,85,99,0.25) 10%, transparent 10%),
-        linear-gradient(180deg, transparent 92%, rgba(75,85,99,0.25) 92%, rgba(75,85,99,0.25) 94%, transparent 94%),
-        linear-gradient(135deg, #1f2937 0%, #111827 100%);
-    border-radius: 18px;
-}
-
-.pc-case-face--left,
-.pc-case-face--right {
-    width: var(--pc-d);
-    height: var(--pc-h);
-    background:
-        radial-gradient(circle at 25% 8%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
-        radial-gradient(circle at 75% 8%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
-        radial-gradient(circle at 25% 92%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
-        radial-gradient(circle at 75% 92%, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 3px),
-        linear-gradient(180deg, #374151 0%, #1f2937 100%);
-    border-radius: 18px;
-}
-
-.pc-case-face--left { transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(calc(var(--pc-w) / 2)); }
-.pc-case-face--right { transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(calc(var(--pc-w) / 2)); }
-
-.pc-case-face--top,
-.pc-case-face--bottom {
-    width: var(--pc-w);
-    height: var(--pc-d);
-    background:
-        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
-        radial-gradient(circle at 40% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
-        radial-gradient(circle at 60% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
-        radial-gradient(circle at 80% 50%, rgba(255,255,255,0.12) 0, rgba(255,255,255,0.12) 2px, transparent 3px),
-        linear-gradient(135deg, #374151 0%, #1f2937 100%);
-    border-radius: 18px;
-}
-
-.pc-case-face--top { transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(calc(var(--pc-h) / 2)); }
-.pc-case-face--bottom { transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(calc(var(--pc-h) / 2)); }
 
 .pc-case-svg {
     width: 100%;
-    height: 100%;
+    height: auto;
     display: block;
 }
 
 .pc-slot .pc-shape {
-    fill: none;
-    stroke: transparent;
-    stroke-width: 2.5;
-    transition: stroke 0.35s, filter 0.35s;
+    fill: rgba(12, 192, 223, 0.08);
+    stroke: #9ca3af;
+    stroke-width: 2;
+    stroke-dasharray: 5 4;
+    transition: fill 0.35s, stroke 0.35s, filter 0.35s;
 }
 
 .pc-slot .pc-shape-inner {
@@ -2099,34 +2025,40 @@ button {
     opacity: 0.35;
 }
 
-.pc-slot--active .pc-shape,
-.pc-slot:hover .pc-shape {
+.pc-slot--active .pc-shape {
     stroke: var(--accent);
-    stroke-width: 3;
-    filter: drop-shadow(0 0 8px rgba(12, 192, 223, 0.55));
+    stroke-dasharray: none;
+    fill: rgba(12, 192, 223, 0.14);
+    animation: pcSlotPulse 1.4s ease-in-out infinite;
 }
 
-.pc-slot--selected .pc-shape,
-.pc-slot--selected:hover .pc-shape {
+.pc-slot--selected .pc-shape {
+    fill: rgba(12, 192, 223, 0.18);
     stroke: var(--accent);
-    stroke-width: 3;
-    filter: drop-shadow(0 0 10px rgba(12, 192, 223, 0.65));
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 6px rgba(12, 192, 223, 0.4));
+}
+
+.pc-slot--selected.pc-slot-case .pc-shape {
+    fill: rgba(12, 192, 223, 0.12);
+    stroke: var(--accent);
+    filter: drop-shadow(0 0 6px rgba(12, 192, 223, 0.4));
 }
 
 .pc-slot-label {
-    fill: #fff;
+    fill: var(--foreground);
     font-size: 15px;
     font-weight: 700;
     text-anchor: middle;
     paint-order: stroke;
-    stroke: #000;
-    stroke-width: 3px;
+    stroke: #fff;
+    stroke-width: 4px;
     pointer-events: none;
 }
 
 @keyframes pcSlotPulse {
-    0%, 100% { filter: drop-shadow(0 0 4px rgba(12, 192, 223, 0.35)); }
-    50% { filter: drop-shadow(0 0 10px rgba(12, 192, 223, 0.65)); }
+    0%, 100% { filter: drop-shadow(0 0 2px rgba(12, 192, 223, 0.2)); }
+    50% { filter: drop-shadow(0 0 6px rgba(12, 192, 223, 0.4)); }
 }
 
 /* --- Итог и форма --- */
@@ -2317,44 +2249,11 @@ button {
         order: -1;
     }
 
-    .pc-case-scene {
-        min-height: 480px;
-        padding: 1rem 0;
-    }
-
     .pc-case-3d {
-        --pc-w: 300px;
-        --pc-h: 420px;
-        --pc-d: 50px;
+        max-width: 280px;
         transition: none;
         transform: none !important;
     }
-
-    .pc-case-face--front,
-    .pc-case-face--back {
-        width: var(--pc-w);
-        height: var(--pc-h);
-    }
-
-    .pc-case-face--left,
-    .pc-case-face--right {
-        width: var(--pc-d);
-        height: var(--pc-h);
-    }
-
-    .pc-case-face--left { transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(calc(var(--pc-w) / 2)); }
-    .pc-case-face--right { transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(calc(var(--pc-w) / 2)); }
-
-    .pc-case-face--top,
-    .pc-case-face--bottom {
-        width: var(--pc-w);
-        height: var(--pc-d);
-    }
-
-    .pc-case-face--top { transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(calc(var(--pc-h) / 2)); }
-    .pc-case-face--bottom { transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(calc(var(--pc-h) / 2)); }
-    .pc-case-face--front { transform: translateX(-50%) translateY(-50%) translateZ(calc(var(--pc-d) / 2)); }
-    .pc-case-face--back { transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(calc(var(--pc-d) / 2)); }
 
     .pc-parts {
         grid-template-columns: 1fr;
@@ -2373,14 +2272,59 @@ button {
     }
 }
 
-/* --- PC Configurator: детализация корпуса --- */
+/* --- PC Configurator: детализация корпуса и ховеры --- */
 
-.pc-slot {
-    cursor: pointer;
+.pc-slot .pc-case-body {
+    fill: #e5e7eb;
 }
 
-.pc-slot--soon {
-    cursor: not-allowed;
+.pc-slot .pc-mb {
+    fill: #d1d5db;
+}
+
+.pc-slot .pc-psu {
+    fill: #d1d5db;
+}
+
+.pc-slot .pc-gpu {
+    fill: #e5e7eb;
+}
+
+.pc-slot--selected.pc-slot-case .pc-case-body {
+    fill: #e8f9fb;
+}
+
+.pc-detail {
+    fill: #e5e7eb;
+    stroke: #9ca3af;
+    stroke-width: 1.5;
+}
+
+.pc-detail-line {
+    fill: none;
+    stroke: #6b7280;
+    stroke-width: 2;
+}
+
+.pc-trace {
+    fill: none;
+    stroke: rgba(12, 192, 223, 0.5);
+    stroke-width: 1.5;
+}
+
+.pc-io {
+    fill: #d1d5db;
+}
+
+.pc-notch {
+    fill: var(--accent);
+    opacity: 0.9;
+}
+
+.pc-fan-ring {
+    fill: #fff;
+    stroke: #9ca3af;
+    stroke-width: 1.5;
 }
 
 .pc-fan-blades {
@@ -2390,34 +2334,35 @@ button {
 }
 
 .pc-fan-blades path {
-    fill: #52525b;
-    stroke: rgba(255,255,255,0.2);
-    stroke-width: 0.5;
+    fill: rgba(12, 192, 223, 0.45);
+    stroke: none;
 }
 
 @keyframes pcFanSpin {
     to { transform: rotate(360deg); }
 }
 
-.pc-glass,
-.pc-led,
-.pc-rgb {
-    pointer-events: none;
-}
-
-.pc-rgb {
-    opacity: 0.5;
-}
-
 .pc-glass {
-    fill: url(#pcGlassGrad);
-    stroke: rgba(255, 255, 255, 0.14);
-    stroke-width: 2;
+    fill: rgba(255, 255, 255, 0.55);
+    stroke: rgba(0, 0, 0, 0.1);
+    stroke-width: 1.5;
+    pointer-events: none;
 }
 
 .pc-glass-glare {
-    fill: rgba(255, 255, 255, 0.04);
+    fill: rgba(255, 255, 255, 0.35);
     pointer-events: none;
+}
+
+.pc-led {
+    fill: var(--accent);
+    pointer-events: none;
+}
+
+.pc-foot {
+    fill: #d1d5db;
+    stroke: #9ca3af;
+    stroke-width: 1.5;
 }
 
 .pc-slot {
@@ -2464,8 +2409,24 @@ button {
 
 /* --- PC Configurator: 3D-грани корпуса и кулер --- */
 
+.pc-slot .pc-case-top {
+    fill: #e5e7eb;
+}
+
+.pc-slot .pc-case-side {
+    fill: #f3f4f6;
+}
+
 .pc-slot .pc-cooler {
     fill: #e5e7eb;
+}
+
+.pc-slot--selected.pc-slot-case .pc-case-top {
+    fill: #e5e7eb;
+}
+
+.pc-slot--selected.pc-slot-case .pc-case-side {
+    fill: #eefcfd;
 }
 
 /* --- PC Configurator: автоподбор по бюджету --- */
