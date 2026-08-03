@@ -2020,15 +2020,14 @@ button {
     width: var(--pc-w);
     height: var(--pc-h);
     transform: translateX(-50%) translateY(-50%) translateZ(calc(var(--pc-d) / 2));
-    background: linear-gradient(145deg, #1e293b 0%, #0f172a 60%, #020617 100%);
-    border: 3px solid #475569;
+    background: transparent;
+    border: 3px solid #94a3b8;
     border-radius: 20px;
     overflow: hidden;
     pointer-events: auto;
     box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.08),
-        inset 0 0 30px rgba(0,0,0,0.5),
-        0 0 0 1px rgba(255,255,255,0.05);
+        inset 0 0 0 1px rgba(255,255,255,0.15),
+        0 0 0 1px rgba(0,0,0,0.15);
 }
 
 .pc-case-face--back,
@@ -2451,24 +2450,24 @@ button {
 }
 
 .pc-case-interior {
-    fill: #334155;
+    fill: #64748b;
     pointer-events: none;
 }
 
 .pc-slot .pc-case-body {
-    fill: #475569;
-    stroke: #94a3b8;
+    fill: #1e293b;
+    stroke: #475569;
     stroke-width: 2.5;
 }
 
 .pc-slot .pc-mb {
-    fill: #064e3b;
+    fill: #0f766e;
     stroke: #14b8a6;
 }
 
 .pc-slot .pc-psu {
     fill: #111827;
-    stroke: #64748b;
+    stroke: #94a3b8;
 }
 
 .pc-slot .pc-gpu {
@@ -2478,7 +2477,7 @@ button {
 
 .pc-slot .pc-cooler {
     fill: #e2e8f0;
-    stroke: #94a3b8;
+    stroke: #64748b;
 }
 
 .pc-slot--soon .pc-detail,
