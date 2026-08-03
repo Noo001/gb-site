@@ -109,7 +109,7 @@
                                 <svg class="pc-case-svg" viewBox="0 0 380 540" xmlns="http://www.w3.org/2000/svg" aria-label="Схема системного блока">
                                     <defs>
                                         <pattern id="pcVentHoles" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
-                                            <circle cx="6" cy="6" r="2" fill="#6b7280" />
+                                            <circle cx="6" cy="6" r="2" fill="#9ca3af" />
                                         </pattern>
                                     </defs>
 
@@ -126,27 +126,27 @@
                                         <rect class="pc-case-interior" x="35" y="85" width="270" height="370" fill="#111827" />
 
                                         {{-- Верхняя и нижняя вентиляционные решётки --}}
-                                        <rect x="35" y="20" width="310" height="24" rx="4" fill="#111827" stroke="#4b5563" stroke-width="1" />
+                                        <rect x="35" y="20" width="310" height="24" rx="4" fill="#374151" stroke="#6b7280" stroke-width="1" />
                                         <rect x="40" y="24" width="300" height="16" fill="url(#pcVentHoles)" />
-                                        <rect x="35" y="496" width="310" height="24" rx="4" fill="#111827" stroke="#4b5563" stroke-width="1" />
+                                        <rect x="35" y="496" width="310" height="24" rx="4" fill="#374151" stroke="#6b7280" stroke-width="1" />
                                         <rect x="40" y="500" width="300" height="16" fill="url(#pcVentHoles)" />
 
                                         {{-- RGB-лента слева --}}
                                         <rect class="pc-led" x="12" y="60" width="6" height="420" rx="2" />
 
                                         {{-- Передняя панель справа --}}
-                                        <rect x="315" y="80" width="50" height="380" rx="4" fill="#1f2937" stroke="#4b5563" stroke-width="1" />
+                                        <rect x="315" y="80" width="50" height="380" rx="4" fill="#4b5563" stroke="#374151" stroke-width="1" />
                                         <rect class="pc-led" x="320" y="100" width="6" height="340" rx="2" />
 
                                         {{-- Кнопка питания и USB --}}
-                                        <circle cx="340" cy="120" r="9" fill="#374151" stroke="#9ca3af" stroke-width="1" />
+                                        <circle cx="340" cy="120" r="9" fill="#6b7280" stroke="#d1d5db" stroke-width="1" />
                                         <circle class="pc-led" cx="340" cy="120" r="3" />
-                                        <rect x="332" y="145" width="8" height="8" rx="1" fill="#111827" stroke="#9ca3af" stroke-width="1" />
-                                        <rect x="345" y="145" width="8" height="8" rx="1" fill="#111827" stroke="#9ca3af" stroke-width="1" />
-                                        <rect x="332" y="160" width="8" height="8" rx="1" fill="#111827" stroke="#9ca3af" stroke-width="1" />
+                                        <rect x="332" y="145" width="8" height="8" rx="1" fill="#374151" stroke="#d1d5db" stroke-width="1" />
+                                        <rect x="345" y="145" width="8" height="8" rx="1" fill="#374151" stroke="#d1d5db" stroke-width="1" />
+                                        <rect x="332" y="160" width="8" height="8" rx="1" fill="#374151" stroke="#d1d5db" stroke-width="1" />
 
                                         {{-- Вентиляционные отверстия на передней панели --}}
-                                        <g fill="#4b5563">
+                                        <g fill="#9ca3af">
                                             <circle cx="340" cy="200" r="3" />
                                             <circle cx="340" cy="220" r="3" />
                                             <circle cx="340" cy="240" r="3" />

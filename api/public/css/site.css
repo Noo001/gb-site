@@ -2438,7 +2438,7 @@ button {
 }
 
 .pc-foot {
-    fill: #111827;
+    fill: #374151;
     stroke: #4b5563;
     stroke-width: 1.5;
 }
@@ -2449,8 +2449,8 @@ button {
 }
 
 .pc-slot .pc-case-body {
-    fill: #1f2937;
-    stroke: #4b5563;
+    fill: #4b5563;
+    stroke: #374151;
     stroke-width: 2;
 }
 

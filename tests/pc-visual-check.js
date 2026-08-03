@@ -19,6 +19,7 @@ const translit = (str) => {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
     httpCredentials: { username: BASIC_LOGIN, password: BASIC_PASSWORD },
+    extraHTTPHeaders: { 'Cache-Control': 'no-cache' },
   });
   const page = await context.newPage();
 
