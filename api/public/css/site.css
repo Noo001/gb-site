@@ -2539,37 +2539,6 @@ button {
     stroke-width: 2;
 }
 
-.pc-case-interior {
-    fill: #64748b;
-    pointer-events: none;
-}
-
-.pc-slot .pc-case-body {
-    fill: #1e293b;
-    stroke: #475569;
-    stroke-width: 2.5;
-}
-
-.pc-slot .pc-mb {
-    fill: #0f766e;
-    stroke: #14b8a6;
-}
-
-.pc-slot .pc-psu {
-    fill: #111827;
-    stroke: #94a3b8;
-}
-
-.pc-slot .pc-gpu {
-    fill: #1e293b;
-    stroke: #38bdf8;
-}
-
-.pc-slot .pc-cooler {
-    fill: #e2e8f0;
-    stroke: #64748b;
-}
-
 .pc-slot--soon .pc-detail,
 .pc-slot--soon .pc-detail-line,
 .pc-slot--soon .pc-trace,
