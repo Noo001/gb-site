@@ -313,11 +313,6 @@
                                     <polygon class="pc-glass-glare" points="40,420 100,420 40,500" opacity="0.5" />
                                 </svg>
                                 </div>
-                                <div class="pc-case-face pc-case-face--back"></div>
-                                <div class="pc-case-face pc-case-face--top"></div>
-                                <div class="pc-case-face pc-case-face--bottom"></div>
-                                <div class="pc-case-face pc-case-face--left"></div>
-                                <div class="pc-case-face pc-case-face--right"></div>
                             </div>
                         </div>
                         <div class="pc-case-hint" x-text="hint"></div>

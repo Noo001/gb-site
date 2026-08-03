@@ -2026,8 +2026,8 @@ button {
     overflow: hidden;
     pointer-events: auto;
     box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.15),
-        0 0 0 1px rgba(0,0,0,0.15);
+        0 0 0 1px rgba(0,0,0,0.1),
+        0 24px 56px rgba(0,0,0,0.35);
 }
 
 .pc-case-face--back,
@@ -2035,44 +2035,8 @@ button {
 .pc-case-face--right,
 .pc-case-face--top,
 .pc-case-face--bottom {
-    pointer-events: none;
+    display: none;
 }
-
-.pc-case-face--back {
-    width: var(--pc-w);
-    height: var(--pc-h);
-    transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(calc(var(--pc-d) / 2));
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border-radius: 20px;
-    border: 2px solid #334155;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
-}
-
-.pc-case-face--left,
-.pc-case-face--right {
-    width: var(--pc-d);
-    height: var(--pc-h);
-    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-    border-radius: 20px;
-    border: 2px solid #334155;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
-}
-
-.pc-case-face--left { transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(calc(var(--pc-w) / 2)); }
-.pc-case-face--right { transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(calc(var(--pc-w) / 2)); }
-
-.pc-case-face--top,
-.pc-case-face--bottom {
-    width: var(--pc-w);
-    height: var(--pc-d);
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border-radius: 20px;
-    border: 2px solid #334155;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
-}
-
-.pc-case-face--top { transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(calc(var(--pc-h) / 2)); }
-.pc-case-face--bottom { transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(calc(var(--pc-h) / 2)); }
 
 .pc-case-svg {
     width: 100%;
@@ -2097,18 +2061,144 @@ button {
     opacity: 0.35;
 }
 
-.pc-slot-label {
-    fill: #fff;
-    font-size: 15px;
-    font-weight: 700;
-    text-anchor: middle;
-    paint-order: stroke;
-    stroke: #111827;
-    stroke-width: 4px;
+.pc-case-interior {
+    fill: #94a3b8;
     pointer-events: none;
 }
 
-@keyframes pcSlotPulse {
+.pc-slot .pc-case-body {
+    fill: #1e293b;
+    stroke: #475569;
+    stroke-width: 2.5;
+}
+
+.pc-slot .pc-mb {
+    fill: #0f766e;
+    stroke: #14b8a6;
+}
+
+.pc-slot .pc-psu {
+    fill: #111827;
+    stroke: #94a3b8;
+}
+
+.pc-slot .pc-gpu {
+    fill: #1e293b;
+    stroke: #38bdf8;
+}
+
+.pc-slot .pc-cooler {
+    fill: #e2e8f0;
+    stroke: #64748b;
+}
+
+.pc-detail {
+    fill: #f8fafc;
+    stroke: #cbd5e1;
+    stroke-width: 1.5;
+}
+
+.pc-detail-line {
+    fill: none;
+    stroke: #e2e8f0;
+    stroke-width: 2.5;
+}
+
+.pc-trace {
+    fill: none;
+    stroke: #22d3ee;
+    stroke-width: 2;
+}
+
+.pc-io {
+    fill: #e2e8f0;
+}
+
+.pc-notch {
+    fill: var(--accent);
+    opacity: 0.9;
+}
+
+.pc-fan-ring {
+    fill: #1e293b;
+    stroke: #e2e8f0;
+    stroke-width: 2;
+}
+
+.pc-led {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 5px rgba(12, 192, 223, 0.9));
+    pointer-events: none;
+}
+
+.pc-foot {
+    fill: #334155;
+    stroke: #475569;
+    stroke-width: 2;
+}
+
+.pc-glass {
+    fill: rgba(255, 255, 255, 0.08);
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 2;
+    pointer-events: none;
+}
+
+.pc-glass-glare {
+    fill: rgba(255, 255, 255, 0.18);
+    pointer-events: none;
+}
+
+.pc-fan-blades path {
+    fill: rgba(34, 211, 238, 0.85);
+    stroke: none;
+}
+
+.pc-slot--soon .pc-detail,
+.pc-slot--soon .pc-detail-line,
+.pc-slot--soon .pc-trace,
+.pc-slot--soon .pc-fan-blades,
+.pc-slot--soon .pc-notch {
+    opacity: 0.35;
+}
+
+.pc-case-hint {
+    min-height: 3.2em;
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+/* --- PC Configurator: hover/active для тёмной темы корпуса --- */
+
+.pc-slot:not(.pc-slot--soon):hover .pc-shape,
+.pc-slot--active .pc-shape,
+.pc-slot--selected:hover .pc-shape {
+    stroke: var(--accent);
+    stroke-dasharray: none;
+    fill: rgba(12, 192, 223, 0.14);
+    filter: drop-shadow(0 0 8px rgba(12, 192, 223, 0.55));
+    animation: pcSlotPulse 1.4s ease-in-out infinite;
+}
+
+.pc-slot--selected .pc-shape {
+    fill: rgba(12, 192, 223, 0.18);
+    stroke: var(--accent);
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 10px rgba(12, 192, 223, 0.65));
+    animation: pcSlotPulse 1.4s ease-in-out infinite;
+}
+
+.pc-slot--soon:hover .pc-shape {
+    stroke: #d1d5db;
+    filter: none;
+    animation: none;
+}
+
+/* --- PC Configurator: автоподбор по бюджету --- */
     0%, 100% { filter: drop-shadow(0 0 4px rgba(12, 192, 223, 0.35)); }
     50% { filter: drop-shadow(0 0 10px rgba(12, 192, 223, 0.65)); }
 }
