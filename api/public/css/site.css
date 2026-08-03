@@ -2062,38 +2062,38 @@ button {
 }
 
 .pc-case-interior {
-    fill: #94a3b8;
+    fill: #475569;
     pointer-events: none;
 }
 
 .pc-slot .pc-case-body {
-    fill: #1e293b;
+    fill: #0f172a;
     stroke: #475569;
     stroke-width: 2.5;
 }
 
 .pc-slot .pc-mb {
-    fill: #0f766e;
-    stroke: #14b8a6;
+    fill: #1e293b;
+    stroke: #0ea5e9;
 }
 
 .pc-slot .pc-psu {
-    fill: #111827;
-    stroke: #94a3b8;
+    fill: #0f172a;
+    stroke: #64748b;
 }
 
 .pc-slot .pc-gpu {
-    fill: #1e293b;
+    fill: #0f172a;
     stroke: #38bdf8;
 }
 
 .pc-slot .pc-cooler {
     fill: #e2e8f0;
-    stroke: #64748b;
+    stroke: #94a3b8;
 }
 
 .pc-detail {
-    fill: #f8fafc;
+    fill: #f1f5f9;
     stroke: #cbd5e1;
     stroke-width: 1.5;
 }
@@ -2106,7 +2106,7 @@ button {
 
 .pc-trace {
     fill: none;
-    stroke: #22d3ee;
+    stroke: #38bdf8;
     stroke-width: 2;
 }
 
@@ -2138,14 +2138,14 @@ button {
 }
 
 .pc-glass {
-    fill: rgba(255, 255, 255, 0.08);
-    stroke: rgba(255, 255, 255, 0.3);
+    fill: rgba(255, 255, 255, 0.06);
+    stroke: rgba(255, 255, 255, 0.35);
     stroke-width: 2;
     pointer-events: none;
 }
 
 .pc-glass-glare {
-    fill: rgba(255, 255, 255, 0.18);
+    fill: rgba(255, 255, 255, 0.15);
     pointer-events: none;
 }
 
