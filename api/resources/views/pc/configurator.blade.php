@@ -876,19 +876,19 @@
             caseStyle() {
                 if (this.isMobile) return '';
                 const poses = {
-                    case:        { t: 'rotateY(-26deg) rotateX(10deg)', o: '50% 50%' },
-                    cpu:         { t: 'rotateY(-36deg) rotateX(14deg) scale(1.06)', o: '32% 26%' },
-                    cooler:      { t: 'rotateY(-36deg) rotateX(14deg) scale(1.06)', o: '30% 24%' },
-                    motherboard: { t: 'rotateY(-30deg) rotateX(12deg) scale(1.04)', o: '38% 42%' },
-                    gpu:         { t: 'rotateY(28deg) rotateX(-12deg) scale(1.06)', o: '42% 48%' },
-                    ram:         { t: 'rotateY(-38deg) rotateX(12deg) scale(1.06)', o: '52% 28%' },
-                    storage:     { t: 'rotateY(22deg) rotateX(-14deg) scale(1.05)', o: '28% 60%' },
-                    psu:         { t: 'rotateY(18deg) rotateX(-22deg) scale(1.04)', o: '40% 78%' },
-                    extra:       { t: 'rotateY(-22deg) rotateX(-18deg) scale(1.05)', o: '50% 62%' },
+                    case:        { t: 'rotateY(-12deg) rotateX(6deg)' },
+                    cpu:         { t: 'rotateY(-16deg) rotateX(8deg)' },
+                    cooler:      { t: 'rotateY(-16deg) rotateX(8deg)' },
+                    motherboard: { t: 'rotateY(-12deg) rotateX(6deg)' },
+                    gpu:         { t: 'rotateY(14deg) rotateX(-6deg)' },
+                    ram:         { t: 'rotateY(-18deg) rotateX(6deg)' },
+                    storage:     { t: 'rotateY(10deg) rotateX(-8deg)' },
+                    psu:         { t: 'rotateY(8deg) rotateX(-10deg)' },
+                    extra:       { t: 'rotateY(-10deg) rotateX(-8deg)' },
                 };
-                const base = { t: 'rotateY(-26deg) rotateX(10deg)', o: '50% 50%' };
+                const base = { t: 'rotateY(-12deg) rotateX(6deg)' };
                 const pose = (this.activeSlot && poses[this.activeSlot]) || base;
-                return 'transform: ' + pose.t + '; transform-origin: ' + pose.o + ';';
+                return 'transform: ' + pose.t + '; transform-origin: 50% 50%;';
             },
 
             phoneFocus() {

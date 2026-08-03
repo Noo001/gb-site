@@ -1987,24 +1987,25 @@ button {
 }
 
 .pc-case-scene {
-    perspective: 1600px;
+    perspective: 2000px;
     display: flex;
     justify-content: center;
     padding: 2rem 0;
     min-height: 860px;
-    filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.25));
 }
 
 .pc-case-3d {
     --pc-w: 560px;
     --pc-h: 760px;
-    --pc-d: 80px;
+    --pc-d: 60px;
     width: var(--pc-w);
     height: var(--pc-h);
     position: relative;
     transform-style: preserve-3d;
+    transform-origin: 50% 50%;
     transition: transform 0.6s ease;
     will-change: transform;
+    filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.25));
 }
 
 .pc-case-face {
