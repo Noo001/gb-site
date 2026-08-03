@@ -1979,7 +1979,7 @@ button {
     color: var(--accent);
 }
 
-/* --- Корпус (настоящий CSS 3D-куб) --- */
+/* --- Корпус (реалистичный системный блок с 3D-вращением) --- */
 
 .pc-case-panel {
     position: sticky;
@@ -1987,17 +1987,17 @@ button {
 }
 
 .pc-case-scene {
-    perspective: 2000px;
+    perspective: 1600px;
     display: flex;
     justify-content: center;
-    padding: 2rem 0;
-    min-height: 600px;
+    padding: 1.5rem 0;
+    min-height: 680px;
 }
 
 .pc-case-3d {
-    --pc-w: 380px;
-    --pc-h: 540px;
-    --pc-d: 130px;
+    --pc-w: 420px;
+    --pc-h: 620px;
+    --pc-d: 150px;
     width: var(--pc-w);
     height: var(--pc-h);
     position: relative;
@@ -2005,7 +2005,7 @@ button {
     transform-origin: 50% 50%;
     transition: transform 0.6s ease;
     will-change: transform;
-    filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.35));
+    filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.4));
 }
 
 .pc-case-face {
@@ -2014,18 +2014,21 @@ button {
     left: 50%;
     backface-visibility: visible;
     box-sizing: border-box;
-    border: 2px solid #111827;
 }
 
 .pc-case-face--front {
     width: var(--pc-w);
     height: var(--pc-h);
     transform: translateX(-50%) translateY(-50%) translateZ(calc(var(--pc-d) / 2));
-    background: transparent;
-    border: none;
+    background: linear-gradient(145deg, #1e293b 0%, #0f172a 60%, #020617 100%);
+    border: 3px solid #475569;
+    border-radius: 20px;
     overflow: hidden;
-    border-radius: 18px;
     pointer-events: auto;
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.08),
+        inset 0 0 30px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(255,255,255,0.05);
 }
 
 .pc-case-face--back,
@@ -2040,18 +2043,20 @@ button {
     width: var(--pc-w);
     height: var(--pc-h);
     transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(calc(var(--pc-d) / 2));
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-    border-radius: 18px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 20px;
+    border: 2px solid #334155;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
 }
 
 .pc-case-face--left,
 .pc-case-face--right {
     width: var(--pc-d);
     height: var(--pc-h);
-    background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
-    border-radius: 18px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 20px;
+    border: 2px solid #334155;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
 }
 
 .pc-case-face--left { transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(calc(var(--pc-w) / 2)); }
@@ -2061,9 +2066,10 @@ button {
 .pc-case-face--bottom {
     width: var(--pc-w);
     height: var(--pc-d);
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-    border-radius: 18px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 20px;
+    border: 2px solid #334155;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
 }
 
 .pc-case-face--top { transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(calc(var(--pc-h) / 2)); }
@@ -2073,13 +2079,14 @@ button {
     width: 100%;
     height: 100%;
     display: block;
+    overflow: visible;
 }
 
 .pc-slot .pc-shape {
-    fill: rgba(12, 192, 223, 0.08);
-    stroke: #9ca3af;
-    stroke-width: 2;
-    stroke-dasharray: 5 4;
+    fill: rgba(34, 211, 238, 0.10);
+    stroke: #e2e8f0;
+    stroke-width: 2.5;
+    stroke-dasharray: none;
     transition: fill 0.35s, stroke 0.35s, filter 0.35s;
 }
 
@@ -2296,14 +2303,14 @@ button {
     }
 
     .pc-case-scene {
-        min-height: 460px;
+        min-height: 520px;
         padding: 1rem 0;
     }
 
     .pc-case-3d {
-        --pc-w: 280px;
-        --pc-h: 400px;
-        --pc-d: 80px;
+        --pc-w: 340px;
+        --pc-h: 480px;
+        --pc-d: 90px;
         transition: none;
         transform: none !important;
     }
@@ -2399,25 +2406,25 @@ button {
 }
 
 .pc-detail {
-    fill: #d1d5db;
-    stroke: #9ca3af;
+    fill: #f8fafc;
+    stroke: #cbd5e1;
     stroke-width: 1.5;
 }
 
 .pc-detail-line {
     fill: none;
-    stroke: #e5e7eb;
-    stroke-width: 2;
+    stroke: #e2e8f0;
+    stroke-width: 2.5;
 }
 
 .pc-trace {
     fill: none;
-    stroke: rgba(12, 192, 223, 0.95);
-    stroke-width: 1.5;
+    stroke: #22d3ee;
+    stroke-width: 2;
 }
 
 .pc-io {
-    fill: #d1d5db;
+    fill: #e2e8f0;
 }
 
 .pc-notch {
@@ -2426,52 +2433,52 @@ button {
 }
 
 .pc-fan-ring {
-    fill: #111827;
-    stroke: #e5e7eb;
-    stroke-width: 1.5;
+    fill: #1e293b;
+    stroke: #e2e8f0;
+    stroke-width: 2;
 }
 
 .pc-led {
     fill: var(--accent);
-    filter: drop-shadow(0 0 3px rgba(12, 192, 223, 0.7));
+    filter: drop-shadow(0 0 5px rgba(12, 192, 223, 0.9));
     pointer-events: none;
 }
 
 .pc-foot {
-    fill: #374151;
-    stroke: #4b5563;
-    stroke-width: 1.5;
+    fill: #334155;
+    stroke: #475569;
+    stroke-width: 2;
 }
 
 .pc-case-interior {
-    fill: #111827;
+    fill: #334155;
     pointer-events: none;
 }
 
 .pc-slot .pc-case-body {
-    fill: #4b5563;
-    stroke: #374151;
-    stroke-width: 2;
+    fill: #475569;
+    stroke: #94a3b8;
+    stroke-width: 2.5;
 }
 
 .pc-slot .pc-mb {
-    fill: #111827;
-    stroke: #374151;
+    fill: #064e3b;
+    stroke: #14b8a6;
 }
 
 .pc-slot .pc-psu {
     fill: #111827;
-    stroke: #374151;
+    stroke: #64748b;
 }
 
 .pc-slot .pc-gpu {
-    fill: #111827;
-    stroke: #374151;
+    fill: #1e293b;
+    stroke: #38bdf8;
 }
 
 .pc-slot .pc-cooler {
-    fill: #9ca3af;
-    stroke: #6b7280;
+    fill: #e2e8f0;
+    stroke: #94a3b8;
 }
 
 .pc-slot--soon .pc-detail,
