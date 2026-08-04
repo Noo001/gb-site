@@ -3,7 +3,14 @@
 import { useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Link from "next/link";
-import type { Category } from "@/lib/api";
+
+export type BrandItem = {
+  id: string | number;
+  name: string;
+  slug: string;
+  url: string;
+  image: string;
+};
 
 function PrevIcon() {
   return (
@@ -21,7 +28,7 @@ function NextIcon() {
   );
 }
 
-export default function BrandCarousel({ brands }: { brands: Category[] }) {
+export default function BrandCarousel({ brands }: { brands: BrandItem[] }) {
   if (brands.length === 0) return null;
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -41,7 +48,7 @@ export default function BrandCarousel({ brands }: { brands: Category[] }) {
         <div className="flex">
           {brands.map((brand) => (
             <div
-              key={brand.id}
+              key={brand.slug}
               className="min-w-0 flex-[0_0_33.333%] px-2 sm:flex-[0_0_25%] md:flex-[0_0_20%] lg:flex-[0_0_16.666%] xl:flex-[0_0_14.285%]"
             >
               <Link

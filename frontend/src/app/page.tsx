@@ -10,21 +10,18 @@ import Features from "@/components/Features";
 
 export const dynamic = "force-dynamic";
 
-const BRAND_SLUGS = new Set([
-  "apple",
-  "samsung",
-  "xiaomi",
-  "honor",
-  "huawei",
-  "sony",
-  "dyson",
-  "smeg",
-  "jbl",
-  "dji",
-  "garmin",
-  "amd",
-  "intel",
-]);
+const BRANDS = [
+  { slug: "apple", name: "Apple", image: "/images/brands/apple.png" },
+  { slug: "samsung", name: "Samsung", image: "/images/brands/samsung.png" },
+  { slug: "xiaomi", name: "Xiaomi", image: "/images/brands/xiaomi.png" },
+  { slug: "honor", name: "Honor", image: "/images/brands/honor.png" },
+  { slug: "huawei", name: "Huawei", image: "/images/brands/huawei.png" },
+  { slug: "sony", name: "Sony", image: "/images/brands/sony.png" },
+  { slug: "dyson", name: "Dyson", image: "/images/brands/dyson.png" },
+  { slug: "smeg", name: "Smeg", image: "/images/brands/smeg.png" },
+  { slug: "jbl", name: "JBL", image: "/images/brands/jbl.png" },
+  { slug: "dji", name: "DJI", image: "/images/brands/dji.png" },
+];
 
 export default async function HomePage() {
   const [categories, products] = await Promise.all([
@@ -32,9 +29,18 @@ export default async function HomePage() {
     getProducts({ per_page: "12", has_image: "1" }),
   ]);
 
-  const brandCategories = categories
-    .filter((c) => BRAND_SLUGS.has(c.slug.toLowerCase()))
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const categoryBySlug = new Map(categories.map((c) => [c.slug.toLowerCase(), c]));
+
+  const brands = BRANDS.map((b) => {
+    const category = categoryBySlug.get(b.slug.toLowerCase());
+    return {
+      id: category?.id ?? b.slug,
+      name: category?.name ?? b.name,
+      slug: b.slug,
+      url: category?.url ?? `/catalog/${b.slug}/`,
+      image: category?.image ?? b.image,
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="pb-12">
