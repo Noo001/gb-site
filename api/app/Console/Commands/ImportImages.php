@@ -270,13 +270,13 @@ class ImportImages extends Command
         }
 
         $url = $this->buildUrl($path);
-        $html = $this->fetch($url);
+        $html = $this->curlFetch($url);
 
         if ($html === null && $this->option('search-fallback')) {
             $searchUrl = $this->searchProductUrl($product->name);
             if ($searchUrl !== null) {
                 $url = $searchUrl;
-                $html = $this->fetch($url);
+                $html = $this->curlFetch($url);
             }
         }
 
@@ -462,7 +462,7 @@ class ImportImages extends Command
     {
         $timeout = (int) $this->option('timeout');
         $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
-        $cmd = 'curl -L -s -A '.escapeshellarg($userAgent).' --connect-timeout 10 --max-time '.$timeout.' '.escapeshellarg($url);
+        $cmd = 'curl -L -s -f -A '.escapeshellarg($userAgent).' --connect-timeout 10 --max-time '.$timeout.' '.escapeshellarg($url);
 
         $output = @shell_exec($cmd);
 
