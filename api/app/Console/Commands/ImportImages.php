@@ -105,19 +105,29 @@ class ImportImages extends Command
         $withImages = 0;
         $failed = 0;
 
-        $query->chunk(50, function ($products) use (&$processed, &$withImages, &$failed, $delay, $bar) {
-            foreach ($products as $product) {
-                $result = $this->importProductImages($product);
-                $processed++;
-                if ($result === true) {
-                    $withImages++;
-                } elseif ($result === false) {
-                    $failed++;
-                }
-                usleep($delay * 1000);
-                $bar->advance();
+        $processOne = function (Product $product) use (&$processed, &$withImages, &$failed, $delay, $bar) {
+            $result = $this->importProductImages($product);
+            $processed++;
+            if ($result === true) {
+                $withImages++;
+            } elseif ($result === false) {
+                $failed++;
             }
-        });
+            usleep($delay * 1000);
+            $bar->advance();
+        };
+
+        if ($limit > 0) {
+            foreach ($query->limit($limit)->get() as $product) {
+                $processOne($product);
+            }
+        } else {
+            $query->chunk(50, function ($products) use ($processOne) {
+                foreach ($products as $product) {
+                    $processOne($product);
+                }
+            });
+        }
 
         $bar->finish();
         $this->newLine();
@@ -201,13 +211,27 @@ class ImportImages extends Command
         }
 
         $crawler = new Crawler($html);
+        $nameLower = mb_strtolower(trim($name));
 
-        $matches = $crawler->filter('img')->reduce(function (Crawler $node) use ($name) {
+        // Brand logos on the homepage are 200x80 images in the brands list.
+        $brandImages = $crawler->filter('img.brands-list__image')->reduce(function (Crawler $node) use ($nameLower) {
+            $alt = mb_strtolower(trim($node->attr('alt') ?? ''));
+            $title = mb_strtolower(trim($node->attr('title') ?? ''));
+
+            return $alt === $nameLower || $title === $nameLower;
+        });
+
+        if ($brandImages->count() > 0) {
+            return $brandImages->first()->attr('src') ?: $brandImages->first()->attr('data-src');
+        }
+
+        // Fallback to small menu icons (56x56).
+        $matches = $crawler->filter('img')->reduce(function (Crawler $node) use ($nameLower) {
             $alt = mb_strtolower(trim($node->attr('alt') ?? ''));
             $title = mb_strtolower(trim($node->attr('title') ?? ''));
             $dataSrc = $node->attr('data-src') ?? $node->attr('src') ?? '';
 
-            return ($alt === $name || $title === $name)
+            return ($alt === $nameLower || $title === $nameLower)
                 && str_contains($dataSrc, 'resize_cache')
                 && str_contains($dataSrc, '56_56_0');
         });
@@ -216,7 +240,7 @@ class ImportImages extends Command
             return null;
         }
 
-        return $matches->first()->attr('data-src');
+        return $matches->first()->attr('data-src') ?: $matches->first()->attr('src');
     }
 
     private function importProductImages(Product $product): ?bool
@@ -283,15 +307,17 @@ class ImportImages extends Command
         try {
             $response = Http::timeout((int) $this->option('timeout'))
                 ->withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
+                ->withOptions(['verify' => false])
                 ->get($url);
 
             if (! $response->successful()) {
+                $this->warn("Failed to fetch {$url}: HTTP {$response->status()}");
                 return null;
             }
 
             return $response->body();
         } catch (Throwable $e) {
-            $this->warn("Failed to fetch {$url}: {$e->getMessage()}");
+            $this->warn("Failed to fetch {$url}: [".get_class($e)."] {$e->getMessage()}");
             return null;
         }
     }
@@ -316,6 +342,7 @@ class ImportImages extends Command
         try {
             $response = Http::timeout((int) $this->option('timeout'))
                 ->withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
+                ->withOptions(['verify' => false])
                 ->get($url);
 
             if (! $response->successful()) {

@@ -26,7 +26,7 @@ class CategoryController extends Controller
                 'slug' => $c->slug,
                 'full_path' => $c->full_path,
                 'url' => $c->url,
-                'image' => null,
+                'image' => $this->categoryImage($c),
                 'children' => [],
             ]),
         ]);

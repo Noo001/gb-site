@@ -10,15 +10,31 @@ import Features from "@/components/Features";
 
 export const dynamic = "force-dynamic";
 
+const BRAND_SLUGS = new Set([
+  "apple",
+  "samsung",
+  "xiaomi",
+  "honor",
+  "huawei",
+  "sony",
+  "dyson",
+  "smeg",
+  "jbl",
+  "dji",
+  "garmin",
+  "amd",
+  "intel",
+]);
+
 export default async function HomePage() {
   const [categories, products] = await Promise.all([
     getCategories(),
     getProducts({ per_page: "12", has_image: "1" }),
   ]);
 
-  const brandSlugs = categories
-    .filter((c) => c.full_path.startsWith("/brands/"))
-    .map((c) => c.slug);
+  const brandCategories = categories
+    .filter((c) => BRAND_SLUGS.has(c.slug.toLowerCase()))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="pb-12">
@@ -29,7 +45,7 @@ export default async function HomePage() {
 
       {/* Brand carousel */}
       <section className="container-theme mb-10">
-        <BrandCarousel existingSlugs={brandSlugs} />
+        <BrandCarousel brands={brandCategories} />
       </section>
 
       {/* Best offers */}
