@@ -86,6 +86,10 @@ class ImportImages extends Command
             $q->whereNotNull('url')->orWhereNotNull('slug');
         });
 
+        if ($this->option('skip-existing')) {
+            $query->whereDoesntHave('media');
+        }
+
         $minId = (int) $this->option('min-id');
         $maxId = (int) $this->option('max-id');
         if ($minId > 0) {
