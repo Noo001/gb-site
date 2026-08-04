@@ -54,8 +54,7 @@
                                     </span>
                                 </button>
 
-                                <template x-if="activeSlot === slot.id && !slot.empty">
-                                <div class="pc-step-body">
+                                <div class="pc-step-body" x-show="activeSlot === slot.id && !slot.empty" x-collapse>
                                     <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
 
                                     <div class="pc-parts-empty" x-show="!loadingParts && partsEmpty">
@@ -96,7 +95,6 @@
                                                 @click="advanceSlot(slot)">Перейти к следующему шагу</button>
                                     </div>
                                 </div>
-                                </template>
                             </div>
                         </template>
                     </div>
