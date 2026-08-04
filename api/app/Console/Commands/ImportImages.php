@@ -407,7 +407,7 @@ class ImportImages extends Command
             return null;
         }
 
-        $maxCheck = min(3, $links->count());
+        $maxCheck = min(10, $links->count());
         for ($i = 0; $i < $maxCheck; $i++) {
             $href = $links->eq($i)->attr('href');
             if (! $href) {
