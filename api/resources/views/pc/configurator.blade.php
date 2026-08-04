@@ -54,7 +54,7 @@
                                     </span>
                                 </button>
 
-                                <div class="pc-step-body" x-show="activeSlot === slot.id && !slot.empty" x-collapse>
+                                <div class="pc-step-body" x-show="activeSlot === slot.id && !slot.empty" x-collapse.duration.1000ms>
                                     <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
 
                                     <div class="pc-parts-empty" x-show="!loadingParts && partsEmpty">
