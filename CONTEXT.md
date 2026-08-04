@@ -152,11 +152,18 @@
   - Продукты: обход chunk/get с `limit`, fallback по `slug`, скачивание через `Http` (с `verify=false` из-за SSL на Beget) во временный файл, затем `addMedia(...)->toMediaCollection('images')`.
   - Категории: поиск логотипов брендов 200×80 на главной `gadget-bar.ru`, fallback на иконки 56×56. Используется `full_path`, т.к. в БД категорий столбец `url` пустой.
   - Статистика: `Processed / with images / failed`.
-- **Массовый импорт продуктов**: запущен 04.08.2026 в фоне на сервере Beget (`import:images --type=products --delay=500 --skip-existing=1 --timeout=30`). ~4024 товара, ожидаемо много 404 из-за расхождения slug.
+- **Массовый импорт продуктов (первый проход)**: завершён 04.08.2026. `Processed: 4024, with images: 165, failed: 3727`. Причина провала — slug в URL товаров gbsale.ru не совпадает со slug на `gadget-bar.ru` (например, транслитерация `cexol...` vs `chekhol...`).
+- **Search-fallback (второй проход)**: доработана команда `import:images` (`api/app/Console/Commands/ImportImages.php`):
+  - Если `/product/{slug}/` возвращает 404, выполняется поиск на `https://gadget-bar.ru/search/?q={name}`.
+  - Берётся первая ссылка `/product/.../` из результатов поиска.
+  - Добавлен in-memory кэш найденных URL, чтобы не дублировать поисковые запросы.
+  - Опция `--search-fallback=1` включена по умолчанию.
+  - Тест на 10 товарах без изображений: `Processed: 10, with images: 10, failed: 0`.
+  - Второй массовый проход запущен в фоне (`import:images --type=products --delay=500 --skip-existing=1 --timeout=30 --search-fallback=1`).
 - **Логотипы брендов**: скачаны 10 PNG с главной `gadget-bar.ru` в `api/public/images/brands/` (Apple, Samsung, Xiaomi, Honor, Huawei, Sony, Dyson, Smeg, JBL, DJI).
 - **Карусель брендов на главной**: Blade-компонент `api/resources/views/components/brand-carousel.blade.php` переделан с текстовой сетки на карусель с логотипами-картинками + стрелки влево/вправо. Стили в `api/public/css/site.css`. Задеплоено, `/images/brands/*.png` отдаются 200.
 - **API категорий**: `CategoryController::index` теперь возвращает `image` для корневых категорий (media-library fallback на первую картинку товара категории).
-- **Следующий шаг**: дождаться окончания массового импорта, посчитать覆盖率和 список несовпавших slug, затем доработать мэтчинг (по имени/артикулу/поиск по сайту-источнику).
+- **Следующий шаг**: дождаться окончания второго прохода, посчитать итоговую статистику и обработать оставшиеся товары, для которых поиск не дал результата.
 
 ## Работа с сервером
 
