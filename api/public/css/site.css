@@ -687,36 +687,104 @@ button {
     background: var(--foreground);
 }
 
-/* Brand grid */
-.brand-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+/* Brand carousel */
+.brand-section {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
 }
 
-@media (min-width: 640px) {
-    .brand-grid {
-        grid-template-columns: repeat(5, 1fr);
-    }
+.brand-carousel {
+    position: relative;
 }
 
-.brand-item {
+.brand-carousel__viewport {
+    overflow: hidden;
+    margin: 0 2rem;
+}
+
+.brand-carousel__track {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0.25rem 0;
+}
+
+.brand-carousel__track::-webkit-scrollbar {
+    display: none;
+}
+
+.brand-carousel__slide {
+    flex: 0 0 calc(33.333% - 0.667rem);
+    scroll-snap-align: start;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 5rem;
+    height: 6rem;
     border-radius: var(--radius);
-    border: 1px solid transparent;
+    border: 1px solid var(--border);
     background: #fff;
-    font-size: 1.125rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    transition: border-color 0.2s, background 0.2s;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.brand-item:hover {
-    border-color: var(--border);
-    background: var(--muted);
+.brand-carousel__slide:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.brand-carousel__slide img {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.brand-carousel__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    z-index: 2;
+}
+
+.brand-carousel__arrow:hover {
+    color: var(--foreground);
+    border-color: var(--accent);
+}
+
+.brand-carousel__arrow--prev { left: 0; }
+.brand-carousel__arrow--next { right: 0; }
+
+@media (min-width: 640px) {
+    .brand-carousel__slide {
+        flex: 0 0 calc(25% - 0.75rem);
+    }
+}
+
+@media (min-width: 768px) {
+    .brand-carousel__slide {
+        flex: 0 0 calc(20% - 0.8rem);
+    }
+}
+
+@media (min-width: 1024px) {
+    .brand-carousel__slide {
+        flex: 0 0 calc(16.666% - 0.833rem);
+    }
 }
 
 /* Promo cards */
