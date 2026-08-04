@@ -43,6 +43,13 @@
 - **Деплой**: `deploy_remote.py` отработал с PHP 8.4 CLI на Beget; статика и view скешированы. Скриншоты: `tests/screenshots/pc-desktop-v2.png`, `pc-desktop-rotated-gpu-v2.png`, `pc-mobile-v2.png`.
 - **Правило**: любые изменения визуала корпуса проверять вручную на проде по `https://gbsale.ru/pc` и скриншотами, не полагаться только на synthetic-тесты.
 
+## Состояние на 04.08.2026 — анимация и UX автоподбора в `/pc` (обновлено)
+
+- **Плавное раскрытие шагов конфигуратора**: подключён плагин `@alpinejs/collapse` CDN, шаги открываются/закрываются через `x-collapse.duration.1000ms` (~1 сек). Работает на десктопе и мобильном. Старый CSS `transition` на `.pc-step-body` убран, чтобы не конфликтовать с плагином.
+- **Исправлены слипшиеся кнопки в автоподборе**: у `.pc-auto-fallback .pc-reset-btn` добавлен `margin-top: 1rem !important`, чтобы между «Отправить заявку менеджеру» и «Попробовать другой бюджет» был зазор.
+- **Файлы**: `api/resources/views/layouts/site.blade.php` (подключение collapse перед Alpine), `api/resources/views/pc/configurator.blade.php` (x-collapse.duration.1000ms), `api/public/css/site.css` (убран transition, margin-top для кнопки).
+- **Деплой и проверка**: коммит `d79004c`, `python deploy_remote.py` — успешно. Скриншоты проверки: `tests/screenshots/pc-anim-memory-*.png` (промежуточные кадры раскрытия), `tests/screenshots/pc-auto-fallback-buttons.png` (отступ кнопок).
+
 ## Демо-режим конфигуратора (28.07, коммит `ee23144`)
 
 - **Тогл**: страница `/admin/pc-settings` → «Демо-режим конфигуратора» (таблица `settings`, ключ `pc_demo_mode`). Сейчас ВКЛЮЧЕН.
