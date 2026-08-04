@@ -41,15 +41,5 @@ for i in $(seq 1 120); do
   sleep 5
 done
 
-# Wait for gb-frontend to be ready
-echo 'Waiting for gb-frontend to be ready...'
-for i in $(seq 1 60); do
-  if /usr/bin/docker exec caddy-proxy wget -qO- --timeout=2 http://gb-frontend:3000/ >/dev/null 2>&1; then
-    echo 'gb-frontend is ready'
-    break
-  fi
-  sleep 2
-done
-
 cd /mnt/c/up/server/proxy
 /usr/bin/docker compose up -d

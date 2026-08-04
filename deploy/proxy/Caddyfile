@@ -39,6 +39,6 @@
         reverse_proxy host.docker.internal:9000
     }
     handle {
-        reverse_proxy gb-frontend:3000
+        reverse_proxy gb-nginx-api:80
     }
 }

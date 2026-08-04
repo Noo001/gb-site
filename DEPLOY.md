@@ -1,67 +1,67 @@
-# Деплой на локальный сервер
+# Деплой
 
-Архитектура: Docker Compose + Traefik (shared reverse proxy) + PostgreSQL + Redis + Meilisearch + MinIO.
-Traefik позволяет запускать несколько сайтов на одном сервере по доменам без конфликтов портов.
+Production развёрнут на **Beget shared hosting** (`gbsale.ru`).
+Локальный Docker-стек больше не используется — сервер закрыт.
 
-## Подготовка
+## Production (Beget)
 
-1. Установить Docker + Docker Compose.
-2. Создать общую сеть (один раз на сервер):
-   ```bash
-   docker network create traefik-public
-   ```
-3. Скопировать и заполнить `.env.prod`:
-   ```bash
-   cp .env.prod .env.prod.local
-   # отредактировать DOMAIN, пароли, ключи
-   ```
-4. Прописать домены в `/etc/hosts` (для локального теста):
-   ```
-   127.0.0.1  gadget-bar.local s3.gadget-bar.local console.gadget-bar.local
-   ```
-
-## Запуск
+Деплой выполняется скриптом `deploy_remote.py` из корня репозитория:
 
 ```bash
-./deploy.sh
+python deploy_remote.py
 ```
 
-Или вручную:
+Скрипт:
+1. Подключается по SSH к `gbsale.ru`.
+2. Делает `git fetch origin && git reset --hard origin/main`.
+3. Запускает `deploy/beget/deploy.sh`, который:
+   - устанавливает PHP-зависимости (`composer install --no-dev`);
+   - синхронизирует статику из `api/public/` в `public_html/`;
+   - накатывает миграции;
+   - обновляет кэши config/route/view;
+   - пересоздаёт индекс бота.
+
+После деплоя вручную:
 
 ```bash
-# Общий Traefik (один раз на сервер)
-docker compose -f docker-compose.traefik.yml up -d
-
-# Этот проект
-docker compose -f docker-compose.prod.yml --env-file .env.prod.local up -d
+cd /home/m/mastak97/gbsale.ru/api
+/usr/local/bin/php8.4 artisan migrate --force
+/usr/local/bin/php8.4 artisan bot:rebuild-index
 ```
 
-После запуска:
+## Важно про статику
 
-- Сайт: http://gadget-bar.local
-- Админка: http://gadget-bar.local/admin
-- MinIO console: http://console.gadget-bar.local
+`public_html` — это **копия** `api/public/`, а не симлинк. После изменений в `api/public/css`, `api/public/js`, `api/public/images` или `favicon*` обязательно запускать деплой, чтобы файлы скопировались в `public_html`.
 
-## Парсинг
+## Локальная разработка (Docker)
+
+Если нужен локальный стенд:
 
 ```bash
-docker compose -f docker-compose.prod.yml exec api php artisan import:images --type=products
+cp .env.example .env
+# отредактировать подключение к БД, APP_KEY и т.д.
+
+docker compose up -d
+docker compose exec api composer install
+docker compose exec api php artisan migrate
 ```
 
-## HTTPS
+- Сайт: http://localhost:8000
+- API: http://localhost:8000/api
+- Admin: http://localhost:8000/admin
 
-Для публичного домена добавьте к сервисам `nginx-api` и `frontend` в `docker-compose.prod.yml` labels:
-
-```yaml
-- traefik.http.routers.gb-frontend.entrypoints=websecure
-- traefik.http.routers.gb-frontend.tls.certresolver=letsencrypt
-```
-
-и аналогично для `gb-api`.
-
-## Обновление
+## Полезные команды
 
 ```bash
-docker compose -f docker-compose.prod.yml --env-file .env.prod.local build
-docker compose -f docker-compose.prod.yml --env-file .env.prod.local up -d
+# Загрузить картинки товаров с gadget-bar.ru
+php artisan import:images --type=products --delay=500 --skip-existing=1
+
+# Загрузить картинки категорий / логотипы брендов
+php artisan import:images --type=categories --delay=300 --skip-existing=1
+
+# Пересоздать индекс бота
+php artisan bot:rebuild-index
+
+# Сверка с 1С
+php artisan reconcile:1c --deactivate-missing --cleanup-logs
 ```

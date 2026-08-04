@@ -114,31 +114,10 @@ services:
       - traefik-public
     labels:
       - traefik.enable=true
-      - traefik.http.routers.gb-api.rule=Host(`${DOMAIN}`) && PathPrefix(`/api/`, `/admin/`, `/storage/`, `/livewire`, `/css/filament/`, `/js/filament/`, `/fonts/filament/`)
+      - traefik.http.routers.gb-api.rule=Host(`${DOMAIN}`)
       - traefik.http.routers.gb-api.entrypoints=web
       - traefik.http.routers.gb-api.service=gb-api
       - traefik.http.services.gb-api.loadbalancer.server.port=80
-
-  frontend:
-    build:
-      context: .
-      dockerfile: docker/prod/frontend.Dockerfile
-    container_name: gb-frontend
-    restart: unless-stopped
-    environment:
-      NEXT_PUBLIC_API_URL: /api
-      API_URL: http://nginx-api
-    depends_on:
-      - nginx-api
-    networks:
-      - gb-network
-      - traefik-public
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.gb-frontend.rule=Host(`${DOMAIN}`)
-      - traefik.http.routers.gb-frontend.entrypoints=web
-      - traefik.http.routers.gb-frontend.service=gb-frontend
-      - traefik.http.services.gb-frontend.loadbalancer.server.port=3000
 
 volumes:
   pgdata:

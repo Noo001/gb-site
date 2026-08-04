@@ -38,14 +38,6 @@ docker-compose.override.yml
 !/api/storage/logs/.gitkeep
 /api/bootstrap/cache/*.php
 
-# Frontend
-/frontend/node_modules/
-/frontend/.next/
-/frontend/out/
-/frontend/build/
-/frontend/*.tsbuildinfo
-/frontend/next-env.d.ts
-
 # Misc
 *.log
 npm-debug.log*

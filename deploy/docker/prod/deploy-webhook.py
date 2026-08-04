@@ -119,15 +119,13 @@ def services_to_build(previous, current):
         ).stdout.strip().splitlines()
     except Exception as e:
         log(f"Could not get changed files: {e}")
-        return ["frontend", "api"]  # fallback: rebuild all image-based services
+        return ["api"]  # fallback: rebuild api
 
     log(f"Changed files: {changed}")
     services = set()
     for path in changed:
         if path.startswith("docker/php/") or path == "docker/prod/api-entrypoint.sh":
             services.add("api")
-        if path.startswith("frontend/") or path == "docker/prod/frontend.Dockerfile":
-            services.add("frontend")
     return sorted(services)
 
 

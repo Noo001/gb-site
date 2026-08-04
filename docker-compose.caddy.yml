@@ -156,23 +156,6 @@ services:
       - shared-network
       - gb-network
 
-  frontend:
-    build:
-      context: .
-      dockerfile: docker/prod/frontend.Dockerfile
-    container_name: gb-frontend
-    restart: unless-stopped
-    environment:
-      NEXT_PUBLIC_API_URL: /api
-      API_URL: http://nginx-api
-    expose:
-      - "3000"
-    depends_on:
-      - nginx-api
-    networks:
-      - shared-network
-      - gb-network
-
 volumes:
   pgdata:
   meilisearchdata:

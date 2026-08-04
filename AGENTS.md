@@ -7,8 +7,7 @@
 - **Сервер**: Windows 10 Pro + WSL2 Ubuntu-22.04, белый IP `5.3.164.6`.
 - **Домен**: `gbsale.ru` (управляется в `../proxy/.env`).
 - **Прокси**: Caddy 2 в Docker (`../proxy/`), терминирует TLS и маршрутизирует запросы.
-- **Бэкенд**: Laravel 11 + Filament (`api/`).
-- **Фронтенд**: Next.js 16 (`frontend/`).
+- **Бэкенд**: Laravel 11 + Filament (`api/`), включая публичный сайт на Blade.
 - **БД**: облачная PostgreSQL Beget (`oritharuskog.beget.app:5432`).
 - **Adminer**: через панель управления Beget (в разделе PostgreSQL), не через сайт.
 
@@ -34,9 +33,7 @@ Production-стек сейчас развёрнут на **Beget shared hosting*
 1. `git stash -u`
 2. `git pull origin main`
 3. `git stash pop`
-4. Пересобирает только изменённые сервисы:
-   - `docker/php/*` или `docker/prod/api-entrypoint.sh` → `api`
-   - `frontend/*` или `docker/prod/frontend.Dockerfile` → `frontend`
+4. Пересобирает изменения в `api/`.
 
 > Важно: исполняемый файл сервиса лежит в `/opt/gb-site-deploy/deploy-webhook.py` (вне репозитория). После изменений в `deploy/docker/prod/deploy-webhook.py` скопируй файл на сервер и перезапусти сервис:
 > ```bash
@@ -119,7 +116,7 @@ cd /home/m/mastak97/gbsale.ru/api
 
 ## Деплой на Beget (gbsale.ru)
 
-Новый стенд на shared-хостинге Beget. Разворачивается **только Laravel-бэкенд** (`api/`), Next.js на shared-хостинге не поддерживается.
+Проект развёрнут на shared-хостинге Beget как **Laravel-приложение** (`api/`). Веб-интерфейс отдаётся шаблонами Blade из `api/resources/views/`.
 
 - **Домен**: `gbsale.ru`
 - **Аккаунт**: `mastak97`

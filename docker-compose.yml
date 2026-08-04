@@ -6,14 +6,11 @@ services:
     ports:
       - "80:80"
       - "8000:8000"
-      - "3000:3000"
     volumes:
       - ./api/public:/var/www/api/public:ro
-      - ./frontend:/var/www/frontend:ro
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - api
-      - frontend
     networks:
       - gb-network
 
@@ -56,23 +53,6 @@ services:
       - minio
     networks:
       - gb-network
-
-  frontend:
-    build:
-      context: .
-      dockerfile: docker/node/Dockerfile
-    volumes:
-      - ./frontend:/var/www/frontend
-    working_dir: /var/www/frontend
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000/api
-      API_URL: http://nginx:8000
-      NODE_ENV: development
-    depends_on:
-      - api
-    networks:
-      - gb-network
-    command: ["npm", "run", "dev"]
 
   db:
     image: postgres:16-alpine
