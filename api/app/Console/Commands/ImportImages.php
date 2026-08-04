@@ -349,12 +349,49 @@ class ImportImages extends Command
             return $this->searchCache[$name];
         }
 
-        $query = substr($name, 0, 100);
+        $queries = $this->buildSearchQueries($name);
+
+        foreach ($queries as $query) {
+            $url = $this->findSearchResultWithGallery($query);
+            if ($url !== null) {
+                $this->searchCache[$name] = $url;
+                return $url;
+            }
+        }
+
+        $this->searchCache[$name] = null;
+        return null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function buildSearchQueries(string $name): array
+    {
+        $queries = [substr($name, 0, 100)];
+
+        // Name without parentheses content (e.g. model/article codes).
+        $withoutParens = preg_replace('/\s*[\[(].*?[\])]\s*/u', ' ', $name);
+        $withoutParens = trim(preg_replace('/\s+/u', ' ', $withoutParens ?? ''));
+        if ($withoutParens !== '' && $withoutParens !== $queries[0]) {
+            $queries[] = substr($withoutParens, 0, 100);
+        }
+
+        return $queries;
+    }
+
+    private function findSearchResultWithGallery(string $query): ?string
+    {
+        $cacheKey = 'q:'.$query;
+        if (array_key_exists($cacheKey, $this->searchCache)) {
+            return $this->searchCache[$cacheKey] ?: null;
+        }
+
         $url = self::BASE.'/search/?q='.urlencode($query);
         $html = $this->fetch($url);
 
         if ($html === null) {
-            $this->searchCache[$name] = null;
+            $this->searchCache[$cacheKey] = null;
             return null;
         }
 
@@ -362,15 +399,39 @@ class ImportImages extends Command
         $links = $crawler->filter('a[href^="/product/"]');
 
         if ($links->count() === 0) {
-            $this->searchCache[$name] = null;
+            $this->searchCache[$cacheKey] = null;
             return null;
         }
 
-        $href = $links->first()->attr('href');
-        $resolved = $href ? $this->buildUrl($href) : null;
-        $this->searchCache[$name] = $resolved;
+        $maxCheck = min(3, $links->count());
+        for ($i = 0; $i < $maxCheck; $i++) {
+            $href = $links->eq($i)->attr('href');
+            if (! $href) {
+                continue;
+            }
 
-        return $resolved;
+            $productUrl = $this->buildUrl($href);
+            if ($this->urlHasGallery($productUrl)) {
+                $this->searchCache[$cacheKey] = $productUrl;
+                return $productUrl;
+            }
+        }
+
+        $this->searchCache[$cacheKey] = null;
+        return null;
+    }
+
+    private function urlHasGallery(string $url): bool
+    {
+        $html = $this->fetch($url);
+        if ($html === null) {
+            return false;
+        }
+
+        $crawler = new Crawler($html);
+
+        return $crawler->filter('img.detail-gallery-big__picture')->count() > 0
+            || $crawler->filter('img.gallery__picture')->count() > 0;
     }
 
     private function resolveSrc(string $src): string
