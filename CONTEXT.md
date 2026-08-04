@@ -46,9 +46,10 @@
 ## Состояние на 04.08.2026 — анимация и UX автоподбора в `/pc` (обновлено)
 
 - **Плавное раскрытие шагов конфигуратора**: подключён плагин `@alpinejs/collapse` CDN, шаги открываются/закрываются через `x-collapse.duration.1000ms` (~1 сек). Работает на десктопе и мобильном. Старый CSS `transition` на `.pc-step-body` убран, чтобы не конфликтовать с плагином. **Padding убран с анимируемого `.pc-step-body` и перенесён на внутренний `.pc-step-content`** — это устраняет перескок высоты в конце анимации, который Alpine Collapse даёт при padding на раскрываемом элементе.
-- **Исправлены слипшиеся кнопки в автоподборе**: у `.pc-auto-fallback .pc-reset-btn` добавлен `margin-top: 1rem !important`, чтобы между «Отправить заявку менеджеру» и «Попробовать другой бюджет» был зазор.
-- **Файлы**: `api/resources/views/layouts/site.blade.php` (подключение collapse перед Alpine), `api/resources/views/pc/configurator.blade.php` (`.pc-step-content` wrapper + `x-collapse.duration.1000ms`), `api/public/css/site.css` (padding перенесён, убран transition, margin-top для кнопки).
-- **Деплой и проверка**: коммит `be2102b`, `python deploy_remote.py` — успешно. Скриншоты проверки: `tests/screenshots/pc-anim-memory-*.png` (промежуточные кадры 0–1100 мс раскрытия), `tests/screenshots/pc-auto-fallback-buttons.png` (отступ кнопок).
+- **Исправлены слипшиеся кнопки в автоподборе**: у `.pc-auto-fallback .pc-reset-btn` и `.pc-auto-result .pc-reset-btn` добавлен `margin-top: 1rem`, чтобы между кнопками и формой был зазор.
+- **Автоподбор приближён к бюджету**: в `PcAutoBuildService` после начальной сборки добавлен `optimizeBuild()` — итеративно поднимает комплектующие до более дорогих совместимых вариантов, пока остаётся бюджет. Проверено: бюджет 200 000 ₽ → сборка 145 200 ₽ (максимум в демо-данных, ограничена мощностью БП).
+- **Файлы**: `api/resources/views/layouts/site.blade.php` (подключение collapse перед Alpine), `api/resources/views/pc/configurator.blade.php` (`.pc-step-content` wrapper + `x-collapse.duration.1000ms`), `api/public/css/site.css` (padding перенесён, отступы кнопок), `api/app/Services/PcAutoBuildService.php` (optimizeBuild + isBuildValid).
+- **Деплой и проверка**: коммит `fa4bfde`, `python deploy_remote.py` — успешно. Скриншоты проверки: `tests/screenshots/pc-anim-memory-*.png` (промежуточные кадры 0–1100 мс раскрытия), `tests/screenshots/pc-auto-fallback-buttons.png` (отступ кнопок), `tests/screenshots/pc-auto-result-200k*.png` (подбор под 200 000 ₽).
 
 ## Демо-режим конфигуратора (28.07, коммит `ee23144`)
 
