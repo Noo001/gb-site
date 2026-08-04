@@ -107,9 +107,20 @@
                             <div class="pc-case-3d" :style="caseStyle()">
                                 <div class="pc-case-face pc-case-face--back"></div>
                                 <div class="pc-case-face pc-case-face--left"></div>
-                                <div class="pc-case-face pc-case-face--right"></div>
+                                <div class="pc-case-face pc-case-face--right">
+                                    <div class="pc-case-io" aria-hidden="true">
+                                        <div class="pc-case-power"></div>
+                                        <div class="pc-case-usb"></div>
+                                        <div class="pc-case-usb"></div>
+                                        <div class="pc-case-usb"></div>
+                                    </div>
+                                </div>
                                 <div class="pc-case-face pc-case-face--top"></div>
                                 <div class="pc-case-face pc-case-face--bottom"></div>
+                                <div class="pc-case-foot pc-case-foot--fl" aria-hidden="true"></div>
+                                <div class="pc-case-foot pc-case-foot--fr" aria-hidden="true"></div>
+                                <div class="pc-case-foot pc-case-foot--bl" aria-hidden="true"></div>
+                                <div class="pc-case-foot pc-case-foot--br" aria-hidden="true"></div>
                                 <div class="pc-case-face pc-case-face--front">
                                     <svg class="pc-case-svg" viewBox="0 0 560 420" xmlns="http://www.w3.org/2000/svg" aria-label="Схема системного блока" preserveAspectRatio="xMidYMid meet">
                                         <defs>
@@ -288,32 +299,11 @@
                                             <text class="pc-slot-label" x="190" y="425" x-show="build['psu']" x-text="shortName('psu')" style="font-size: 13px;"></text>
                                         </g>
 
-                                        {{-- Передняя панель справа (на лицевой грани) --}}
-                                        <g class="pc-slot pc-slot-front" data-slot="case" :class="slotClass('case')"
-                                           @mouseenter="hoveredSlot = 'case'" @mouseleave="hoveredSlot = null" @click="activateSlot('case')">
-                                            <rect x="410" y="40" width="110" height="320" rx="4" fill="#1e293b" stroke="#334155" stroke-width="2" />
-                                            {{-- Кнопка питания --}}
-                                            <circle cx="465" cy="80" r="11" fill="#334155" stroke="#e2e8f0" stroke-width="2" />
-                                            <circle class="pc-led" cx="465" cy="80" r="5" />
-                                            {{-- USB-порты --}}
-                                            <rect x="453" y="105" width="10" height="10" rx="2" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5" />
-                                            <rect x="469" y="105" width="10" height="10" rx="2" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5" />
-                                            <rect x="453" y="123" width="10" height="10" rx="2" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5" />
-                                            {{-- Вентиляция передней панели --}}
-                                            <g fill="#64748b">
-                                                <circle cx="465" cy="200" r="5" />
-                                                <circle cx="465" cy="235" r="5" />
-                                                <circle cx="465" cy="270" r="5" />
-                                                <circle cx="465" cy="305" r="5" />
-                                                <circle cx="465" cy="340" r="5" />
-                                            </g>
-                                            {{-- RGB-лента на передней панели --}}
-                                            <rect class="pc-led" x="417" y="50" width="5" height="300" rx="2" />
+                                        {{-- Ножки (SVG-вариант для мобильной версии) --}}
+                                        <g class="pc-svg-foot">
+                                            <rect class="pc-foot" x="70" y="420" width="60" height="12" rx="3" />
+                                            <rect class="pc-foot" x="430" y="420" width="60" height="12" rx="3" />
                                         </g>
-
-                                        {{-- Ножки --}}
-                                        <rect class="pc-foot" x="70" y="420" width="60" height="12" rx="3" />
-                                        <rect class="pc-foot" x="430" y="420" width="60" height="12" rx="3" />
 
                                         {{-- Стеклянная панель поверх --}}
                                         <rect class="pc-glass" x="40" y="40" width="360" height="320" rx="4" fill="url(#pcGlassGrad)" />
