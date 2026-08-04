@@ -55,44 +55,46 @@
                                 </button>
 
                                 <div class="pc-step-body" x-show="activeSlot === slot.id && !slot.empty" x-collapse.duration.1000ms>
-                                    <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
+                                    <div class="pc-step-content">
+                                        <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
 
-                                    <div class="pc-parts-empty" x-show="!loadingParts && partsEmpty">
-                                        Нет совместимых вариантов — попробуйте изменить другие комплектующие.
-                                    </div>
+                                        <div class="pc-parts-empty" x-show="!loadingParts && partsEmpty">
+                                            Нет совместимых вариантов — попробуйте изменить другие комплектующие.
+                                        </div>
 
-                                    <div class="pc-parts" x-show="!loadingParts && !partsEmpty">
-                                        <template x-for="part in parts" :key="part.id">
-                                            <button type="button" class="pc-part"
-                                                    :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }"
-                                                    @click="choose(slot, part)">
-                                                <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
-                                                <span class="pc-part-name" x-text="part.name"></span>
-                                                <span class="pc-part-meta">
-                                                    <template x-for="chip in chips(part)" :key="chip">
-                                                        <span class="pc-chip" x-text="chip"></span>
-                                                    </template>
-                                                </span>
-                                                <span class="pc-part-footer">
-                                                    <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
-                                                    <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
-                                                </span>
-                                                <template x-if="isMulti(slot.id)">
-                                                    <span class="pc-part-qty" @click.stop>
-                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
-                                                        <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
-                                                        <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                        <div class="pc-parts" x-show="!loadingParts && !partsEmpty">
+                                            <template x-for="part in parts" :key="part.id">
+                                                <button type="button" class="pc-part"
+                                                        :class="{ 'pc-part--selected': isSelected(slot, part), 'pc-part--multi': isMulti(slot.id) }"
+                                                        @click="choose(slot, part)">
+                                                    <span class="pc-part-multi-badge" x-show="isMulti(slot.id)">можно несколько</span>
+                                                    <span class="pc-part-name" x-text="part.name"></span>
+                                                    <span class="pc-part-meta">
+                                                        <template x-for="chip in chips(part)" :key="chip">
+                                                            <span class="pc-chip" x-text="chip"></span>
+                                                        </template>
                                                     </span>
-                                                </template>
-                                            </button>
-                                        </template>
-                                    </div>
+                                                    <span class="pc-part-footer">
+                                                        <span class="pc-part-price" x-text="fmtPrice(part.price)"></span>
+                                                        <span class="pc-part-stock" x-text="'в наличии: ' + Math.round(part.stock)"></span>
+                                                    </span>
+                                                    <template x-if="isMulti(slot.id)">
+                                                        <span class="pc-part-qty" @click.stop>
+                                                            <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, -1)">−</button>
+                                                            <span class="pc-qty-value" x-text="qtyOf(slot, part)"></span>
+                                                            <button type="button" class="pc-qty-btn" @click="changeQty(slot, part, 1)">+</button>
+                                                        </span>
+                                                    </template>
+                                                </button>
+                                            </template>
+                                        </div>
 
-                                    <div class="pc-step-actions" x-show="!loadingParts && !partsEmpty">
-                                        <button type="button" class="pc-skip-btn" x-show="!slot.required && !hasSlotItems(slot.id)"
-                                                @click="skipStep(slot)">Пропустить шаг</button>
-                                        <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) && hasSlotItems(slot.id)"
-                                                @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                        <div class="pc-step-actions" x-show="!loadingParts && !partsEmpty">
+                                            <button type="button" class="pc-skip-btn" x-show="!slot.required && !hasSlotItems(slot.id)"
+                                                    @click="skipStep(slot)">Пропустить шаг</button>
+                                            <button type="button" class="pc-next-btn" x-show="isMulti(slot.id) && hasSlotItems(slot.id)"
+                                                    @click="advanceSlot(slot)">Перейти к следующему шагу</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
