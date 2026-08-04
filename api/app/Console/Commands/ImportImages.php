@@ -349,6 +349,7 @@ class ImportImages extends Command
     private function searchProductUrl(string $name): ?string
     {
         $name = $this->toUtf8(trim($name));
+        $this->info('SEARCH name_b64='.base64_encode($name).' cached='.(isset($this->searchCache[$name]) ? 'yes' : 'no'));
         if (isset($this->searchCache[$name])) {
             return $this->searchCache[$name];
         }
@@ -393,22 +394,28 @@ class ImportImages extends Command
         }
 
         $url = self::BASE.'/search/?q='.urlencode($query);
+        $this->info('FIND query_b64='.base64_encode($query).' url='.$url);
         $html = $this->fetch($url);
+        $status = $html === null ? 'null' : 'len='.strlen($html);
+        $linksCount = 0;
+        if ($html !== null) {
+            $crawler = new Crawler($html);
+            $links = $crawler->filter('a[href^="/product/"]');
+            $linksCount = $links->count();
+        }
+        $this->info('FIND status='.$status.' links='.$linksCount);
 
         if ($html === null) {
             $this->searchCache[$cacheKey] = null;
             return null;
         }
 
-        $crawler = new Crawler($html);
-        $links = $crawler->filter('a[href^="/product/"]');
-
-        if ($links->count() === 0) {
+        if ($linksCount === 0) {
             $this->searchCache[$cacheKey] = null;
             return null;
         }
 
-        $maxCheck = min(20, $links->count());
+        $maxCheck = min(20, $linksCount);
         for ($i = 0; $i < $maxCheck; $i++) {
             $href = $links->eq($i)->attr('href');
             if (! $href) {
@@ -418,6 +425,7 @@ class ImportImages extends Command
             $productUrl = $this->buildUrl($href);
             if ($this->urlHasGallery($productUrl)) {
                 $this->searchCache[$cacheKey] = $productUrl;
+                $this->info('FIND gallery='.$productUrl);
                 return $productUrl;
             }
         }
