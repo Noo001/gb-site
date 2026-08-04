@@ -54,7 +54,7 @@ class ImportImages extends Command
 
     private function processCategories(int $limit, int $delay): void
     {
-        $query = Category::query()->whereNotNull('url');
+        $query = Category::query()->whereNotNull('full_path');
         if ($limit > 0) {
             $query->limit($limit);
         }
@@ -66,7 +66,7 @@ class ImportImages extends Command
         $this->homeHtml = $this->fetch(self::BASE.'/');
         $this->loadBrandLogos();
 
-        foreach ($query->cursor() as $category) {
+        foreach ($query->get() as $category) {
             $this->importCategoryImage($category);
             usleep($delay * 1000);
             $bar->advance();
@@ -144,11 +144,13 @@ class ImportImages extends Command
         $src = null;
 
         // Brand categories: try the original /brands/ page first.
-        if (str_starts_with($category->url ?? '', '/brands/')) {
-            $src = $this->findBrandImageSrc($name);
+        $path = $category->url ?? $category->full_path ?? '';
+        if (str_starts_with($path, '/brands/') || str_starts_with($path, '/catalog/')) {
+            $brandSlug = trim($category->slug ?: basename($path), '/');
+            $src = $this->findBrandImageSrc($brandSlug) ?: $this->findBrandImageSrc($name);
         }
 
-        // Fallback to homepage menu icons.
+        // Fallback to homepage menu icons / brand logos.
         if (! $src) {
             $html = $this->homeHtml ?? $this->fetch(self::BASE.'/');
             $src = $this->findCategoryImageSrc($html, $name);
