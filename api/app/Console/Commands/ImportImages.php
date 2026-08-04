@@ -325,7 +325,15 @@ class ImportImages extends Command
     {
         try {
             $response = Http::timeout((int) $this->option('timeout'))
-                ->withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
+                ->withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+                ->withHeaders([
+                    'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                    'Accept-Language' => 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+                    'Accept-Encoding' => 'gzip, deflate, br',
+                    'Cache-Control' => 'max-age=0',
+                    'Connection' => 'keep-alive',
+                    'Upgrade-Insecure-Requests' => '1',
+                ])
                 ->withOptions(['verify' => false])
                 ->get($url);
 
@@ -349,7 +357,6 @@ class ImportImages extends Command
     private function searchProductUrl(string $name): ?string
     {
         $name = $this->toUtf8(trim($name));
-        $this->info('SEARCH name_b64='.base64_encode($name).' cached='.(isset($this->searchCache[$name]) ? 'yes' : 'no'));
         if (isset($this->searchCache[$name])) {
             return $this->searchCache[$name];
         }
@@ -373,13 +380,13 @@ class ImportImages extends Command
      */
     private function buildSearchQueries(string $name): array
     {
-        $queries = [substr($name, 0, 100)];
+        $queries = [$name];
 
         // Name without parentheses content (e.g. model/article codes).
         $withoutParens = preg_replace('/\s*[\[(].*?[\])]\s*/u', ' ', $name);
         $withoutParens = trim(preg_replace('/\s+/u', ' ', $withoutParens ?? ''));
         if ($withoutParens !== '' && $withoutParens !== $queries[0]) {
-            $queries[] = substr($withoutParens, 0, 100);
+            $queries[] = $withoutParens;
         }
 
         return $queries;
@@ -394,28 +401,22 @@ class ImportImages extends Command
         }
 
         $url = self::BASE.'/search/?q='.urlencode($query);
-        $this->info('FIND query_b64='.base64_encode($query).' url='.$url);
-        $html = $this->fetch($url);
-        $status = $html === null ? 'null' : 'len='.strlen($html);
-        $linksCount = 0;
-        if ($html !== null) {
-            $crawler = new Crawler($html);
-            $links = $crawler->filter('a[href^="/product/"]');
-            $linksCount = $links->count();
-        }
-        $this->info('FIND status='.$status.' links='.$linksCount);
+        $html = $this->curlFetch($url);
 
         if ($html === null) {
             $this->searchCache[$cacheKey] = null;
             return null;
         }
 
-        if ($linksCount === 0) {
+        $crawler = new Crawler($html);
+        $links = $crawler->filter('a[href^="/product/"]');
+
+        if ($links->count() === 0) {
             $this->searchCache[$cacheKey] = null;
             return null;
         }
 
-        $maxCheck = min(20, $linksCount);
+        $maxCheck = min(20, $links->count());
         for ($i = 0; $i < $maxCheck; $i++) {
             $href = $links->eq($i)->attr('href');
             if (! $href) {
@@ -425,7 +426,6 @@ class ImportImages extends Command
             $productUrl = $this->buildUrl($href);
             if ($this->urlHasGallery($productUrl)) {
                 $this->searchCache[$cacheKey] = $productUrl;
-                $this->info('FIND gallery='.$productUrl);
                 return $productUrl;
             }
         }
@@ -447,7 +447,7 @@ class ImportImages extends Command
 
     private function urlHasGallery(string $url): bool
     {
-        $html = $this->fetch($url);
+        $html = $this->curlFetch($url);
         if ($html === null) {
             return false;
         }
@@ -456,6 +456,21 @@ class ImportImages extends Command
 
         return $crawler->filter('img.detail-gallery-big__picture')->count() > 0
             || $crawler->filter('img.gallery__picture')->count() > 0;
+    }
+
+    private function curlFetch(string $url): ?string
+    {
+        $timeout = (int) $this->option('timeout');
+        $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        $cmd = 'curl -L -s -A '.escapeshellarg($userAgent).' --connect-timeout 10 --max-time '.$timeout.' '.escapeshellarg($url);
+
+        $output = @shell_exec($cmd);
+
+        if ($output === null || $output === '') {
+            return null;
+        }
+
+        return $output;
     }
 
     private function resolveSrc(string $src): string
