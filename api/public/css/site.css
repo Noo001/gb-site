@@ -1989,8 +1989,9 @@ button {
 .pc-case-scene {
     display: flex;
     justify-content: center;
+    align-items: center;
     padding: 1rem 0;
-    min-height: 560px;
+    min-height: 620px;
 }
 
 .pc-case-3d {
@@ -2362,13 +2363,13 @@ button {
     }
 
     .pc-case-scene {
-        min-height: 340px;
-        padding: 1.5rem 0 0.5rem;
+        min-height: 360px;
+        padding: 2rem 0 0.5rem;
     }
 
     .pc-case-3d {
         width: 100%;
-        max-width: 360px;
+        max-width: 340px;
         height: auto;
         aspect-ratio: 720 / 600;
         transition: none;
