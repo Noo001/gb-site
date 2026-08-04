@@ -2855,6 +2855,10 @@ button {
     margin-top: 1rem !important;
 }
 
+.pc-auto-result .pc-reset-btn {
+    margin-top: 1rem;
+}
+
 @media (min-width: 640px) {
     .pc-auto-title {
         font-size: 1.5rem;

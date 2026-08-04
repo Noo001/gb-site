@@ -127,10 +127,105 @@ class PcAutoBuildService
             return null;
         }
 
+        $this->optimizeBuild($selected, $buildIds, $remaining, $budget);
+        $total = $budget - $remaining;
+
         return [
             'items' => $selected,
             'total' => $total,
         ];
+    }
+
+    /**
+     * Довести сборку ближе к бюджету, поднимая отдельные комплектующие
+     * до более дорогих, но совместимых вариантов, пока остаётся бюджет.
+     */
+    private function optimizeBuild(array &$selected, array &$buildIds, float &$remaining, float $budget): void
+    {
+        $minGain = max(1000.0, $budget * 0.01);
+        $maxIterations = 50;
+
+        for ($i = 0; $i < $maxIterations && $remaining >= $minGain; $i++) {
+            $upgrades = [];
+
+            foreach (self::BUILD_ORDER as $slot) {
+                $current = $selected[$slot];
+                $currentPrice = (float) $current['price'];
+
+                $candidates = $this->compatibility->isDemoMode()
+                    ? $this->compatibility->availableDemoParts($slot, $buildIds)
+                    : $this->compatibility->availableParts($slot, $buildIds);
+
+                $formatted = $candidates->map(fn ($item) => $this->formatCandidate($slot, $item));
+                $better = $formatted
+                    ->filter(fn ($item) => $item['price'] !== null)
+                    ->filter(fn ($item) => $item['price'] > $currentPrice + 0.001)
+                    ->filter(fn ($item) => $item['price'] <= $currentPrice + $remaining + 0.001);
+
+                foreach ($better as $candidate) {
+                    $upgrades[] = [
+                        'slot' => $slot,
+                        'candidate' => $candidate,
+                        'gain' => (float) $candidate['price'] - $currentPrice,
+                    ];
+                }
+            }
+
+            if (empty($upgrades)) {
+                break;
+            }
+
+            usort($upgrades, fn ($a, $b) => $b['gain'] <=> $a['gain']);
+
+            $applied = false;
+
+            foreach ($upgrades as $upgrade) {
+                $slot = $upgrade['slot'];
+                $oldCandidate = $selected[$slot];
+                $oldBuildId = $buildIds[$slot];
+
+                $selected[$slot] = $upgrade['candidate'];
+                $buildIds[$slot] = $upgrade['candidate']['id'];
+                $remaining -= $upgrade['gain'];
+
+                if ($this->isBuildValid($selected, $buildIds, $budget)) {
+                    $applied = true;
+                    break;
+                }
+
+                // Откат, если замена нарушила совместимость других слотов.
+                $selected[$slot] = $oldCandidate;
+                $buildIds[$slot] = $oldBuildId;
+                $remaining += $upgrade['gain'];
+            }
+
+            if (! $applied) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Проверить, что каждый выбранный компонент всё ещё доступен
+     * с учётом текущей сборки (совместимость и цена <= бюджет).
+     */
+    private function isBuildValid(array $selected, array $buildIds, float $budget): bool
+    {
+        foreach (self::BUILD_ORDER as $slot) {
+            $candidates = $this->compatibility->isDemoMode()
+                ? $this->compatibility->availableDemoParts($slot, $buildIds)
+                : $this->compatibility->availableParts($slot, $buildIds);
+
+            $ids = $candidates->map(fn ($item) => $item->id)->all();
+
+            if (! in_array($selected[$slot]['id'], $ids, true)) {
+                return false;
+            }
+        }
+
+        $total = array_sum(array_map(fn ($item) => (float) $item['price'], $selected));
+
+        return $total <= $budget + 0.001;
     }
 
     /**
