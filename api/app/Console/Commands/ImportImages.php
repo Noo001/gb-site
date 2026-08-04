@@ -348,7 +348,7 @@ class ImportImages extends Command
 
     private function searchProductUrl(string $name): ?string
     {
-        $name = trim($name);
+        $name = $this->toUtf8(trim($name));
         if (isset($this->searchCache[$name])) {
             return $this->searchCache[$name];
         }
@@ -386,6 +386,7 @@ class ImportImages extends Command
 
     private function findSearchResultWithGallery(string $query): ?string
     {
+        $query = $this->toUtf8($query);
         $cacheKey = 'q:'.$query;
         if (array_key_exists($cacheKey, $this->searchCache)) {
             return $this->searchCache[$cacheKey] ?: null;
@@ -423,6 +424,17 @@ class ImportImages extends Command
 
         $this->searchCache[$cacheKey] = null;
         return null;
+    }
+
+    private function toUtf8(string $text): string
+    {
+        if (mb_check_encoding($text, 'UTF-8')) {
+            return $text;
+        }
+
+        $converted = @mb_convert_encoding($text, 'UTF-8', 'CP1251');
+
+        return $converted !== false ? $converted : $text;
     }
 
     private function urlHasGallery(string $url): bool
