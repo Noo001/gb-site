@@ -1979,7 +1979,7 @@ button {
     color: var(--accent);
 }
 
-/* --- Корпус (реалистичный горизонтальный Mid Tower с 3D-вращением) --- */
+/* --- Корпус (изометрический Mid Tower) --- */
 
 .pc-case-panel {
     position: sticky;
@@ -1987,90 +1987,25 @@ button {
 }
 
 .pc-case-scene {
-    perspective: 1400px;
     display: flex;
     justify-content: center;
-    padding: 1.5rem 0;
-    min-height: 520px;
+    padding: 1rem 0;
+    min-height: 440px;
 }
 
 .pc-case-3d {
-    --pc-w: 620px;
-    --pc-h: 420px;
-    --pc-d: 190px;
-    width: var(--pc-w);
-    height: var(--pc-h);
+    width: 720px;
+    height: 420px;
     position: relative;
-    transform-style: preserve-3d;
-    transform-origin: 50% 50%;
-    transition: transform 0.6s ease;
+    transition: transform 0.5s ease;
     will-change: transform;
-    filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.45));
-}
-
-.pc-case-face {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    backface-visibility: hidden;
-    box-sizing: border-box;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.35));
 }
 
 .pc-case-face--front {
-    width: var(--pc-w);
-    height: var(--pc-h);
-    transform: translateX(-50%) translateY(-50%) translateZ(calc(var(--pc-d) / 2));
-    background: transparent;
-    border: 3px solid #475569;
-    border-radius: 14px;
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
     pointer-events: auto;
-    box-shadow:
-        0 0 0 1px rgba(0,0,0,0.15),
-        0 20px 48px rgba(0,0,0,0.35);
-}
-
-.pc-case-face--back {
-    width: var(--pc-w);
-    height: var(--pc-h);
-    transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(calc(var(--pc-d) / 2));
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    border: 3px solid #334155;
-    border-radius: 14px;
-}
-
-.pc-case-face--left,
-.pc-case-face--right {
-    width: var(--pc-d);
-    height: var(--pc-h);
-    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-    border: 3px solid #334155;
-    border-radius: 14px;
-}
-
-.pc-case-face--left {
-    transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(calc(var(--pc-w) / 2));
-}
-
-.pc-case-face--right {
-    transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(calc(var(--pc-w) / 2));
-}
-
-.pc-case-face--top,
-.pc-case-face--bottom {
-    width: var(--pc-w);
-    height: var(--pc-d);
-    background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
-    border: 3px solid #334155;
-    border-radius: 14px;
-}
-
-.pc-case-face--top {
-    transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(calc(var(--pc-h) / 2));
-}
-
-.pc-case-face--bottom {
-    transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(calc(var(--pc-h) / 2));
 }
 
 .pc-case-svg {
@@ -2103,7 +2038,7 @@ button {
 
 .pc-slot .pc-case-body {
     fill: #0f172a;
-    stroke: #475569;
+    stroke: #334155;
     stroke-width: 2.5;
 }
 
@@ -2428,44 +2363,17 @@ button {
 
     .pc-case-scene {
         min-height: 280px;
-        padding: 1rem 0;
+        padding: 0.5rem 0;
     }
 
     .pc-case-3d {
-        --pc-w: 100vw;
-        --pc-h: calc(100vw * 0.55);
-        --pc-d: 60px;
-        max-width: 540px;
-        max-height: 300px;
+        width: 100%;
+        max-width: 420px;
+        height: auto;
+        aspect-ratio: 720 / 420;
         transition: none;
         transform: none !important;
     }
-
-    .pc-case-face--front,
-    .pc-case-face--back {
-        width: var(--pc-w);
-        height: var(--pc-h);
-    }
-
-    .pc-case-face--left,
-    .pc-case-face--right {
-        width: var(--pc-d);
-        height: var(--pc-h);
-    }
-
-    .pc-case-face--left { transform: translateX(-50%) translateY(-50%) rotateY(-90deg) translateZ(calc(var(--pc-w) / 2)); }
-    .pc-case-face--right { transform: translateX(-50%) translateY(-50%) rotateY(90deg) translateZ(calc(var(--pc-w) / 2)); }
-
-    .pc-case-face--top,
-    .pc-case-face--bottom {
-        width: var(--pc-w);
-        height: var(--pc-d);
-    }
-
-    .pc-case-face--top { transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(calc(var(--pc-h) / 2)); }
-    .pc-case-face--bottom { transform: translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(calc(var(--pc-h) / 2)); }
-    .pc-case-face--front { transform: translateX(-50%) translateY(-50%) translateZ(calc(var(--pc-d) / 2)); }
-    .pc-case-face--back { transform: translateX(-50%) translateY(-50%) rotateY(180deg) translateZ(calc(var(--pc-d) / 2)); }
 
     .pc-parts {
         grid-template-columns: 1fr;
