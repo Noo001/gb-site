@@ -56,8 +56,14 @@ const translit = (str) => {
     await screenshot('pc-anim-memory-300ms');
     await page.waitForTimeout(300);
     await screenshot('pc-anim-memory-600ms');
-    await page.waitForTimeout(400);
+    await page.waitForTimeout(200);
+    await screenshot('pc-anim-memory-800ms');
+    await page.waitForTimeout(100);
+    await screenshot('pc-anim-memory-900ms');
+    await page.waitForTimeout(100);
     await screenshot('pc-anim-memory-1000ms');
+    await page.waitForTimeout(100);
+    await screenshot('pc-anim-memory-1100ms');
   } else {
     console.log('Memory step not found');
   }
