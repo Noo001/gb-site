@@ -20,7 +20,8 @@ class ImportImages extends Command
         {--timeout=30 : HTTP timeout}
         {--min-id=0 : Minimum product ID}
         {--max-id=0 : Maximum product ID}
-        {--use-slug : Build URL from slug if product url is empty}';
+        {--use-slug : Build URL from slug if product url is empty}
+        {--search-fallback=1 : Search gadget-bar.ru by product name when slug URL fails}';
 
     protected $description = 'Download product/category images from old site into Spatie media library';
 
@@ -51,6 +52,9 @@ class ImportImages extends Command
     private ?string $homeHtml = null;
 
     private ?array $brandLogos = null;
+
+    /** @var array<string, string|null> */
+    private array $searchCache = [];
 
     private function processCategories(int $limit, int $delay): void
     {
@@ -263,6 +267,15 @@ class ImportImages extends Command
 
         $url = $this->buildUrl($path);
         $html = $this->fetch($url);
+
+        if ($html === null && $this->option('search-fallback')) {
+            $searchUrl = $this->searchProductUrl($product->name);
+            if ($searchUrl !== null) {
+                $url = $searchUrl;
+                $html = $this->fetch($url);
+            }
+        }
+
         if ($html === null) {
             $this->warn("Product #{$product->id} failed to fetch {$url}");
             return false;
@@ -327,6 +340,37 @@ class ImportImages extends Command
     private function buildUrl(string $path): string
     {
         return self::BASE.rtrim($path, '/').'/';
+    }
+
+    private function searchProductUrl(string $name): ?string
+    {
+        $name = trim($name);
+        if (isset($this->searchCache[$name])) {
+            return $this->searchCache[$name];
+        }
+
+        $query = substr($name, 0, 100);
+        $url = self::BASE.'/search/?q='.urlencode($query);
+        $html = $this->fetch($url);
+
+        if ($html === null) {
+            $this->searchCache[$name] = null;
+            return null;
+        }
+
+        $crawler = new Crawler($html);
+        $links = $crawler->filter('a[href^="/product/"]');
+
+        if ($links->count() === 0) {
+            $this->searchCache[$name] = null;
+            return null;
+        }
+
+        $href = $links->first()->attr('href');
+        $resolved = $href ? $this->buildUrl($href) : null;
+        $this->searchCache[$name] = $resolved;
+
+        return $resolved;
     }
 
     private function resolveSrc(string $src): string
