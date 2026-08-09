@@ -41,6 +41,11 @@ class LogOneCRequest
     private function filteredHeaders(Request $request): array
     {
         $headers = $request->headers->all();
+        $key = $request->header('X-1C-API-Key');
+        if ($key !== null) {
+            // Сохраняем хеш ключа для отладки, сам ключ не логируем.
+            $headers['x-1c-api-key-hash'] = hash('sha256', $key);
+        }
         unset($headers['x-1c-api-key']);
 
         return $headers;
