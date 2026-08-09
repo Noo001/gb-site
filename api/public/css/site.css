@@ -1892,7 +1892,22 @@ button {
 }
 
 .pc-step-body {
+    display: grid;
+    grid-template-rows: 0fr;
     padding: 0;
+}
+
+.pc-step-body--animated {
+    transition: grid-template-rows 0.4s ease;
+}
+
+.pc-step-body--open {
+    grid-template-rows: 1fr;
+}
+
+.pc-step-inner {
+    overflow: hidden;
+    min-height: 0;
 }
 
 .pc-step-content {
@@ -3000,9 +3015,25 @@ button {
 }
 
 .pc-assembly-details {
+    display: grid;
+    grid-template-rows: 0fr;
     margin-top: 0.75rem;
-    padding-top: 0.75rem;
+    padding-top: 0;
     border-top: 1px solid var(--border);
+}
+
+.pc-assembly-details--animated {
+    transition: grid-template-rows 0.35s ease;
+}
+
+.pc-assembly-details--open {
+    grid-template-rows: 1fr;
+}
+
+.pc-assembly-details-inner {
+    overflow: hidden;
+    min-height: 0;
+    padding-top: 0.75rem;
 }
 
 .pc-assembly-package {

@@ -54,8 +54,9 @@
                                     </span>
                                 </button>
 
-                                <div class="pc-step-body" x-show="activeSlot === slot.id && !slot.empty" x-collapse.duration.1000ms>
-                                    <div class="pc-step-content">
+                                <div class="pc-step-body" :class="{ 'pc-step-body--open': activeSlot === slot.id && !slot.empty, 'pc-step-body--animated': animated }">
+                                    <div class="pc-step-inner">
+                                        <div class="pc-step-content">
                                         <div class="pc-parts-loading" x-show="loadingParts">Подбираем совместимые варианты…</div>
 
                                         <div class="pc-parts-empty" x-show="!loadingParts && partsEmpty">
@@ -97,6 +98,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                </div>
                             </div>
                         </template>
 
@@ -112,24 +114,28 @@
                                 </span>
                             </button>
 
-                            <div class="pc-step-body" x-show="activeSlot === 'assembly'" x-collapse.duration.1000ms>
-                                <div class="pc-step-content">
-                                    <div class="pc-assembly-card">
-                                        <label class="pc-assembly-toggle">
-                                            <input type="checkbox" x-model="assembly.enabled">
-                                            <span>Нужна сборка ПК</span>
-                                        </label>
-                                        <div class="pc-assembly-details" x-show="assembly.enabled" x-collapse>
-                                            <div class="pc-assembly-package">
-                                                <span x-text="'Тариф «' + assemblyPackage + '»'"></span>
-                                                <span class="pc-assembly-price" x-text="fmtPrice(assemblyPrice)"></span>
-                                            </div>
-                                            <label class="pc-assembly-option">
-                                                <input type="checkbox" x-model="assembly.windows">
-                                                <span>Установка Windows</span>
+                            <div class="pc-step-body" :class="{ 'pc-step-body--open': activeSlot === 'assembly', 'pc-step-body--animated': animated }">
+                                <div class="pc-step-inner">
+                                    <div class="pc-step-content">
+                                        <div class="pc-assembly-card">
+                                            <label class="pc-assembly-toggle">
+                                                <input type="checkbox" x-model="assembly.enabled">
+                                                <span>Нужна сборка ПК</span>
                                             </label>
-                                            <div class="pc-assembly-gift">
-                                                <strong>Подарок:</strong> установка Microsoft Office при покупке комплектующих и сборки
+                                            <div class="pc-assembly-details" :class="{ 'pc-assembly-details--open': assembly.enabled, 'pc-assembly-details--animated': animated }">
+                                                <div class="pc-assembly-details-inner">
+                                                    <div class="pc-assembly-package">
+                                                        <span x-text="'Тариф «' + assemblyPackage + '»'"></span>
+                                                        <span class="pc-assembly-price" x-text="fmtPrice(assemblyPrice)"></span>
+                                                    </div>
+                                                    <label class="pc-assembly-option">
+                                                        <input type="checkbox" x-model="assembly.windows">
+                                                        <span>Установка Windows</span>
+                                                    </label>
+                                                    <div class="pc-assembly-gift">
+                                                        <strong>Подарок:</strong> установка Microsoft Office при покупке комплектующих и сборки
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -448,17 +454,19 @@
                             <input type="checkbox" x-model="assembly.enabled">
                             <span>Нужна сборка ПК</span>
                         </label>
-                        <div class="pc-assembly-details" x-show="assembly.enabled" x-collapse>
-                            <div class="pc-assembly-package">
-                                <span x-text="'Тариф «' + assemblyPackage + '»'"></span>
-                                <span class="pc-assembly-price" x-text="fmtPrice(assemblyPrice)"></span>
-                            </div>
-                            <label class="pc-assembly-option">
-                                <input type="checkbox" x-model="assembly.windows">
-                                <span>Установка Windows</span>
-                            </label>
-                            <div class="pc-assembly-gift">
-                                <strong>Подарок:</strong> установка Microsoft Office при покупке комплектующих и сборки
+                        <div class="pc-assembly-details" :class="{ 'pc-assembly-details--open': assembly.enabled, 'pc-assembly-details--animated': animated }">
+                            <div class="pc-assembly-details-inner">
+                                <div class="pc-assembly-package">
+                                    <span x-text="'Тариф «' + assemblyPackage + '»'"></span>
+                                    <span class="pc-assembly-price" x-text="fmtPrice(assemblyPrice)"></span>
+                                </div>
+                                <label class="pc-assembly-option">
+                                    <input type="checkbox" x-model="assembly.windows">
+                                    <span>Установка Windows</span>
+                                </label>
+                                <div class="pc-assembly-gift">
+                                    <strong>Подарок:</strong> установка Microsoft Office при покупке комплектующих и сборки
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -545,6 +553,7 @@
             autoError: '',
             autoLoading: false,
             assembly: { enabled: true, windows: true },
+            animated: false,
 
             init() {
                 const mq = window.matchMedia('(max-width: 767px)');
@@ -576,6 +585,9 @@
                     if (next) {
                         this.activeSlot = next.id;
                         this.loadParts();
+                        // Включаем CSS-переходы только после первоначальной отрисовки,
+                        // чтобы активный шаг открылся сразу без анимации.
+                        requestAnimationFrame(() => { this.animated = true; });
                     }
                 }
             },
