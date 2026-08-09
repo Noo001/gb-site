@@ -125,13 +125,13 @@
                                     <svg class="pc-case-svg" viewBox="0 0 560 420" xmlns="http://www.w3.org/2000/svg" aria-label="Схема системного блока" preserveAspectRatio="xMidYMid meet">
                                         <defs>
                                             <linearGradient id="pcBodyFrontGrad" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stop-color="#1e293b" />
-                                                <stop offset="100%" stop-color="#0f172a" />
+                                                <stop offset="0%" stop-color="#545152" />
+                                                <stop offset="100%" stop-color="#000000" />
                                             </linearGradient>
                                             <linearGradient id="pcInteriorGrad" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stop-color="#334155" />
-                                                <stop offset="50%" stop-color="#1e293b" />
-                                                <stop offset="100%" stop-color="#0f172a" />
+                                                <stop offset="0%" stop-color="#6a696a" />
+                                                <stop offset="50%" stop-color="#545152" />
+                                                <stop offset="100%" stop-color="#000000" />
                                             </linearGradient>
                                             <linearGradient id="pcGlassGrad" x1="0" y1="0" x2="1" y2="1">
                                                 <stop offset="0%" stop-color="rgba(255,255,255,0.14)" />
@@ -157,7 +157,7 @@
                                         {{-- Корпус (лицевая грань) --}}
                                         <g class="pc-slot pc-slot-case" data-slot="case" :class="slotClass('case')"
                                            @mouseenter="hoveredSlot = 'case'" @mouseleave="hoveredSlot = null" @click="activateSlot('case')">
-                                            <rect class="pc-shape pc-case-body" x="0" y="0" width="560" height="420" rx="8" fill="url(#pcBodyFrontGrad)" stroke="#334155" stroke-width="2.5" />
+                                            <rect class="pc-shape pc-case-body" x="0" y="0" width="560" height="420" rx="8" fill="url(#pcBodyFrontGrad)" stroke="#6a696a" stroke-width="2.5" />
                                         </g>
 
                                         {{-- Интерьер за стеклом --}}
@@ -186,8 +186,8 @@
                                             <line class="pc-trace" x1="145" y1="115" x2="145" y2="305" />
                                             <line class="pc-trace" x1="200" y1="115" x2="200" y2="305" />
                                             {{-- чипсет --}}
-                                            <rect x="165" y="205" width="40" height="28" rx="3" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
-                                            <text class="pc-slot-label" x="190" y="350" x-show="build['motherboard']" x-text="shortName('motherboard')" style="font-size: 13px;"></text>
+                                            <rect x="165" y="205" width="40" height="28" rx="3" fill="#545152" stroke="#d9d9d9" stroke-width="1.5" />
+                                            <text class="pc-slot-label" x="190" y="350" text-anchor="middle" x-show="build['motherboard']" x-text="slotTitle('motherboard')"></text>
                                         </g>
 
                                         {{-- Процессор --}}
@@ -196,7 +196,7 @@
                                             <rect class="pc-shape" x="145" y="120" width="55" height="55" rx="4" />
                                             <rect class="pc-detail" x="155" y="130" width="35" height="35" rx="2" />
                                             <circle class="pc-detail" cx="172" cy="147" r="9" />
-                                            <text class="pc-slot-label" x="172" y="185" x-show="build['cpu']" x-text="shortName('cpu')" style="font-size: 13px;"></text>
+                                            <text class="pc-slot-label" x="172" y="185" text-anchor="middle" x-show="build['cpu']" x-text="slotTitle('cpu')"></text>
                                         </g>
 
                                         {{-- Кулер --}}
@@ -220,7 +220,7 @@
                                                 <path d="M172 147 q10 -8 4 -18" transform="rotate(300 172 147)" />
                                             </g>
                                             <circle class="pc-detail" cx="172" cy="147" r="5" />
-                                            <text class="pc-slot-label" x="215" y="100" style="text-anchor:end; font-size: 13px;" x-show="build['cooler']" x-text="shortName('cooler')"></text>
+                                            <text class="pc-slot-label" x="215" y="100" text-anchor="end" x-show="build['cooler']" x-text="slotTitle('cooler')"></text>
                                         </g>
 
                                         {{-- Память: 2 планки DDR --}}
@@ -229,13 +229,13 @@
                                             <rect class="pc-shape" x="245" y="120" width="13" height="85" rx="2" />
                                             <rect class="pc-shape" x="263" y="120" width="13" height="85" rx="2" />
                                             {{-- чипы --}}
-                                            <rect class="pc-detail" x="247" y="130" width="9" height="17" rx="1" fill="#0ea5e9" />
-                                            <rect class="pc-detail" x="247" y="153" width="9" height="17" rx="1" fill="#0ea5e9" />
-                                            <rect class="pc-detail" x="247" y="176" width="9" height="17" rx="1" fill="#0ea5e9" />
-                                            <rect class="pc-detail" x="265" y="130" width="9" height="17" rx="1" fill="#0ea5e9" />
-                                            <rect class="pc-detail" x="265" y="153" width="9" height="17" rx="1" fill="#0ea5e9" />
-                                            <rect class="pc-detail" x="265" y="176" width="9" height="17" rx="1" fill="#0ea5e9" />
-                                            <text class="pc-slot-label" x="260" y="110" style="text-anchor:start; font-size: 13px;" x-show="build['ram']" x-text="shortName('ram')"></text>
+                                            <rect class="pc-detail" x="247" y="130" width="9" height="17" rx="1" fill="#d9d9d9" />
+                                            <rect class="pc-detail" x="247" y="153" width="9" height="17" rx="1" fill="#d9d9d9" />
+                                            <rect class="pc-detail" x="247" y="176" width="9" height="17" rx="1" fill="#d9d9d9" />
+                                            <rect class="pc-detail" x="265" y="130" width="9" height="17" rx="1" fill="#d9d9d9" />
+                                            <rect class="pc-detail" x="265" y="153" width="9" height="17" rx="1" fill="#d9d9d9" />
+                                            <rect class="pc-detail" x="265" y="176" width="9" height="17" rx="1" fill="#d9d9d9" />
+                                            <text class="pc-slot-label" x="260" y="110" text-anchor="start" x-show="build['ram']" x-text="slotTitle('ram')"></text>
                                         </g>
 
                                         {{-- Видеокарта: 2 вентилятора --}}
@@ -257,7 +257,7 @@
                                             <line class="pc-detail-line" x1="211" y1="278" x2="199" y2="292" />
                                             {{-- RGB-полоса на GPU --}}
                                             <rect class="pc-led" x="95" y="265" width="220" height="3" rx="1.5" />
-                                            <text class="pc-slot-label" x="205" y="325" x-show="build['gpu']" x-text="shortName('gpu')" style="font-size: 13px;"></text>
+                                            <text class="pc-slot-label" x="205" y="325" text-anchor="middle" x-show="build['gpu']" x-text="slotTitle('gpu')"></text>
                                         </g>
 
                                         {{-- Накопитель: M.2 --}}
@@ -266,7 +266,7 @@
                                             <rect class="pc-shape" x="90" y="340" width="75" height="14" rx="2" />
                                             <rect class="pc-detail" x="97" y="343" width="25" height="8" rx="1" />
                                             <rect class="pc-detail" x="127" y="343" width="20" height="8" rx="1" />
-                                            <text class="pc-slot-label" x="127" y="370" x-show="build['storage']" x-text="shortName('storage')" style="font-size: 13px;"></text>
+                                            <text class="pc-slot-label" x="127" y="370" text-anchor="middle" x-show="build['storage']" x-text="slotTitle('storage')"></text>
                                         </g>
 
                                         {{-- Дополнительный вентилятор --}}
@@ -282,7 +282,7 @@
                                                 <path d="M260 320 q12 -10 5 -22" transform="rotate(300 260 320)" />
                                             </g>
                                             <circle class="pc-detail" cx="260" cy="320" r="5" />
-                                            <text class="pc-slot-label" x="260" y="360" x-show="build['extra']" x-text="shortName('extra')" style="font-size: 13px;"></text>
+                                            <text class="pc-slot-label" x="260" y="360" text-anchor="middle" x-show="build['extra']" x-text="slotTitle('extra')"></text>
                                         </g>
 
                                         {{-- Блок питания --}}
@@ -294,22 +294,22 @@
                                             <circle class="pc-detail-line" cx="160" cy="382" r="13" />
                                             <circle class="pc-detail-line" cx="160" cy="382" r="6" />
                                             {{-- кабели --}}
-                                            <path d="M 280 370 Q 310 360 325 370" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" />
-                                            <path d="M 280 385 Q 310 375 325 385" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" />
-                                            <text class="pc-slot-label" x="190" y="425" x-show="build['psu']" x-text="shortName('psu')" style="font-size: 13px;"></text>
+                                            <path d="M 280 370 Q 310 360 325 370" fill="none" stroke="#545152" stroke-width="2.5" stroke-linecap="round" />
+                                            <path d="M 280 385 Q 310 375 325 385" fill="none" stroke="#545152" stroke-width="2.5" stroke-linecap="round" />
+                                            <text class="pc-slot-label" x="190" y="425" text-anchor="middle" x-show="build['psu']" x-text="slotTitle('psu')"></text>
                                         </g>
 
                                         {{-- Передняя панель (SVG-вариант для мобильной версии) --}}
                                         <g class="pc-slot pc-svg-front-panel" data-slot="case" :class="slotClass('case')"
                                            @mouseenter="hoveredSlot = 'case'" @mouseleave="hoveredSlot = null" @click="activateSlot('case')">
-                                            <rect x="410" y="40" width="110" height="320" rx="4" fill="#1e293b" stroke="#334155" stroke-width="2" />
+                                            <rect x="410" y="40" width="110" height="320" rx="4" fill="#545152" stroke="#6a696a" stroke-width="2" />
                                             {{-- Кнопка питания --}}
-                                            <circle cx="465" cy="80" r="11" fill="#334155" stroke="#e2e8f0" stroke-width="2" />
+                                            <circle cx="465" cy="80" r="11" fill="#6a696a" stroke="#d9d9d9" stroke-width="2" />
                                             <circle class="pc-led" cx="465" cy="80" r="5" />
                                             {{-- USB-порты --}}
-                                            <rect x="453" y="105" width="10" height="10" rx="2" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5" />
-                                            <rect x="469" y="105" width="10" height="10" rx="2" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5" />
-                                            <rect x="453" y="123" width="10" height="10" rx="2" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5" />
+                                            <rect x="453" y="105" width="10" height="10" rx="2" fill="#000000" stroke="#d9d9d9" stroke-width="1.5" />
+                                            <rect x="469" y="105" width="10" height="10" rx="2" fill="#000000" stroke="#d9d9d9" stroke-width="1.5" />
+                                            <rect x="453" y="123" width="10" height="10" rx="2" fill="#000000" stroke="#d9d9d9" stroke-width="1.5" />
                                             {{-- Вентиляция передней панели --}}
                                             <g fill="#64748b">
                                                 <circle cx="465" cy="200" r="5" />
@@ -346,6 +346,26 @@
                         <span class="pc-total-label">Итого</span>
                         <span class="pc-total-value" x-text="fmtPrice(total)"></span>
                         <button type="button" class="pc-reset-btn" @click="reset()" x-show="hasBuild">Сбросить сборку</button>
+                    </div>
+
+                    <div class="pc-assembly">
+                        <label class="pc-assembly-toggle">
+                            <input type="checkbox" x-model="assembly.enabled">
+                            <span>Нужна сборка ПК</span>
+                        </label>
+                        <div class="pc-assembly-details" x-show="assembly.enabled" x-collapse>
+                            <div class="pc-assembly-package">
+                                <span x-text="'Тариф «' + assemblyPackage + '»'"></span>
+                                <span class="pc-assembly-price" x-text="fmtPrice(assemblyPrice)"></span>
+                            </div>
+                            <label class="pc-assembly-option">
+                                <input type="checkbox" x-model="assembly.windows">
+                                <span>Установка Windows</span>
+                            </label>
+                            <div class="pc-assembly-gift">
+                                <strong>Подарок:</strong> установка Microsoft Office при покупке комплектующих и сборки
+                            </div>
+                        </div>
                     </div>
 
                     <form class="pc-order-form" @submit.prevent="submit()">
@@ -411,8 +431,29 @@
                     </div>
                     <div class='pc-auto-total'>
                         <span>Итого</span>
-                        <span x-text='fmtPrice(autoBuild?.total)'></span>
+                        <span x-text='fmtPrice(total)'></span>
                     </div>
+
+                    <div class="pc-assembly">
+                        <label class="pc-assembly-toggle">
+                            <input type="checkbox" x-model="assembly.enabled">
+                            <span>Нужна сборка ПК</span>
+                        </label>
+                        <div class="pc-assembly-details" x-show="assembly.enabled" x-collapse>
+                            <div class="pc-assembly-package">
+                                <span x-text="'Тариф «' + assemblyPackage + '»'"></span>
+                                <span class="pc-assembly-price" x-text="fmtPrice(assemblyPrice)"></span>
+                            </div>
+                            <label class="pc-assembly-option">
+                                <input type="checkbox" x-model="assembly.windows">
+                                <span>Установка Windows</span>
+                            </label>
+                            <div class="pc-assembly-gift">
+                                <strong>Подарок:</strong> установка Microsoft Office при покупке комплектующих и сборки
+                            </div>
+                        </div>
+                    </div>
+
                     <form class='pc-order-form' @submit.prevent='submitAutoBuildOrder()'>
                         <div class='pc-field'>
                             <label class='pc-label' for='pc-auto-name'>Имя</label>
@@ -493,6 +534,7 @@
             autoBuild: null,
             autoError: '',
             autoLoading: false,
+            assembly: { enabled: true, windows: true },
 
             init() {
                 const mq = window.matchMedia('(max-width: 767px)');
@@ -544,21 +586,39 @@
                 if (slot) this.selectStep(slot);
             },
 
-            get hint() {
-                if (!this.hoveredSlot) return '';
-                const slot = this.slots.find(s => s.id === this.hoveredSlot);
+            slotChosenLabel(slotId) {
+                const slot = this.slots.find(s => s.id === slotId);
                 if (!slot) return '';
-                if (slot.empty) return slot.title + ' — скоро в продаже';
                 const chosen = this.build[slot.id];
-                if (!chosen) return slot.title;
+                if (!chosen) return '';
                 if (Array.isArray(chosen)) {
-                    if (!chosen.length) return slot.title;
+                    if (!chosen.length) return '';
                     return slot.title + ': ' + chosen.map(p => {
                         const qty = p.qty || 1;
                         return qty > 1 ? `${p.name} ×${qty}` : p.name;
                     }).join(', ');
                 }
                 return slot.title + ': ' + chosen.name;
+            },
+
+            get hint() {
+                if (this.hoveredSlot) {
+                    const slot = this.slots.find(s => s.id === this.hoveredSlot);
+                    if (!slot) return '';
+                    if (slot.empty) return slot.title + ' — скоро в продаже';
+                    return this.slotChosenLabel(slot.id) || slot.title;
+                }
+                if (this.activeSlot) {
+                    const slot = this.slots.find(s => s.id === this.activeSlot);
+                    if (slot) {
+                        return this.slotChosenLabel(slot.id) || slot.title;
+                    }
+                }
+                const firstFilled = this.slots.find(s => this.hasSlotItems(s.id));
+                if (firstFilled) {
+                    return this.slotChosenLabel(firstFilled.id);
+                }
+                return 'Наведите курсор на комплектующее в корпусе или выберите шаг слева';
             },
 
             isMulti(slotId) {
@@ -747,11 +807,31 @@
                 return Object.keys(this.build).length > 0;
             },
 
-            get total() {
+            get partsTotal() {
                 return Object.values(this.build).reduce((sum, val) => {
                     if (Array.isArray(val)) return sum + val.reduce((s, p) => s + (p.price || 0) * (p.qty || 1), 0);
                     return sum + (val.price || 0);
                 }, 0);
+            },
+
+            get assemblyPackage() {
+                if (!this.assembly.enabled) return null;
+                const total = this.partsTotal;
+                if (total < 60000) return 'Lite';
+                if (total < 140000) return 'Standart';
+                if (total < 300000) return 'Gaming';
+                return 'Ultra';
+            },
+
+            get assemblyPrice() {
+                if (!this.assembly.enabled) return 0;
+                const pkg = this.assemblyPackage;
+                const map = { Lite: 4500, Standart: 6000, Gaming: 8000, Ultra: 10000 };
+                return map[pkg] || 0;
+            },
+
+            get total() {
+                return this.partsTotal + this.assemblyPrice;
             },
 
             get canSubmit() {
@@ -941,6 +1021,9 @@
                             customer_phone: this.form.phone.trim(),
                             customer_city: this.city,
                             items: this.buildItems(),
+                            assembly: this.assembly.enabled,
+                            assembly_package: this.assemblyPackage,
+                            windows_install: this.assembly.windows,
                         }),
                     });
                     const data = await res.json();
@@ -949,6 +1032,7 @@
                         this.build = {};
                         this.autoBuild = null;
                         this.autoForm = { budget: '', purpose: '', wishes: '' };
+                        this.assembly = { enabled: true, windows: true };
                         localStorage.removeItem('pc_build');
                         this.form = { name: '', phone: '' };
                         this.activeSlot = null;
@@ -1026,12 +1110,16 @@
                             customer_phone: this.form.phone.trim(),
                             customer_city: this.city,
                             items: this.buildItems(),
+                            assembly: this.assembly.enabled,
+                            assembly_package: this.assemblyPackage,
+                            windows_install: this.assembly.windows,
                         }),
                     });
                     const data = await res.json();
                     if (res.status === 201 && data.success) {
                         this.orderId = data.order_id;
                         this.build = {};
+                        this.assembly = { enabled: true, windows: true };
                         localStorage.removeItem('pc_build');
                         this.form = { name: '', phone: '' };
                         this.activeSlot = null;

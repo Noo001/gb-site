@@ -39,6 +39,9 @@ class PcConfiguratorController extends Controller
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'integer', $isDemo ? 'exists:pc_demo_parts,id' : 'exists:products,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:99'],
+            'assembly' => ['nullable', 'boolean'],
+            'assembly_package' => ['nullable', 'string', 'max:50'],
+            'windows_install' => ['nullable', 'boolean'],
         ]);
 
         // Демо-режим: позиции из pc_demo_parts (product_id заказа = null, имя/цена из демо).
@@ -78,6 +81,10 @@ class PcConfiguratorController extends Controller
 
                     $commentLines[] = sprintf('- %s × %d', $part?->name ?? "Демо-деталь #{$item['product_id']}", $item['quantity']);
                 }
+
+                $this->appendAssembly($commentLines, $data, $orderTotal, function ($item) use ($order) {
+                    $order->items()->create($item);
+                });
 
                 $order->update([
                     'total' => $orderTotal,
@@ -146,6 +153,10 @@ class PcConfiguratorController extends Controller
                 $commentLines[] = sprintf('- %s × %d', $product?->name ?? "Товар #{$item['product_id']}", $item['quantity']);
             }
 
+            $this->appendAssembly($commentLines, $data, $orderTotal, function ($item) use ($order) {
+                $order->items()->create($item);
+            });
+
             $order->update([
                 'total' => $hasPrices ? $orderTotal : null,
                 'customer_comment' => implode("\n", $commentLines),
@@ -202,5 +213,44 @@ class PcConfiguratorController extends Controller
             'order_id' => $order->id,
             'message' => 'Заявка принята. Менеджер свяжется с вами и подберёт конфигурацию.',
         ], 201);
+    }
+
+    /**
+     * Добавляет услугу сборки ПК к комментарию и позициям заказа.
+     */
+    private function appendAssembly(array &$commentLines, array $data, float &$orderTotal, callable $createItem): void
+    {
+        if (empty($data['assembly'])) {
+            return;
+        }
+
+        $package = $data['assembly_package'] ?? 'Не указан';
+        $prices = [
+            'Lite' => 4500,
+            'Standart' => 6000,
+            'Gaming' => 8000,
+            'Ultra' => 10000,
+        ];
+        $price = $prices[$package] ?? 0;
+
+        $commentLines[] = '';
+        $commentLines[] = 'Услуга сборки ПК:';
+        $commentLines[] = '- Тариф: ' . $package;
+        $commentLines[] = '- Стоимость: ' . number_format($price, 0, '.', ' ') . ' ₽';
+        $commentLines[] = '- Установка Windows: ' . (! empty($data['windows_install']) ? 'да' : 'нет');
+        $commentLines[] = '- Установка Microsoft Office: в подарок';
+
+        if ($price > 0) {
+            $createItem([
+                'product_id' => null,
+                'offer_id' => null,
+                'product_name' => 'Сборка ПК (' . $package . ')',
+                'offer_name' => null,
+                'quantity' => 1,
+                'price' => $price,
+                'total' => $price,
+            ]);
+            $orderTotal += $price;
+        }
     }
 }
