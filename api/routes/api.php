@@ -105,6 +105,7 @@ Route::middleware('bot.api')->prefix('bot')->group(function () {
     Route::post('/triggers/check', [BotController::class, 'checkTrigger']);
     Route::post('/config', [BotController::class, 'getConfig']);
     Route::post('/stores', [BotController::class, 'getStores']);
+    Route::post('/employees', [BotController::class, 'getEmployees']);
     Route::post('/tradein', [BotController::class, 'getTradeInPrice']);
     Route::post('/log', [BotController::class, 'logAction']);
 });

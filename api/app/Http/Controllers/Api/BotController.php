@@ -61,6 +61,22 @@ class BotController extends Controller
             $dbQuery->whereLike('subcategory', '%' . $filter['subcategory'] . '%');
         }
 
+        if (! empty($filter['model_line'])) {
+            $dbQuery->whereLike('model_line', '%' . $filter['model_line'] . '%');
+        }
+
+        if (! empty($filter['storage'])) {
+            $dbQuery->whereLike('storage', '%' . $filter['storage'] . '%');
+        }
+
+        if (! empty($filter['color'])) {
+            $dbQuery->whereLike('color', '%' . $filter['color'] . '%');
+        }
+
+        if (! empty($filter['sim'])) {
+            $dbQuery->whereLike('sim', '%' . $filter['sim'] . '%');
+        }
+
         if (! empty($filter['availability']) && $filter['availability'] === 'in_stock') {
             $dbQuery->where('availability', 'in_stock');
         }
@@ -194,20 +210,20 @@ class BotController extends Controller
 
         $message = mb_strtolower(trim($data['p_message']));
 
-        $trigger = BotKnowledge::query()
-            ->where('type', 'trigger')
+        $trigger = \App\Models\BotTriggerPhrase::query()
             ->where('is_active', true)
+            ->orderBy('sort')
             ->get()
-            ->first(function (BotKnowledge $item) use ($message) {
-                $phrase = mb_strtolower($item->key);
+            ->first(function (\App\Models\BotTriggerPhrase $item) use ($message) {
+                $phrase = mb_strtolower($item->phrase);
                 return Str::contains($message, $phrase);
             });
 
         if ($trigger) {
             return response()->json([
                 'triggered' => true,
-                'action' => $trigger->payload['action'] ?? 'unknown',
-                'message' => $trigger->payload['message'] ?? null,
+                'action' => $trigger->action ?? 'unknown',
+                'message' => $trigger->response ?? null,
             ]);
         }
 
@@ -299,6 +315,22 @@ class BotController extends Controller
         });
 
         return response()->json($stores);
+    }
+
+    public function getEmployees(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'p_department' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $query = \App\Models\BotEmployee::query()
+            ->where('is_active', true);
+
+        if (! empty($data['p_department'])) {
+            $query->whereLike('department', '%' . $data['p_department'] . '%');
+        }
+
+        return response()->json($query->orderBy('full_name')->get());
     }
 
     public function getTradeInPrice(Request $request): JsonResponse

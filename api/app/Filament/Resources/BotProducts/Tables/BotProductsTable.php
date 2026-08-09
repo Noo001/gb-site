@@ -24,6 +24,14 @@ class BotProductsTable
                     ->searchable(),
                 TextColumn::make('category')
                     ->searchable(),
+                TextColumn::make('model_line')
+                    ->searchable(),
+                TextColumn::make('storage')
+                    ->searchable(),
+                TextColumn::make('color')
+                    ->searchable(),
+                TextColumn::make('sim')
+                    ->searchable(),
                 TextColumn::make('price')
                     ->numeric()
                     ->sortable(),

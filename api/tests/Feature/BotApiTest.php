@@ -351,14 +351,10 @@ class BotApiTest extends TestCase
 
     public function test_check_trigger(): void
     {
-        BotKnowledge::create([
-            'type' => 'trigger',
-            'group' => 'escalation',
-            'key' => 'оператор',
-            'payload' => [
-                'action' => 'escalate_to_manager',
-                'message' => 'Сейчас переведу на менеджера.',
-            ],
+        \App\Models\BotTriggerPhrase::create([
+            'phrase' => 'оператор',
+            'action' => 'escalate_to_manager',
+            'response' => 'Сейчас переведу на менеджера.',
             'is_active' => true,
         ]);
 

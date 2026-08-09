@@ -18,12 +18,27 @@
 
 - **Проблема, найденная на сайте**: в расчёте остатка на витрине и в конфигураторе суммировались **все** активные склады, включая служебные (`service`) и подразделения (`department`). Сейчас на `service`-складах висят **19 772 ед.**, которые не должны показываться как доступные для продажи (РЦ, брак, уценка, тестовые склады).
 - **Исправлено**: в остаток на витрине, в индекс бота, в сверке `reconcile:1c` и в конфигураторе ПК теперь учитываются только склады типа `store` и `department`; `service` исключаются. Записи `stocks` для `service`-складов остаются в БД для истории, а сами склады деактивируются при импорте.
-- **Файлы**: `api/app/Models/Store.php`, `api/app/Models/Stock.php`, `api/app/Models/Product.php`, `api/app/Services/BotIndexService.php`, `api/app/Console/Commands/Reconcile1CData.php`, `api/app/Services/OneCSyncService.php`, `api/app/Services/PcCompatibilityService.php`, `api/app/Http/Controllers/Api/PcConfiguratorController.php`, `api/app/Services/PcAutoBuildService.php`, `api/app/Http/Controllers/Api/OfferController.php`, `api/tests/Feature/Reconcile1CTest.php`.
+- **Проверено на проде**: после деплоя `reconcile:1c --dry-run` показывает 0 расхождений остатков и 0 расхождений цен. Пример: товар `paket-gb-msp` (`61345b67-2c13-11f1-8238-00e04c680230`) теперь отдаёт `stock: 34107` в API, без 17 053 ед. с service-склада.
+- **Механизм полной сверки с 1С**:
+  - Добавлена таблица `one_c_stocks_snapshots` и endpoint `POST /api/1c/stocks/snapshot` (принимает пачки остатков).
+  - Добавлена команда `php artisan 1c:compare-stocks --batch-id=...` (сравнивает snapshot с сайтом).
+  - В 1С-модуль `docs/1c/ЕдинаяБазаGB_модуль.bsl` добавлена процедура `ВыгрузитьВсеОстатки()` — выгружает все остатки регистра «Запасы» пачками по 100 записей.
+- **Чтобы выполнить сверку**:
+  1. В 1С открыть модуль `ЕдинаяБазаGB`, добавить процедуру `ВыгрузитьВсеОстатки()` из репозитория.
+  2. Выполнить `ЕдинаяБазаGB.ВыгрузитьВсеОстатки();` (например, через сервисную обработку или консоль кода).
+  3. На сервере выполнить `php artisan 1c:compare-stocks` — получить отчёт о расхождениях.
 - **Открытые вопросы к пользователю / 1С**:
   1. Какое значение передаётся в `quantity` — свободный остаток, доступно, или общий без резерва? Сейчас на сайте `quantity - reserved`.
   2. Прислать скриншот из 1С (регистр «Запасы» / «Товары на складах») по товару `61345b67-2c13-11f1-8238-00e04c680230` для сравнения.
-- **Следующее действие**: получить скриншоты из 1С и подтверждение формулы остатка; при необходимости скорректировать `quantity - reserved` → просто `quantity` или другое. Затем перезапустить `bot:rebuild-index` и `reconcile:1c` на проде.
-- **Проверено на проде**: после деплоя `reconcile:1c --dry-run` показывает 0 расхождений остатков и 0 расхождений цен. Пример: товар `paket-gb-msp` (`61345b67-2c13-11f1-8238-00e04c680230`) теперь отдаёт `stock: 34107` в API, без 17 053 ед. с service-склада.
+
+## Состояние на 09.08.2026 — замечания по боту и БД
+
+- **Приведение `bot_products` к формату Supabase**: добавлены столбцы `model_line`, `storage`, `color`, `sim` (вместо JSON metadata). `BotIndexService` теперь заполняет их отдельно. Админка `/admin/bot-products` показывает новые столбцы.
+- **Таблица сотрудников**: создана `bot_employees` (ФИО, `b24_token`, `department`, `permissions`, `is_active`) + Filament-ресурс `/admin/bot-employees`.
+- **Таблица триггеров**: создана `bot_trigger_phrases` (фраза, действие, ответ, sort, активность) + Filament-ресурс `/admin/bot-trigger-phrases`. API `/api/bot/triggers/check` теперь использует её вместо `bot_knowledge`.
+- **API бота**: добавлены фильтры `model_line`, `storage`, `color`, `sim` в `/api/bot/products/search`. Добавлен endpoint `/api/bot/employees`.
+- **N8N**: workflow `docs/GadgetBar_Bitrix24.json` уже портирован на API gbsale. Осталось переключить в n8n и обновить промпты под новые поля (`model_line`, `storage`, `color`, `sim`).
+- **Supabase**: URL известен (`jhgbarjpesgnlfbddfox.supabase.co`), но API-ключ был вычищен из git-истории. Для прямой сверки нужен anon/service ключ.
 
 ## Состояние на 04.08.2026 — импорт картинок с gadget-bar.ru
 

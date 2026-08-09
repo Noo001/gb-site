@@ -137,6 +137,11 @@ class BotIndexService
         }
 
         $metadata = [];
+        $modelLine = null;
+        $storage = null;
+        $color = null;
+        $sim = null;
+
         $searchParts = [
             $product->name,
             $offer->name,
@@ -158,10 +163,13 @@ class BotIndexService
 
             $slug = mb_strtolower($attribute->slug);
             if (str_contains($slug, 'color')) {
+                $color = $value;
                 $metadata['color'] = $value;
             } elseif (str_contains($slug, 'storage') || str_contains($slug, 'memory')) {
+                $storage = $value;
                 $metadata['storage'] = $value;
             } elseif (str_contains($slug, 'sim')) {
+                $sim = $value;
                 $metadata['sim_type'] = $value;
             } elseif (str_contains($slug, 'ram')) {
                 $metadata['ram_gb'] = is_numeric($value) ? (int) $value : $value;
@@ -169,6 +177,8 @@ class BotIndexService
                 $metadata['cpu'] = $value;
             }
         }
+
+        $modelLine = $this->resolveModelLine($product->name, $offer->name);
 
         $searchText = collect($searchParts)
             ->filter()
@@ -187,6 +197,10 @@ class BotIndexService
             'brand' => $product->brand,
             'category' => $categoryName,
             'subcategory' => $subcategoryName,
+            'model_line' => $modelLine,
+            'storage' => $storage,
+            'color' => $color,
+            'sim' => $sim,
             'price' => $price,
             'old_price' => $oldPrice,
             'currency' => $currency,
@@ -201,5 +215,33 @@ class BotIndexService
             'is_active' => true,
             'updated_at' => now(),
         ];
+    }
+
+    private function resolveModelLine(string $productName, string $offerName): ?string
+    {
+        $name = mb_strtolower($productName . ' ' . $offerName);
+
+        if (str_contains($name, 'iphone')) {
+            return 'iPhone';
+        }
+
+        if (str_contains($name, 'samsung') || str_contains($name, 'galaxy')) {
+            if (preg_match('/\b(s\d+|s\d+\s*(ultra|plus|fe)?)\b/i', $name)) {
+                return 'Samsung S-серия';
+            }
+            if (preg_match('/\b(a\d+)\b/i', $name)) {
+                return 'Samsung A-серия';
+            }
+            if (preg_match('/\b(z\s*(fold|flip))\b/i', $name)) {
+                return 'Samsung Z-серия';
+            }
+            return 'Samsung';
+        }
+
+        if (str_contains($name, 'xiaomi') || str_contains($name, 'redmi') || str_contains($name, 'poco')) {
+            return 'Xiaomi';
+        }
+
+        return null;
     }
 }
