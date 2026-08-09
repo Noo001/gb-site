@@ -593,6 +593,7 @@
                 }
 
                 this.prefetchAllParts();
+            },
 
             selectStep(slot) {
                 if (slot.empty) return;
