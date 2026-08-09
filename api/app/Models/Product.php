@@ -77,7 +77,12 @@ class Product extends Model implements HasMedia
 
     public function totalStock(): float
     {
-        return (float) $this->offers->flatMap(fn (Offer $offer) => $offer->stocks)->sum('quantity');
+        return (float) $this->offers()
+            ->with('stocks.store')
+            ->get()
+            ->flatMap(fn (Offer $offer) => $offer->stocks)
+            ->filter(fn (Stock $stock) => $stock->store && $stock->store->isForSale())
+            ->sum('quantity');
     }
 
     public function currentStock(): ?Stock

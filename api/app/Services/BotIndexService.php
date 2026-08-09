@@ -118,6 +118,10 @@ class BotIndexService
         $cityAvailability = [];
         $totalQty = 0;
         foreach ($offer->stocks as $stock) {
+            if (! $stock->store || ! $stock->store->isForSale()) {
+                continue;
+            }
+
             $qty = max((float) $stock->quantity - (float) $stock->reserved, 0);
             if ($qty <= 0) {
                 continue;

@@ -77,6 +77,15 @@ class Store extends Model
         return self::TYPE_STORE;
     }
 
+    /**
+     * Участвует ли склад в продажном остатке на витрине.
+     * Service (брак, уценка, тестовые, РЦ и т.п.) исключаются.
+     */
+    public function isForSale(): bool
+    {
+        return in_array($this->type, [self::TYPE_STORE, self::TYPE_DEPARTMENT], true);
+    }
+
     public function prices(): HasMany
     {
         return $this->hasMany(Price::class);

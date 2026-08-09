@@ -158,9 +158,7 @@ class PcConfiguratorController extends Controller
     private function partResource(PcCompatibilityService $service, Product $product): array
     {
         $price = $product->currentPrice();
-        $stock = $product->offers
-            ->flatMap(fn ($offer) => $offer->stocks)
-            ->sum(fn ($stock) => (float) $stock->quantity);
+        $stock = $product->totalStock();
 
         return [
             'id' => $product->id,

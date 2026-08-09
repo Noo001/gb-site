@@ -33,7 +33,7 @@ class OfferController extends Controller
     {
         $offer = Offer::query()
             ->where('is_active', true)
-            ->with(['product', 'prices', 'stocks'])
+            ->with(['product', 'prices', 'stocks.store'])
             ->find($id);
 
         if (! $offer) {
@@ -52,7 +52,7 @@ class OfferController extends Controller
                     'slug' => $offer->product->slug,
                 ] : null,
                 'prices' => $offer->prices,
-                'stocks' => $offer->stocks,
+                'stocks' => $offer->stocks->filter(fn ($stock) => $stock->store && $stock->store->isForSale())->values(),
             ],
         ]);
     }

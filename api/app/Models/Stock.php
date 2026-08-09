@@ -31,4 +31,21 @@ class Stock extends Model
     {
         return $this->belongsTo(Store::class);
     }
+
+    /**
+     * Склады, участвующие в продажном остатке (магазины и подразделения).
+     * Service-склады (брак, уценка, тестовые, РЦ) исключаются.
+     */
+    public function scopeForSale($query)
+    {
+        return $query->whereHas('store', fn ($q) => $q->whereIn('type', [Store::TYPE_STORE, Store::TYPE_DEPARTMENT]));
+    }
+
+    /**
+     * Доступное для продажи количество с учётом резерва.
+     */
+    public function availableQuantity(): float
+    {
+        return max((float) $this->quantity - (float) $this->reserved, 0);
+    }
 }

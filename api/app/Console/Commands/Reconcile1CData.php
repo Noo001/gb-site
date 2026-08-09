@@ -62,7 +62,7 @@ class Reconcile1CData extends Command
         $siteProducts = Product::query()
             ->whereNotNull('uuid_1c')
             ->whereIn('id', $linkedProductIds)
-            ->with(['offers.prices', 'offers.stocks'])
+            ->with(['offers.prices', 'offers.stocks.store'])
             ->get();
 
         foreach ($siteProducts as $product) {
@@ -78,6 +78,7 @@ class Reconcile1CData extends Command
 
             $siteStock = $product->offers
                 ->flatMap(fn ($offer) => $offer->stocks)
+                ->filter(fn ($stock) => $stock->store && $stock->store->isForSale())
                 ->sum(fn ($stock) => max((float) $stock->quantity - (float) $stock->reserved, 0));
 
             if ($sitePrice !== null && (float) $sitePrice !== (float) $bot->price) {

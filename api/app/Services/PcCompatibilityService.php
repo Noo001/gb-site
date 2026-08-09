@@ -120,7 +120,7 @@ class PcCompatibilityService
         $buildAttrs = $this->resolveBuildAttributes($build);
 
         return $this->baseQuery($categoryIds)
-            ->with(['attributeValues.attribute', 'offers.prices', 'offers.stocks'])
+            ->with(['attributeValues.attribute', 'offers.prices', 'offers.stocks.store'])
             ->orderBy('name')
             ->get()
             ->filter(fn (Product $product) => $this->isCompatible($slot, $this->resolveAttributes($product), $buildAttrs))

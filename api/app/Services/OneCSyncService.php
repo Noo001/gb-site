@@ -232,6 +232,12 @@ class OneCSyncService
             if ($storeName && $store->name !== $storeName) {
                 $store->update(['name' => $storeName]);
             }
+
+            // Service-склады не показываем в списках магазинов, но оставляем stock-записи для истории.
+            if (! $store->isForSale() && $store->is_active) {
+                $store->update(['is_active' => false]);
+            }
+
             $storeId = $store->id;
         }
 

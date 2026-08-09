@@ -271,7 +271,7 @@ class PcAutoBuildService
                 'id' => $item->id,
                 'name' => $item->name,
                 'price' => $price ? (float) $price->price : null,
-                'stock' => $item->offers->flatMap(fn ($offer) => $offer->stocks)->sum(fn ($stock) => (float) $stock->quantity),
+                'stock' => $item->totalStock(),
                 'attributes' => $this->compatibility->resolveAttributes($item),
             ];
         }
