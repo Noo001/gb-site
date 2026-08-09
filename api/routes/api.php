@@ -35,6 +35,7 @@ Route::get('/offers/{id}', [OfferController::class, 'show']);
 // PC configurator (public)
 Route::get('/pc/slots', [PcConfiguratorController::class, 'slots']);
 Route::get('/pc/parts', [PcConfiguratorController::class, 'parts']);
+Route::get('/pc/parts/batch', [PcConfiguratorController::class, 'partsBatch']);
 Route::post('/pc/auto-build', [PcConfiguratorController::class, 'autoBuild']);
 
 // Auth

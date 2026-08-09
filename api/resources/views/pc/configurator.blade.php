@@ -591,7 +591,8 @@
                         requestAnimationFrame(() => { this.animated = true; });
                     }
                 }
-            },
+
+                this.prefetchAllParts();
 
             selectStep(slot) {
                 if (slot.empty) return;
@@ -713,6 +714,7 @@
                         this.parts = cached.parts || [];
                         this.partsEmpty = cached.partsEmpty || false;
                         delete this.prefetched[this.activeSlot];
+                        this.loadingParts = false;
                         return;
                     }
                     const params = new URLSearchParams({
@@ -732,23 +734,29 @@
                 }
             },
 
-            prefetchNextParts(slot) {
-                const idx = this.slots.indexOf(slot);
-                const next = this.slots.slice(idx + 1).find(s => !s.empty && !this.hasSlotItems(s.id))
-                    || this.slots.find(s => !s.empty && !this.hasSlotItems(s.id));
-                if (!next || next.id === slot.id) return;
-                if (this.prefetched[next.id]) return;
+            prefetchAllParts() {
+                if (!this.slots.length) return;
+                const slots = this.slots
+                    .filter(s => !s.empty && !this.hasSlotItems(s.id))
+                    .map(s => s.id);
+                if (!slots.length) return;
+
                 const params = new URLSearchParams({
-                    slot: next.id,
                     build: JSON.stringify(this.buildIds()),
                 });
-                fetch('/api/pc/parts?' + params.toString(), { headers: { 'Accept': 'application/json' } })
+                slots.forEach(s => params.append('slots[]', s));
+
+                fetch('/api/pc/parts/batch?' + params.toString(), { headers: { 'Accept': 'application/json' } })
                     .then(res => res.json())
                     .then(data => {
-                        this.prefetched[next.id] = {
-                            parts: data.data || [],
-                            partsEmpty: !data.empty && (data.data || []).length === 0,
-                        };
+                        const results = data.data || {};
+                        Object.entries(results).forEach(([slot, result]) => {
+                            if (result.error) return;
+                            this.prefetched[slot] = {
+                                parts: result.data || [],
+                                partsEmpty: !result.empty && (result.data || []).length === 0,
+                            };
+                        });
                     })
                     .catch(() => {});
             },
@@ -775,7 +783,6 @@
                     this.build[slot.id] = saved;
                 }
                 this.saveBuild();
-                this.prefetchNextParts(slot);
 
                 if (this.isMulti(slot.id)) {
                     this.parts = this.parts.map(p => ({ ...p }));
@@ -813,7 +820,6 @@
                         list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
                         if (list.length) this.build[slot.id] = list;
                         this.saveBuild();
-                        this.prefetchNextParts(slot);
                         this.parts = this.parts.map(p => ({ ...p }));
                     }
                     return;
@@ -826,7 +832,6 @@
                     list[idx].qty = next;
                 }
                 this.saveBuild();
-                this.prefetchNextParts(slot);
                 this.parts = this.parts.map(p => ({ ...p }));
             },
 
@@ -846,6 +851,7 @@
             saveBuild() {
                 localStorage.setItem('pc_build', JSON.stringify(this.build));
                 this.prefetched = {};
+                this.prefetchAllParts();
             },
 
             reset() {
@@ -856,6 +862,7 @@
                 this.activeSlot = first ? first.id : null;
                 this.parts = [];
                 if (this.activeSlot) this.loadParts();
+                this.prefetchAllParts();
             },
 
             get hasBuild() {

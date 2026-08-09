@@ -34,34 +34,48 @@ class PcConfiguratorController extends Controller
             'build' => ['nullable', 'string'],
         ]);
 
-        $slot = $validated['slot'];
+        $result = $this->resolveSlotParts($validated['slot'], $validated['build'] ?? null, $service);
 
-        if (! $service->hasSlot($slot)) {
+        if (isset($result['error'])) {
             return response()->json([
-                'message' => 'Неизвестный слот конфигуратора.',
-                'errors' => ['slot' => ['Неизвестный слот конфигуратора.']],
+                'message' => $result['error'],
+                'errors' => [$result['slot'] => [$result['error']]],
             ], 422);
         }
 
-        $build = [];
+        return response()->json($result);
+    }
 
-        if (! empty($validated['build'])) {
-            $decoded = json_decode($validated['build'], true);
+    public function partsBatch(Request $request, PcCompatibilityService $service): JsonResponse
+    {
+        $validated = $request->validate([
+            'slots' => ['required', 'array'],
+            'slots.*' => ['string'],
+            'build' => ['nullable', 'string'],
+        ]);
 
-            if (! is_array($decoded)) {
-                return response()->json([
-                    'message' => 'Параметр build должен быть JSON-объектом вида {"cpu": 123}.',
-                    'errors' => ['build' => ['Параметр build должен быть JSON-объектом вида {"cpu": 123}.']],
-                ], 422);
-            }
+        $buildJson = $validated['build'] ?? null;
+        $results = [];
 
-            foreach ($decoded as $buildSlot => $productId) {
-                if (is_string($buildSlot) && is_numeric($productId)) {
-                    $build[$buildSlot] = (int) $productId;
-                } elseif (is_string($buildSlot) && is_array($productId)) {
-                    $build[$buildSlot] = array_values(array_filter(array_map('intval', array_filter($productId, 'is_numeric'))));
-                }
-            }
+        foreach ($validated['slots'] as $slot) {
+            $results[$slot] = $this->resolveSlotParts($slot, $buildJson, $service);
+        }
+
+        return response()->json([
+            'data' => $results,
+        ]);
+    }
+
+    private function resolveSlotParts(string $slot, ?string $buildJson, PcCompatibilityService $service): array
+    {
+        if (! $service->hasSlot($slot)) {
+            return ['slot' => $slot, 'error' => 'Неизвестный слот конфигуратора.'];
+        }
+
+        $build = $this->parseBuild($buildJson);
+
+        if (isset($build['error'])) {
+            return ['slot' => $slot, 'error' => $build['error']];
         }
 
         if ($service->isDemoMode()) {
@@ -75,22 +89,47 @@ class PcConfiguratorController extends Controller
                 ])
                 ->values();
 
-            return response()->json([
+            return [
                 'slot' => $slot,
                 'empty' => ! $service->slotHasParts($slot),
                 'data' => $parts,
-            ]);
+            ];
         }
 
         $parts = $service->availableParts($slot, $build)
             ->map(fn (Product $product) => $this->partResource($service, $product))
             ->values();
 
-        return response()->json([
+        return [
             'slot' => $slot,
             'empty' => ! $service->slotHasParts($slot),
             'data' => $parts,
-        ]);
+        ];
+    }
+
+    private function parseBuild(?string $buildJson): array
+    {
+        if (empty($buildJson)) {
+            return [];
+        }
+
+        $decoded = json_decode($buildJson, true);
+
+        if (! is_array($decoded)) {
+            return ['error' => 'Параметр build должен быть JSON-объектом вида {"cpu": 123}.'];
+        }
+
+        $build = [];
+
+        foreach ($decoded as $buildSlot => $productId) {
+            if (is_string($buildSlot) && is_numeric($productId)) {
+                $build[$buildSlot] = (int) $productId;
+            } elseif (is_string($buildSlot) && is_array($productId)) {
+                $build[$buildSlot] = array_values(array_filter(array_map('intval', array_filter($productId, 'is_numeric'))));
+            }
+        }
+
+        return $build;
     }
 
     public function autoBuild(Request $request, PcAutoBuildService $auto): JsonResponse
