@@ -49,6 +49,7 @@ return [
 
     '1c' => [
         'api_key' => env('IMPORT_1C_API_KEY'),
+        'api_key_fallbacks' => array_filter(array_map('trim', explode(',', env('IMPORT_1C_API_KEY_FALLBACK', '')))),
         'webhook_url' => env('EXPORT_1C_WEBHOOK_URL'),
         'webhook_secret' => env('EXPORT_1C_WEBHOOK_SECRET'),
         'timeout' => env('EXPORT_1C_TIMEOUT', 10),

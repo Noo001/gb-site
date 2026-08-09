@@ -28,13 +28,15 @@ EXPORT_1C_WEBHOOK_SECRET=test-1c-webhook-secret
 
 ```env
 IMPORT_1C_API_KEY=<сильный-секретный-ключ>
+# Резервные ключи через запятую (например, старый ключ при смене). В проде лучше оставить пустым.
+IMPORT_1C_API_KEY_FALLBACK=
 EXPORT_1C_WEBHOOK_URL=https://1c.gbsale.ru/hs/gadget-bar/webhook
 EXPORT_1C_WEBHOOK_SECRET=<сильный-секретный-ключ-для-подписи>
 EXPORT_1C_TIMEOUT=10
 BOT_API_KEY=<сильный-секретный-ключ>
 ```
 
-`IMPORT_1C_API_KEY` проверяется в заголовке `X-1C-API-Key`.
+`IMPORT_1C_API_KEY` проверяется в заголовке `X-1C-API-Key`. `IMPORT_1C_API_KEY_FALLBACK` позволяет временно принимать запросы со старым ключом, пока 1С не обновит свой ключ.
 
 `BOT_API_KEY` проверяется в заголовке `X-Bot-API-Key`.
 

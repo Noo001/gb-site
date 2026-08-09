@@ -13,6 +13,7 @@ class OneCApiKey
     {
         $key = $request->header('X-1C-API-Key');
         $expected = config('services.1c.api_key');
+        $fallbacks = config('services.1c.api_key_fallbacks', []);
 
         if (empty($expected)) {
             return response()->json([
@@ -21,13 +22,16 @@ class OneCApiKey
             ], 500);
         }
 
-        if (! hash_equals($expected, (string) $key)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Неверный API ключ.',
-            ], 401);
+        $validKeys = array_merge([$expected], $fallbacks);
+        foreach ($validKeys as $valid) {
+            if (hash_equals($valid, (string) $key)) {
+                return $next($request);
+            }
         }
 
-        return $next($request);
+        return response()->json([
+            'success' => false,
+            'message' => 'Неверный API ключ.',
+        ], 401);
     }
 }
