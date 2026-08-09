@@ -19,9 +19,23 @@ class PcConfiguratorController extends Controller
      */
     public function index(Request $request)
     {
+        $assemblyPrices = Setting::get('pc_assembly_prices');
+        if (is_string($assemblyPrices)) {
+            $assemblyPrices = json_decode($assemblyPrices, true);
+        }
+        if (empty($assemblyPrices) || ! is_array($assemblyPrices)) {
+            $assemblyPrices = [
+                ['name' => 'Lite', 'min' => 0, 'max' => 60000, 'price' => 4500],
+                ['name' => 'Standart', 'min' => 60000, 'max' => 140000, 'price' => 6000],
+                ['name' => 'Gaming', 'min' => 140000, 'max' => 300000, 'price' => 8000],
+                ['name' => 'Ultra', 'min' => 300000, 'max' => null, 'price' => 10000],
+            ];
+        }
+
         return view('pc.configurator', [
             'city' => $request->query('city'),
             'demo' => Setting::get('pc_demo_mode') === '1',
+            'assemblyPrices' => $assemblyPrices,
         ]);
     }
 
@@ -82,9 +96,10 @@ class PcConfiguratorController extends Controller
                     $commentLines[] = sprintf('- %s × %d', $part?->name ?? "Демо-деталь #{$item['product_id']}", $item['quantity']);
                 }
 
-                $this->appendAssembly($commentLines, $data, $orderTotal, function ($item) use ($order) {
+                $assemblyPrice = $this->appendAssembly($commentLines, $data, $orderTotal, function ($item) use ($order) {
                     $order->items()->create($item);
                 });
+                $orderTotal += $assemblyPrice;
 
                 $order->update([
                     'total' => $orderTotal,
@@ -153,9 +168,10 @@ class PcConfiguratorController extends Controller
                 $commentLines[] = sprintf('- %s × %d', $product?->name ?? "Товар #{$item['product_id']}", $item['quantity']);
             }
 
-            $this->appendAssembly($commentLines, $data, $orderTotal, function ($item) use ($order) {
+            $assemblyPrice = $this->appendAssembly($commentLines, $data, $orderTotal, function ($item) use ($order) {
                 $order->items()->create($item);
             });
+            $orderTotal += $assemblyPrice;
 
             $order->update([
                 'total' => $hasPrices ? $orderTotal : null,
@@ -216,26 +232,51 @@ class PcConfiguratorController extends Controller
     }
 
     /**
-     * Добавляет услугу сборки ПК к комментарию и позициям заказа.
+     * Возвращает цену сборки по сумме комплектующих из настроек.
      */
-    private function appendAssembly(array &$commentLines, array $data, float &$orderTotal, callable $createItem): void
+    private function assemblyPrice(float $partsTotal, ?string &$packageName = null): float
     {
-        if (empty($data['assembly'])) {
-            return;
+        $prices = Setting::get('pc_assembly_prices');
+        if (is_string($prices)) {
+            $prices = json_decode($prices, true);
+        }
+        if (empty($prices) || ! is_array($prices)) {
+            $prices = [
+                ['name' => 'Lite', 'min' => 0, 'max' => 60000, 'price' => 4500],
+                ['name' => 'Standart', 'min' => 60000, 'max' => 140000, 'price' => 6000],
+                ['name' => 'Gaming', 'min' => 140000, 'max' => 300000, 'price' => 8000],
+                ['name' => 'Ultra', 'min' => 300000, 'max' => null, 'price' => 10000],
+            ];
         }
 
-        $package = $data['assembly_package'] ?? 'Не указан';
-        $prices = [
-            'Lite' => 4500,
-            'Standart' => 6000,
-            'Gaming' => 8000,
-            'Ultra' => 10000,
-        ];
-        $price = $prices[$package] ?? 0;
+        foreach ($prices as $tier) {
+            $min = (float) ($tier['min'] ?? 0);
+            $max = $tier['max'] !== null && $tier['max'] !== '' ? (float) $tier['max'] : PHP_FLOAT_MAX;
+            if ($partsTotal >= $min && $partsTotal < $max) {
+                $packageName = $tier['name'] ?? 'Не указан';
+                return (float) ($tier['price'] ?? 0);
+            }
+        }
+
+        $packageName = null;
+        return 0;
+    }
+
+    /**
+     * Добавляет услугу сборки ПК к комментарию и позициям заказа.
+     */
+    private function appendAssembly(array &$commentLines, array $data, float $partsTotal, callable $createItem): float
+    {
+        if (empty($data['assembly'])) {
+            return 0;
+        }
+
+        $packageName = $data['assembly_package'] ?? null;
+        $price = $this->assemblyPrice($partsTotal, $packageName);
 
         $commentLines[] = '';
         $commentLines[] = 'Услуга сборки ПК:';
-        $commentLines[] = '- Тариф: ' . $package;
+        $commentLines[] = '- Тариф: ' . ($packageName ?? 'Не указан');
         $commentLines[] = '- Стоимость: ' . number_format($price, 0, '.', ' ') . ' ₽';
         $commentLines[] = '- Установка Windows: ' . (! empty($data['windows_install']) ? 'да' : 'нет');
         $commentLines[] = '- Установка Microsoft Office: в подарок';
@@ -244,13 +285,14 @@ class PcConfiguratorController extends Controller
             $createItem([
                 'product_id' => null,
                 'offer_id' => null,
-                'product_name' => 'Сборка ПК (' . $package . ')',
+                'product_name' => 'Сборка ПК (' . ($packageName ?? 'Не указан') . ')',
                 'offer_name' => null,
                 'quantity' => 1,
                 'price' => $price,
                 'total' => $price,
             ]);
-            $orderTotal += $price;
         }
+
+        return $price;
     }
 }

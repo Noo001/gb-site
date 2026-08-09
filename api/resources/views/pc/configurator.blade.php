@@ -5,7 +5,7 @@
 @section('meta_description', 'Соберите компьютер онлайн: подбор совместимых комплектующих по шагам — корпус, процессор, материнская плата, видеокарта, память, накопитель, блок питания.')
 
 @section('content')
-    <section class="pc-section" x-data="pcConfigurator(@js($city))" x-init="init()">
+    <section class="pc-section" x-data="pcConfigurator(@js($city), @js($assemblyPrices))" x-init="init()">
         <div class="container-theme">
             <div class="pc-hero">
                 <h1 class="pc-title">Конфигуратор ПК</h1>
@@ -99,6 +99,43 @@
                                 </div>
                             </div>
                         </template>
+
+                        {{-- Шаг 10: Сборка ПК --}}
+                        <div class="pc-step pc-step--assembly"
+                             :class="{ 'pc-step--active': activeSlot === 'assembly', 'pc-step--done': assembly.enabled }">
+                            <button type="button" class="pc-step-head" @click="activeSlot = (activeSlot === 'assembly' ? null : 'assembly')">
+                                <span class="pc-step-num">10</span>
+                                <span class="pc-step-title">Сборка ПК</span>
+                                <span class="pc-step-chosen" x-show="assembly.enabled" x-text="assemblyPackage + ' — ' + fmtPrice(assemblyPrice)"></span>
+                                <span class="pc-step-state">
+                                    <span x-show="assembly.enabled" class="pc-badge pc-badge--done">✓</span>
+                                </span>
+                            </button>
+
+                            <div class="pc-step-body" x-show="activeSlot === 'assembly'" x-collapse.duration.1000ms>
+                                <div class="pc-step-content">
+                                    <div class="pc-assembly-card">
+                                        <label class="pc-assembly-toggle">
+                                            <input type="checkbox" x-model="assembly.enabled">
+                                            <span>Нужна сборка ПК</span>
+                                        </label>
+                                        <div class="pc-assembly-details" x-show="assembly.enabled" x-collapse>
+                                            <div class="pc-assembly-package">
+                                                <span x-text="'Тариф «' + assemblyPackage + '»'"></span>
+                                                <span class="pc-assembly-price" x-text="fmtPrice(assemblyPrice)"></span>
+                                            </div>
+                                            <label class="pc-assembly-option">
+                                                <input type="checkbox" x-model="assembly.windows">
+                                                <span>Установка Windows</span>
+                                            </label>
+                                            <div class="pc-assembly-gift">
+                                                <strong>Подарок:</strong> установка Microsoft Office при покупке комплектующих и сборки
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- 3D-корпус системного блока --}}
@@ -340,33 +377,9 @@
                     </div>
                 </div>
 
-                {{-- Итог и форма заявки --}}
+                {{-- Форма заявки --}}
                 <div class="pc-summary">
-                    <div class="pc-total">
-                        <span class="pc-total-label">Итого</span>
-                        <span class="pc-total-value" x-text="fmtPrice(total)"></span>
-                        <button type="button" class="pc-reset-btn" @click="reset()" x-show="hasBuild">Сбросить сборку</button>
-                    </div>
-
-                    <div class="pc-assembly">
-                        <label class="pc-assembly-toggle">
-                            <input type="checkbox" x-model="assembly.enabled">
-                            <span>Нужна сборка ПК</span>
-                        </label>
-                        <div class="pc-assembly-details" x-show="assembly.enabled" x-collapse>
-                            <div class="pc-assembly-package">
-                                <span x-text="'Тариф «' + assemblyPackage + '»'"></span>
-                                <span class="pc-assembly-price" x-text="fmtPrice(assemblyPrice)"></span>
-                            </div>
-                            <label class="pc-assembly-option">
-                                <input type="checkbox" x-model="assembly.windows">
-                                <span>Установка Windows</span>
-                            </label>
-                            <div class="pc-assembly-gift">
-                                <strong>Подарок:</strong> установка Microsoft Office при покупке комплектующих и сборки
-                            </div>
-                        </div>
-                    </div>
+                    <button type="button" class="pc-reset-btn pc-reset-btn--summary" @click="reset()" x-show="hasBuild">Сбросить сборку</button>
 
                     <form class="pc-order-form" @submit.prevent="submit()">
                         <div class="pc-field">
@@ -428,10 +441,6 @@
                                 <span class='pc-auto-item-price' x-text='fmtPrice(item.price)'></span>
                             </div>
                         </template>
-                    </div>
-                    <div class='pc-auto-total'>
-                        <span>Итого</span>
-                        <span x-text='fmtPrice(total)'></span>
                     </div>
 
                     <div class="pc-assembly">
@@ -514,8 +523,9 @@
 @push('scripts')
 <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('pcConfigurator', (city) => ({
+        Alpine.data('pcConfigurator', (city, assemblyPrices) => ({
             city: city || null,
+            assemblyPrices: assemblyPrices || [],
             mode: 'manual',
             slots: [],
             activeSlot: null,
@@ -814,20 +824,22 @@
                 }, 0);
             },
 
-            get assemblyPackage() {
+            get assemblyTier() {
                 if (!this.assembly.enabled) return null;
                 const total = this.partsTotal;
-                if (total < 60000) return 'Lite';
-                if (total < 140000) return 'Standart';
-                if (total < 300000) return 'Gaming';
-                return 'Ultra';
+                return this.assemblyPrices.find(t => {
+                    const min = Number(t.min || 0);
+                    const max = t.max === null || t.max === undefined || t.max === '' ? Infinity : Number(t.max);
+                    return total >= min && total < max;
+                }) || null;
+            },
+
+            get assemblyPackage() {
+                return this.assemblyTier ? this.assemblyTier.name : null;
             },
 
             get assemblyPrice() {
-                if (!this.assembly.enabled) return 0;
-                const pkg = this.assemblyPackage;
-                const map = { Lite: 4500, Standart: 6000, Gaming: 8000, Ultra: 10000 };
-                return map[pkg] || 0;
+                return this.assemblyTier ? (Number(this.assemblyTier.price) || 0) : 0;
             },
 
             get total() {

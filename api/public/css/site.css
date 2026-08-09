@@ -2373,27 +2373,7 @@ button {
     padding: 1.5rem;
 }
 
-.pc-total {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1.25rem;
-}
-
-.pc-total-label {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-}
-
-.pc-total-value {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--foreground);
-}
-
 .pc-reset-btn {
-    margin-left: auto;
     padding: 0.4rem 0.9rem;
     background: none;
     border: 1px solid var(--border);
@@ -2408,6 +2388,10 @@ button {
 .pc-reset-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
+}
+
+.pc-reset-btn--summary {
+    margin-bottom: 1rem;
 }
 
 .pc-order-form {
@@ -2889,17 +2873,6 @@ button {
     text-align: right;
 }
 
-.pc-auto-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-    margin-bottom: 1rem;
-    border-top: 2px solid var(--foreground);
-    font-size: 1.125rem;
-    font-weight: 700;
-}
-
 .pc-auto-fallback {
     text-align: center;
     padding: 2rem 1rem;
@@ -3071,6 +3044,13 @@ button {
 
 .pc-assembly-gift strong {
     color: var(--foreground);
+}
+
+.pc-step-content .pc-assembly-card {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: 0;
 }
 
 /* Sales */
