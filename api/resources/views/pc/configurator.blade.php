@@ -554,6 +554,7 @@
             autoLoading: false,
             assembly: { enabled: true, windows: true },
             animated: false,
+            prefetched: {},
 
             init() {
                 const mq = window.matchMedia('(max-width: 767px)');
@@ -707,6 +708,13 @@
                 this.parts = [];
                 this.partsEmpty = false;
                 try {
+                    const cached = this.prefetched[this.activeSlot];
+                    if (cached) {
+                        this.parts = cached.parts || [];
+                        this.partsEmpty = cached.partsEmpty || false;
+                        delete this.prefetched[this.activeSlot];
+                        return;
+                    }
                     const params = new URLSearchParams({
                         slot: this.activeSlot,
                         build: JSON.stringify(this.buildIds()),
@@ -722,6 +730,27 @@
                 } finally {
                     this.loadingParts = false;
                 }
+            },
+
+            prefetchNextParts(slot) {
+                const idx = this.slots.indexOf(slot);
+                const next = this.slots.slice(idx + 1).find(s => !s.empty && !this.hasSlotItems(s.id))
+                    || this.slots.find(s => !s.empty && !this.hasSlotItems(s.id));
+                if (!next || next.id === slot.id) return;
+                if (this.prefetched[next.id]) return;
+                const params = new URLSearchParams({
+                    slot: next.id,
+                    build: JSON.stringify(this.buildIds()),
+                });
+                fetch('/api/pc/parts?' + params.toString(), { headers: { 'Accept': 'application/json' } })
+                    .then(res => res.json())
+                    .then(data => {
+                        this.prefetched[next.id] = {
+                            parts: data.data || [],
+                            partsEmpty: !data.empty && (data.data || []).length === 0,
+                        };
+                    })
+                    .catch(() => {});
             },
 
             choose(slot, part) {
@@ -746,6 +775,7 @@
                     this.build[slot.id] = saved;
                 }
                 this.saveBuild();
+                this.prefetchNextParts(slot);
 
                 if (this.isMulti(slot.id)) {
                     this.parts = this.parts.map(p => ({ ...p }));
@@ -783,6 +813,7 @@
                         list.push({ id: part.id, name: part.name, price: part.price, qty: 1 });
                         if (list.length) this.build[slot.id] = list;
                         this.saveBuild();
+                        this.prefetchNextParts(slot);
                         this.parts = this.parts.map(p => ({ ...p }));
                     }
                     return;
@@ -795,6 +826,7 @@
                     list[idx].qty = next;
                 }
                 this.saveBuild();
+                this.prefetchNextParts(slot);
                 this.parts = this.parts.map(p => ({ ...p }));
             },
 
@@ -813,6 +845,7 @@
 
             saveBuild() {
                 localStorage.setItem('pc_build', JSON.stringify(this.build));
+                this.prefetched = {};
             },
 
             reset() {
