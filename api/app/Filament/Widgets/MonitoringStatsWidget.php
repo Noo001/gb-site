@@ -58,6 +58,14 @@ class MonitoringStatsWidget extends StatsOverviewWidget
         $logsLast24h = DB::table('integration_logs')
             ->where('created_at', '>=', now()->subDay())
             ->count();
+        $errorsLast24h = DB::table('integration_logs')
+            ->where('created_at', '>=', now()->subDay())
+            ->where('status_code', '>=', 400)
+            ->count();
+        $lastError = DB::table('integration_logs')
+            ->where('status_code', '>=', 400)
+            ->orderByDesc('created_at')
+            ->first(['created_at', 'status_code', 'endpoint']);
         $pendingExports = DB::table('failed_1c_exports')->whereNull('processed_at')->count();
         $failedJobs = DB::table('failed_jobs')->count();
         $queuedJobs = DB::table('jobs')->count();
@@ -66,10 +74,23 @@ class MonitoringStatsWidget extends StatsOverviewWidget
             ? (int) Carbon::parse($lastLogAt)->diffInMinutes(now()) . ' мин назад'
             : 'нет записей';
 
+        $lastLogWasError = DB::table('integration_logs')
+            ->where('created_at', $lastLogAt)
+            ->value('status_code') >= 400;
+
         return [
             Stat::make('Последний обмен 1С', $lastLogAt ? Carbon::parse($lastLogAt)->format('d.m.Y H:i') : '—')
-                ->description($lastLogDescription),
+                ->description($lastLogDescription . ($lastLogWasError ? ' ⚠ ОШИБКА' : ''))
+                ->color($lastLogWasError ? 'danger' : 'success'),
             Stat::make('Событий обмена за 24ч', $logsLast24h),
+            Stat::make('Ошибок 1С за 24ч', $errorsLast24h)
+                ->description($errorsLast24h > 0 ? 'Требуется проверка' : 'Нет ошибок')
+                ->color($errorsLast24h > 0 ? 'danger' : 'success'),
+            Stat::make('Последняя ошибка 1С', $lastError
+                ? Carbon::parse($lastError->created_at)->format('d.m.Y H:i') . ' (' . $lastError->status_code . ')'
+                : '—')
+                ->description($lastError ? $lastError->endpoint : 'нет ошибок')
+                ->color($lastError ? 'danger' : 'success'),
             Stat::make('Неотправленные выгрузки 1С', $pendingExports)
                 ->description($pendingExports > 0 ? 'Требуется обработка' : 'Всё отправлено')
                 ->color($pendingExports > 0 ? 'danger' : 'success'),

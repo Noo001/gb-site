@@ -58,6 +58,10 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 'panels::head.end',
                 fn () => view('filament.table-wide'),
+            )
+            ->renderHook(
+                'panels::page.start',
+                fn () => view('filament.alerts.one-c-errors'),
             );
     }
 }
