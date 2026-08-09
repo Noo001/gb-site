@@ -287,6 +287,28 @@ class OneCController extends Controller
         ], $result['failed'] === 0 ? 200 : 422);
     }
 
+    public function stocksSnapshot(Store1CStocksSyncRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $batchId = (string) Str::uuid();
+
+        foreach ($data['items'] as $item) {
+            \App\Models\OneCStocksSnapshot::create([
+                'batch_id' => $batchId,
+                'offer_external_id' => $item['offer_external_id'],
+                'store_external_id' => $item['store_external_id'] ?? null,
+                'store_name' => $item['store_name'] ?? null,
+                'quantity' => $item['quantity'],
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'batch_id' => $batchId,
+            'received' => count($data['items']),
+        ]);
+    }
+
     public function listProducts(Request $request): JsonResponse
     {
         $data = $request->validate([

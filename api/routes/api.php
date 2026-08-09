@@ -78,6 +78,7 @@ Route::middleware(['onec.api', 'onec.log'])->prefix('1c')->group(function () {
     Route::put('/prices/sync', [OneCController::class, 'syncPrices']);
     Route::post('/stocks/sync', [OneCController::class, 'syncStocks']);
     Route::put('/stocks/sync', [OneCController::class, 'syncStocks']);
+    Route::post('/stocks/snapshot', [OneCController::class, 'stocksSnapshot']);
     Route::post('/stores/sync', [OneCController::class, 'syncStores']);
     Route::get('/products', [OneCController::class, 'listProducts']);
     Route::get('/products/{uuid_1c}', [OneCController::class, 'showProduct']);
