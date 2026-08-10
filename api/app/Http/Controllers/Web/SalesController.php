@@ -8,6 +8,14 @@ class SalesController extends Controller
 {
     private array $sales = [
         [
+            'slug' => 'besplatnaya-zashchita-ekrana-v-gadget-bar',
+            'title' => 'Бесплатная защита экрана в Gadget Bar',
+            'description' => 'При покупке любого смартфона в Gadget Bar установим защитное стекло или плёнку бесплатно. Акция действует во всех магазинах сети при наличии комплектующих на складе.',
+            'image' => '/images/original/promo-screen.png',
+            'period' => 'Бессрочная акция',
+            'sticker' => '0₽',
+        ],
+        [
             'slug' => 'grand-theft-auto-vi-uzhe-dostupna-dlya-predzakaza',
             'title' => 'Grand Theft Auto VI уже доступна для предзаказа',
             'description' => 'Оформите предзаказ на долгожданную игру и получите бонусы при запуске.',

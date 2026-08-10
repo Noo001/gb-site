@@ -1,14 +1,14 @@
 @php
 $slides = [
-    ['image' => '/images/original/banner-1.png', 'href' => '/sales/kodovyy-zamok-udachi', 'alt' => 'Кодовый замок удачи'],
+    ['image' => '/images/original/banner-1.png', 'href' => '/sales/aktsiya-kodovyy-zamok-udachi', 'alt' => 'Кодовый замок удачи'],
     ['image' => '/images/original/banner-2.png', 'href' => '/catalog/smartfony', 'alt' => 'iPhone'],
     ['image' => '/images/original/banner-3.png', 'href' => '/installment', 'alt' => 'Рассрочка'],
     ['image' => '/images/original/banner-4.png', 'href' => '/brands/samsung', 'alt' => 'Samsung'],
     ['image' => '/images/original/banner-5.png', 'href' => '/catalog/smartfony', 'alt' => 'iPhone'],
     ['image' => '/images/original/banner-6.png', 'href' => '/brands/dyson', 'alt' => 'Dyson'],
     ['image' => '/images/original/banner-7.png', 'href' => '/catalog/igrovye-konsoli', 'alt' => 'Игровые консоли'],
-    ['image' => '/images/original/banner-8.png', 'href' => '/catalog/naushniki-i-audio/kolonki', 'alt' => 'Яндекс Станции'],
-    ['image' => '/images/original/banner-9.png', 'href' => '/sales/trade-in', 'alt' => 'Trade-In'],
+    ['image' => '/images/original/banner-8.png', 'href' => '/catalog/nausniki-i-audio/kolonki', 'alt' => 'Яндекс Станции'],
+    ['image' => '/images/original/banner-9.png', 'href' => '/sales/programma-trade-in', 'alt' => 'Trade-In'],
     ['image' => '/images/original/banner-10.png', 'href' => '/brands/smeg', 'alt' => 'Smeg'],
 ];
 @endphp
