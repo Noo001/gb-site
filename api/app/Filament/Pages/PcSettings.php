@@ -13,12 +13,15 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use UnitEnum;
 
 class PcSettings extends Page implements HasForms
 {
     use InteractsWithForms;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
+
+    protected static UnitEnum|string|null $navigationGroup = 'Сайт';
 
     protected static ?string $navigationLabel = 'Настройки ПК-конфигуратора';
 
