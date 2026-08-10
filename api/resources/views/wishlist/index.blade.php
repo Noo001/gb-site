@@ -19,9 +19,9 @@
                 <div class="product-grid">
                     <template x-for="item in items" :key="item.id">
                         <div class="card product-card">
-                            <a :href="item.product?.url" class="product-card-link">
+                            <a x-bind:href='item.product?.url' class="product-card-link">
                                 <div class="product-card-image">
-                                    <img :src="item.product?.images?.[0] || '/images/placeholder-product.svg'" :alt="item.product?.name">
+                                    <img x-bind:src='item.product?.images?.[0] || "/images/placeholder-product.svg"' x-bind:alt='item.product?.name'>
                                 </div>
                                 <div class="product-card-name" x-text="item.product?.name"></div>
                             </a>

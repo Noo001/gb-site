@@ -17,7 +17,7 @@ class CatalogController extends Controller
 
         $categoryResponse = app(CategoryController::class)->show($request, $path);
         if ($categoryResponse->getStatusCode() === 404) {
-            return redirect('/catalog');
+            return redirect('/catalog' . ($request->filled('site_access') ? '?site_access=' . urlencode($request->query('site_access')) : ''));
         }
         $category = $categoryResponse->getData()->data;
 

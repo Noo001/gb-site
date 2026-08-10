@@ -38,7 +38,7 @@ class BrandController extends Controller
         $brandName = $brands->first(fn ($name) => \Illuminate\Support\Str::slug($name) === $slug);
 
         if (! $brandName) {
-            return redirect('/brands');
+            return redirect('/brands' . ($request->filled('site_access') ? '?site_access=' . urlencode($request->query('site_access')) : ''));
         }
 
         $brand = (object) [

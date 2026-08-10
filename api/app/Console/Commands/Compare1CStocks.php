@@ -9,42 +9,71 @@ use App\Models\Stock;
 use App\Models\Store;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class Compare1CStocks extends Command
 {
     protected $signature = '1c:compare-stocks
-        {--batch-id= : ID пачки snapshot для сравнения}
-        {--clear : Очистить snapshot после сравнения}';
+        {--batch-id= : ID одной пачки snapshot для сравнения}
+        {--window-minutes=30 : Максимальный разрыв между батчами одной выгрузки, в минутах}
+        {--clear : Очистить использованные snapshot после сравнения}';
 
     protected $description = 'Сравнивает snapshot остатков из 1С с текущими остатками на сайте';
 
     public function handle(): int
     {
         $batchId = $this->option('batch-id');
+        $windowMinutes = (int) $this->option('window-minutes');
+        if ($windowMinutes <= 0) {
+            $windowMinutes = 30;
+        }
 
-        $query = OneCStocksSnapshot::query();
         if ($batchId) {
-            $query->where('batch_id', $batchId);
+            $batchIds = [$batchId];
         } else {
-            $batchId = OneCStocksSnapshot::query()
+            $batches = OneCStocksSnapshot::query()
                 ->select('batch_id')
-                ->orderByDesc('created_at')
-                ->value('batch_id');
-            if (! $batchId) {
+                ->selectRaw('MAX(created_at) as last_seen')
+                ->groupBy('batch_id')
+                ->orderByDesc('last_seen')
+                ->get()
+                ->map(fn ($row) => [
+                    'batch_id' => $row->batch_id,
+                    'last_seen' => Carbon::parse($row->last_seen),
+                ]);
+
+            if ($batches->isEmpty()) {
                 $this->error('Snapshot не найден. Сначала выполните выгрузку из 1С.');
                 return self::FAILURE;
             }
-            $query->where('batch_id', $batchId);
+
+            // Берём все батчи, входящие в последнюю выгрузку:
+            // последовательные батчи с разрывом не более window-minutes.
+            $batchIds = [];
+            $previous = null;
+            foreach ($batches as $batch) {
+                if ($previous && $batch['last_seen']->diffInMinutes($previous) > $windowMinutes) {
+                    break;
+                }
+                $batchIds[] = $batch['batch_id'];
+                $previous = $batch['last_seen'];
+            }
         }
 
-        $snapshots = $query->get();
-        $this->info("Сравниваем snapshot batch {$batchId} ({$snapshots->count()} записей)");
+        $snapshots = OneCStocksSnapshot::query()
+            ->whereIn('batch_id', $batchIds)
+            ->get();
+
+        $this->info('Сравниваем snapshot: ' . count($batchIds) . ' batch(ей), ' . $snapshots->count() . ' записей');
+        if (count($batchIds) > 1) {
+            $this->line('  batch_id: ' . implode(', ', array_slice($batchIds, 0, 5)) . (count($batchIds) > 5 ? ' ...' : ''));
+        }
 
         // Собираем 1С-остатки в мапу: offer_external_id + store_external_id => quantity
         $oneCMap = [];
         foreach ($snapshots as $s) {
             $key = $s->offer_external_id . '|' . ($s->store_external_id ?? '');
-            $oneCMap[$key] = (float) $s->quantity;
+            $oneCMap[$key] = ($oneCMap[$key] ?? 0) + (float) $s->quantity;
         }
 
         // Собираем остатки сайта в мапу
@@ -98,7 +127,7 @@ class Compare1CStocks extends Command
 
         if (! empty($report['only_in_1c'])) {
             $this->warn('Товары/склады есть в 1С, но нет на сайте:');
-            foreach (array_slice($report['only_in_1c'], 0, 10) as $key => $qty) {
+            foreach (array_slice($report['only_in_1c'], 0, 10, true) as $key => $qty) {
                 [$offerId, $storeId] = explode('|', $key);
                 $this->line("  {$offerId} | {$storeId} = {$qty}");
             }
@@ -109,7 +138,7 @@ class Compare1CStocks extends Command
 
         if (! empty($report['only_on_site'])) {
             $this->warn('Товары/склады есть на сайте, но нет в 1С:');
-            foreach (array_slice($report['only_on_site'], 0, 10) as $key => $qty) {
+            foreach (array_slice($report['only_on_site'], 0, 10, true) as $key => $qty) {
                 [$offerId, $storeId] = explode('|', $key);
                 $this->line("  {$offerId} | {$storeId} = {$qty}");
             }
@@ -131,8 +160,8 @@ class Compare1CStocks extends Command
         }
 
         if ($this->option('clear')) {
-            OneCStocksSnapshot::where('batch_id', $batchId)->delete();
-            $this->info("Snapshot batch {$batchId} очищен.");
+            OneCStocksSnapshot::whereIn('batch_id', $batchIds)->delete();
+            $this->info('Snapshot очищен: ' . count($batchIds) . ' batch(ей).');
         }
 
         return self::SUCCESS;

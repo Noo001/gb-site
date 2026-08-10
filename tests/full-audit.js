@@ -34,7 +34,8 @@ async function fetchWithTimeout(url, options = {}) {
 
 async function fetchHtml(url) {
   try {
-    const res = await fetchWithTimeout(url, { redirect: 'follow' });
+    const urlWithAccess = appendAccessParam(url);
+    const res = await fetchWithTimeout(urlWithAccess, { redirect: 'follow' });
     const contentType = res.headers.get('content-type') || '';
     const text = contentType.includes('text/html') ? await res.text() : '';
     return { status: res.status, text, contentType };
@@ -43,17 +44,26 @@ async function fetchHtml(url) {
   }
 }
 
+function appendAccessParam(url) {
+  const u = new URL(url);
+  if (!u.searchParams.has('site_access')) {
+    u.searchParams.set('site_access', 'granted');
+  }
+  return u.href;
+}
+
 async function checkUrl(url) {
   try {
+    const urlWithAccess = appendAccessParam(url);
     let res;
     try {
-      res = await fetchWithTimeout(url, { method: 'HEAD', redirect: 'follow', headers: { Accept: '*/*' } });
+      res = await fetchWithTimeout(urlWithAccess, { method: 'HEAD', redirect: 'follow', headers: { Accept: '*/*' } });
     } catch {
       res = null;
     }
     // Some servers do not support HEAD on dynamic routes; fallback to GET.
     if (!res || res.status === 405 || res.status === 501 || res.status === 0) {
-      res = await fetchWithTimeout(url, { method: 'GET', redirect: 'follow', headers: { Accept: '*/*' } });
+      res = await fetchWithTimeout(urlWithAccess, { method: 'GET', redirect: 'follow', headers: { Accept: '*/*' } });
     }
     return { status: res.status, contentType: res.headers.get('content-type') || '' };
   } catch (e) {
@@ -61,14 +71,24 @@ async function checkUrl(url) {
   }
 }
 
+const AUTH_ONLY_PATHS = new Set([
+  '/wishlist',
+  '/account',
+  '/login',
+  '/register',
+  '/logout',
+]);
+
 function extractLinks(html, baseUrl) {
   const links = new Set();
-  const regex = /href="([^"]+)"/g;
+  // Игнорируем Alpine-директивы :href / x-bind:href — берём только обычный href
+  const regex = /(?<!:)href="([^"]+)"/g;
   let m;
   while ((m = regex.exec(html))) {
     try {
       const u = new URL(m[1], baseUrl);
-      if (u.origin === new URL(baseUrl).origin && !shouldSkipPath(u.pathname)) {
+      if (u.origin === new URL(baseUrl).origin && !shouldSkipPath(u.pathname) && !AUTH_ONLY_PATHS.has(u.pathname)) {
+        u.searchParams.set('site_access', 'granted');
         links.add(u.pathname + u.search);
       }
     } catch {}
@@ -78,7 +98,8 @@ function extractLinks(html, baseUrl) {
 
 function extractImages(html, baseUrl) {
   const images = [];
-  const regex = /<img[^>]+src="([^"]+)"/g;
+  // Игнорируем Alpine-директивы :src / x-bind:src — берём только обычный src
+  const regex = /<img[^>]*\s(?<!:)src="([^"]+)"/g;
   let m;
   while ((m = regex.exec(html))) {
     try {
@@ -123,7 +144,7 @@ async function crawl(start) {
 
 async function main() {
   console.log(`Crawling ${BASE} (max ${MAX_PAGES} pages)...`);
-  const pages = await crawl('/');
+  const pages = await crawl('/?site_access=granted');
 
   const brokenPages = [];
   const allInternalLinks = new Map(); // link -> from pages

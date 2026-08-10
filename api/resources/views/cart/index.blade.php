@@ -20,9 +20,9 @@
                     <div class="cart-items">
                         <template x-for="item in items" :key="item.id">
                             <div class="cart-item">
-                                <img :src="item.product?.images?.[0] || '/images/placeholder-product.svg'" :alt="item.product?.name">
+                                <img x-bind:src='item.product?.images?.[0] || "/images/placeholder-product.svg"' x-bind:alt='item.product?.name'>
                                 <div class="cart-item-info">
-                                    <a :href="item.product?.url" x-text="item.product?.name"></a>
+                                    <a x-bind:href='item.product?.url' x-text='item.product?.name'></a>
                                     <span class="text-muted" x-text="item.offer?.name ?? ''"></span>
                                 </div>
                                 <div class="cart-item-qty">
