@@ -55,7 +55,7 @@ class OneCStagingService
         return $this->syncService->apply([$staging]);
     }
 
-    public function stageAndApplyPrices(array $data): array
+    public function stageAndApplyPrices(array $data, bool $updateBotIndex = true): array
     {
         $batchId = (string) Str::uuid();
 
@@ -64,7 +64,7 @@ class OneCStagingService
             $records[] = $this->storeSinglePrice($batchId, $price);
         }
 
-        return $this->syncService->apply($records);
+        return $this->syncService->apply($records, $updateBotIndex);
     }
 
     public function stageAndApplyStock(array $data): array
@@ -76,7 +76,7 @@ class OneCStagingService
         return $this->syncService->apply([$staging]);
     }
 
-    public function stageAndApplyStocks(array $data): array
+    public function stageAndApplyStocks(array $data, bool $updateBotIndex = true): array
     {
         $batchId = (string) Str::uuid();
 
@@ -85,7 +85,7 @@ class OneCStagingService
             $records[] = $this->storeSingleStock($batchId, $stock);
         }
 
-        return $this->syncService->apply($records);
+        return $this->syncService->apply($records, $updateBotIndex);
     }
 
     public function storeCategories(string $batchId, array $categories): void

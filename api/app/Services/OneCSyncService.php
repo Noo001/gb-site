@@ -43,44 +43,59 @@ class OneCSyncService
         $this->updateBotIndex = $updateBotIndex;
 
         return Price::withoutSyncNotifications(function () use ($records) {
-            return DB::transaction(function () use ($records) {
-                $result = [
-                    'processed' => 0,
-                    'failed' => 0,
-                    'errors' => [],
-                ];
+            $result = [
+                'processed' => 0,
+                'failed' => 0,
+                'errors' => [],
+            ];
 
-                foreach ($records as $record) {
-                    try {
+            foreach ($records as $record) {
+                try {
+                    DB::transaction(function () use ($record) {
                         $record->increment('attempts');
-
-                        match (true) {
-                            $record instanceof OneCCategory => $this->applyCategory($record),
-                            $record instanceof OneCProduct => $this->applyProduct($record),
-                            $record instanceof OneCOffer => $this->applyOffer($record),
-                            $record instanceof OneCPrice => $this->applyPrice($record),
-                            $record instanceof OneCStock => $this->applyStock($record),
-                            default => throw new \RuntimeException('Unknown staging record type'),
-                        };
-
+                        $this->applyRecord($record);
                         $this->markProcessed($record);
-                        $result['processed']++;
-                    } catch (Throwable $e) {
-                        $this->markFailed($record, $e);
-                        $result['failed']++;
-                        $result['errors'][] = [
-                            'type' => class_basename($record),
-                            'external_id' => $record->external_id ?? $record->offer_external_id ?? null,
-                            'error' => $e->getMessage(),
-                        ];
+                    });
+
+                    $result['processed']++;
+                } catch (Throwable $e) {
+                    // Если внутри транзакции случился deadlock, вся транзакция
+                    // откатывается — записать ошибку в той же транзакции нельзя.
+                    // Пробуем отметить неудачу отдельной транзакцией.
+                    try {
+                        DB::transaction(function () use ($record, $e) {
+                            $record->increment('attempts');
+                            $this->markFailed($record, $e);
+                        });
+                    } catch (Throwable $markFailedException) {
+                        // Игнорируем — запись останется unprocessed и будет обработана позже.
                     }
+
+                    $result['failed']++;
+                    $result['errors'][] = [
+                        'type' => class_basename($record),
+                        'external_id' => $record->external_id ?? $record->offer_external_id ?? null,
+                        'error' => $e->getMessage(),
+                    ];
                 }
+            }
 
-                $this->rebuildCategoryPaths();
+            $this->rebuildCategoryPaths();
 
-                return $result;
-            });
+            return $result;
         });
+    }
+
+    private function applyRecord(Model $record): void
+    {
+        match (true) {
+            $record instanceof OneCCategory => $this->applyCategory($record),
+            $record instanceof OneCProduct => $this->applyProduct($record),
+            $record instanceof OneCOffer => $this->applyOffer($record),
+            $record instanceof OneCPrice => $this->applyPrice($record),
+            $record instanceof OneCStock => $this->applyStock($record),
+            default => throw new \RuntimeException('Unknown staging record type'),
+        };
     }
 
     public function applyCategory(OneCCategory $staging): Category

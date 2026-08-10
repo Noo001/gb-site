@@ -269,7 +269,9 @@ class OneCController extends Controller
 
     public function syncPrices(Store1CPricesSyncRequest $request): JsonResponse
     {
-        $result = $this->stagingService->stageAndApplyPrices($request->validated());
+        $result = $this->stagingService->stageAndApplyPrices($request->validated(), false);
+
+        $this->dispatchBotIndexRebuild();
 
         return response()->json([
             'success' => $result['failed'] === 0,
@@ -279,12 +281,22 @@ class OneCController extends Controller
 
     public function syncStocks(Store1CStocksSyncRequest $request): JsonResponse
     {
-        $result = $this->stagingService->stageAndApplyStocks($request->validated());
+        $result = $this->stagingService->stageAndApplyStocks($request->validated(), false);
+
+        $this->dispatchBotIndexRebuild();
 
         return response()->json([
             'success' => $result['failed'] === 0,
             'data' => $result,
         ], $result['failed'] === 0 ? 200 : 422);
+    }
+
+    private function dispatchBotIndexRebuild(): void
+    {
+        $hasPendingRebuild = DB::table('jobs')->where('payload', 'like', '%RebuildBotIndexJob%')->exists();
+        if (! $hasPendingRebuild) {
+            RebuildBotIndexJob::dispatch()->delay(now()->addMinutes(2));
+        }
     }
 
     public function stocksSnapshot(Store1CStocksSyncRequest $request): JsonResponse
