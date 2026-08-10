@@ -19,7 +19,7 @@ class PcSettings extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
+    protected static string|BackedEnum|null $navigationIcon = null;
 
     protected static UnitEnum|string|null $navigationGroup = 'Сайт';
 

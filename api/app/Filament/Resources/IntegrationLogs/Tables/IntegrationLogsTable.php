@@ -45,8 +45,20 @@ class IntegrationLogsTable
                     ->label('Ответ / ошибка')
                     ->limit(80)
                     ->wrap()
-                    ->formatStateUsing(fn ($state): string => is_array($state) ? json_encode($state, JSON_UNESCAPED_UNICODE) : strip_tags((string) $state))
-                    ->color(fn ($state): string => str_contains(is_array($state) ? json_encode($state) : (string) $state, '"success":false') ? 'danger' : 'gray'),
+                    ->formatStateUsing(function ($state): string {
+                        if (is_array($state)) {
+                            $json = json_encode($state, JSON_UNESCAPED_UNICODE);
+
+                            return $json === false ? '[invalid json]' : $json;
+                        }
+
+                        return strip_tags((string) $state);
+                    })
+                    ->color(function ($state): string {
+                        $text = is_array($state) ? json_encode($state, JSON_UNESCAPED_UNICODE) : (string) $state;
+
+                        return str_contains($text, '"success":false') ? 'danger' : 'gray';
+                    }),
                 TextColumn::make('duration_ms')
                     ->label('Время, мс')
                     ->numeric(),
