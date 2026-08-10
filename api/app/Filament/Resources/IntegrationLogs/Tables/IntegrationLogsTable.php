@@ -34,7 +34,8 @@ class IntegrationLogsTable
                 TextColumn::make('status_code')
                     ->label('Код')
                     ->badge()
-                    ->color(fn (int $state): string => match (true) {
+                    ->color(fn (?int $state): string => match (true) {
+                        $state === null => 'gray',
                         $state >= 500 => 'danger',
                         $state >= 400 => 'warning',
                         $state >= 200 && $state < 300 => 'success',
