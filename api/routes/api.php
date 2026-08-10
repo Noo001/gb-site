@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Api\PcConfiguratorController;
 use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\SeoController;
+use App\Http\Controllers\Api\TelegramBotController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\Api\WishlistController;
 use App\Http\Middleware\EnsureCartSession;
@@ -109,3 +109,7 @@ Route::middleware('bot.api')->prefix('bot')->group(function () {
     Route::post('/tradein', [BotController::class, 'getTradeInPrice']);
     Route::post('/log', [BotController::class, 'logAction']);
 });
+
+// Telegram first-line bot webhook
+Route::post('/telegram/webhook', [TelegramBotController::class, 'webhook'])->name('telegram.webhook');
+Route::post('/telegram/set-webhook', [TelegramBotController::class, 'setWebhook'])->name('telegram.set-webhook');
