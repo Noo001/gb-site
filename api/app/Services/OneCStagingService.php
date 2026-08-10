@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\OneCStocksSnapshot;
 use App\Models\OneCCategory;
 use App\Models\OneCOffer;
 use App\Models\OneCPrice;
@@ -22,6 +23,7 @@ class OneCStagingService
 
         $this->storeCategories($batchId, $data['categories'] ?? []);
         $this->storeProducts($batchId, $data['products'] ?? []);
+        $this->storeStocksSnapshot($batchId, $data['products'] ?? []);
 
         return $batchId;
     }
@@ -97,6 +99,23 @@ class OneCStagingService
     {
         foreach ($products as $product) {
             $this->storeSingleProduct($batchId, $product);
+        }
+    }
+
+    private function storeStocksSnapshot(string $batchId, array $products): void
+    {
+        foreach ($products as $product) {
+            foreach ($product['offers'] ?? [] as $offer) {
+                foreach ($offer['stocks'] ?? [] as $stock) {
+                    OneCStocksSnapshot::create([
+                        'batch_id' => $batchId,
+                        'offer_external_id' => $offer['external_id'],
+                        'store_external_id' => $stock['store_external_id'] ?? null,
+                        'store_name' => $stock['store_name'] ?? null,
+                        'quantity' => $stock['quantity'],
+                    ]);
+                }
+            }
         }
     }
 
