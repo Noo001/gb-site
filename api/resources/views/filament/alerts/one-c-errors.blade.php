@@ -31,7 +31,9 @@ $lastError = \App\Models\IntegrationLog::query()
                     </p>
                 @endif
                 <p class="mt-1 text-sm">
-                    Проверьте мониторинг на Dashboard.
+                    <a href="{{ \App\Filament\Resources\IntegrationLogs\IntegrationLogResource::getUrl() }}" class="font-medium underline hover:text-danger-800">
+                        Открыть логи обмена с 1С →
+                    </a>
                 </p>
             </div>
         </div>
