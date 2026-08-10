@@ -25,6 +25,10 @@ class BotEmployeesTable
                 TextColumn::make('b24_token')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('telegram_chat_id')
+                    ->label('Telegram Chat ID')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('is_active')
                     ->boolean(),
                 TextColumn::make('updated_at')

@@ -14,6 +14,7 @@ class BotEmployee extends Model
     protected $fillable = [
         'full_name',
         'b24_token',
+        'telegram_chat_id',
         'department',
         'permissions',
         'is_active',

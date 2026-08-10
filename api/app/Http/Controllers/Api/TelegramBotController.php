@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BotActionLog;
+use App\Models\BotEmployee;
 use App\Models\BotProduct;
-use App\Models\BotTradeInPrice;
 use App\Models\BotTriggerPhrase;
 use App\Models\Store;
 use Illuminate\Http\JsonResponse;
@@ -26,6 +27,13 @@ class TelegramBotController extends Controller
         }
 
         $update = $request->all();
+
+        // Менеджер отвечает на пересланный лид
+        if (! empty($update['message']['reply_to_message'])) {
+            $this->handleManagerReply($update['message']);
+            return response('OK', 200);
+        }
+
         if (empty($update['message'])) {
             return response('OK', 200);
         }
@@ -38,13 +46,26 @@ class TelegramBotController extends Controller
             return response('OK', 200);
         }
 
-        $this->handleMessage($chatId, $text);
+        // Не обрабатываем сообщения от самих менеджеров (их chat_id есть в списке)
+        if (BotEmployee::where('telegram_chat_id', (string) $chatId)->where('is_active', true)->exists()) {
+            return response('OK', 200);
+        }
+
+        $this->handleClientMessage($chatId, $text, $message);
 
         return response('OK', 200);
     }
 
-    private function handleMessage(int $chatId, string $text): void
+    private function handleClientMessage(int $chatId, string $text, array $message): void
     {
+        $username = $message['chat']['username'] ?? null;
+        $firstName = $message['chat']['first_name'] ?? null;
+        $lastName = $message['chat']['last_name'] ?? null;
+
+        // Любое входящее сообщение клиента регистрируем как лид и рассылаем менеджерам.
+        $this->storeLead($chatId, $username, $firstName, $lastName, $text);
+        $this->notifyManagers($chatId, $username, $firstName, $lastName, $text);
+
         $lower = mb_strtolower($text);
 
         if ($lower === '/start') {
@@ -58,7 +79,7 @@ class TelegramBotController extends Controller
         }
 
         if ($lower === '/tradein' || $lower === 'trade-in' || $lower === 'трейдин') {
-            $this->sendMessage($chatId, "Для оценки trade-in укажи модель и состояние устройства. Например: «iPhone 14 128GB идеал».", $this->mainMenu());
+            $this->sendMessage($chatId, "Для оценки trade-in укажи модель и состояние устройства. Например: «iPhone 14 128GB идеал». Менеджер ответит в ближайшее время.", $this->mainMenu());
             return;
         }
 
@@ -71,7 +92,7 @@ class TelegramBotController extends Controller
         $results = $this->searchProducts($text);
 
         if ($results->isEmpty()) {
-            $this->sendMessage($chatId, "Ничего не нашёл по запросу «{$text}». Попробуй написать по-другому или выбери команду из меню.", $this->mainMenu());
+            $this->sendMessage($chatId, "Ничего не нашёл по запросу «{$this->escapeHtml($text)}». Попробуй написать по-другому или выбери команду из меню. Менеджер уже получил твой запрос и скоро ответит.", $this->mainMenu());
             return;
         }
 
@@ -88,8 +109,75 @@ class TelegramBotController extends Controller
             $lines[] = $line;
         }
 
-        $message = "Нашёл {$results->count()} товаров по «{$this->escapeHtml($text)}»:\n\n" . implode("\n\n", $lines);
-        $this->sendMessage($chatId, $message, $this->mainMenu());
+        $messageText = "Нашёл {$results->count()} товаров по «{$this->escapeHtml($text)}»:\n\n" . implode("\n\n", $lines);
+        $this->sendMessage($chatId, $messageText, $this->mainMenu());
+    }
+
+    private function handleManagerReply(array $message): void
+    {
+        $replyText = $message['reply_to_message']['text'] ?? '';
+        $managerChatId = $message['chat']['id'] ?? null;
+        $reply = trim($message['text'] ?? '');
+
+        if (! $managerChatId || $reply === '') {
+            return;
+        }
+
+        // Ищем метку лида в пересланном сообщении: #lead <chat_id>
+        if (! preg_match('/#lead\s+(\d+)/', $replyText, $matches)) {
+            return;
+        }
+
+        $clientChatId = (int) $matches[1];
+
+        $this->sendMessage($clientChatId, $reply);
+        $this->sendMessage($managerChatId, "Ответ отправлен клиенту.", $this->mainMenu());
+    }
+
+    private function storeLead(int $chatId, ?string $username, ?string $firstName, ?string $lastName, string $text): void
+    {
+        try {
+            BotActionLog::create([
+                'channel' => 'telegram',
+                'action' => 'lead',
+                'payload' => [
+                    'chat_id' => $chatId,
+                    'username' => $username,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'message' => $text,
+                ],
+                'ip' => request()->ip(),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Failed to store Telegram lead', ['error' => $e->getMessage()]);
+        }
+    }
+
+    private function notifyManagers(int $clientChatId, ?string $username, ?string $firstName, ?string $lastName, string $text): void
+    {
+        $managers = BotEmployee::query()
+            ->where('is_active', true)
+            ->whereNotNull('telegram_chat_id')
+            ->where('telegram_chat_id', '!=', '')
+            ->get();
+
+        if ($managers->isEmpty()) {
+            return;
+        }
+
+        $clientLink = $username ? "@{$username}" : "tg://user?id={$clientChatId}";
+        $name = trim(($firstName ?? '') . ' ' . ($lastName ?? '')) ?: 'Клиент';
+
+        $message = "📩 Новый лид из Telegram-бота\n"
+            . "👤 {$this->escapeHtml($name)} ({$clientLink})\n"
+            . "💬 «{$this->escapeHtml($text)}»\n\n"
+            . "Ответь на это сообщение, чтобы написать клиенту.\n"
+            . "#lead {$clientChatId}";
+
+        foreach ($managers as $manager) {
+            $this->sendMessage((int) $manager->telegram_chat_id, $message);
+        }
     }
 
     private function searchProducts(string $query)
