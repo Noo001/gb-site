@@ -44,6 +44,10 @@ Route::get('/register', [AuthController::class, 'registerForm'])->name('register
 Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/e2e/login', [\App\Http\Controllers\Web\E2ELoginController::class, '__invoke'])
+    ->name('e2e.login')
+    ->middleware('signed');
+
 Route::middleware('auth')->group(function () {
     Route::get('/account', [AccountController::class, 'dashboard'])->name('account.dashboard');
     Route::get('/account/profile', [AccountController::class, 'profile'])->name('account.profile');
