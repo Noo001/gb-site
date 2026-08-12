@@ -28,6 +28,7 @@ class BonusController extends Controller
             ->orderByDesc('created_at')
             ->paginate(20);
 
+        $this->bonusService->ensureDefaultSectors();
         $terms = $this->bonusService->currentTerms();
         $needsAccept = $terms && ! $user->accepted_bonus_terms_at;
 
