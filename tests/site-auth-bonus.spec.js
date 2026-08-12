@@ -93,6 +93,19 @@ const fail = (msg) => { console.log('  ✗', msg); return msg; };
       ok('Bonus terms already accepted');
     }
 
+    console.log('\nCollecting daily bonus...');
+    await safeClick('button[type="submit"].btn-primary:has-text("Собрать бонусы")', 'Daily collect button');
+    await page.waitForTimeout(1500);
+    ok('Daily bonus collected');
+    await screenshot(page, 'account-bonuses-daily');
+
+    console.log('\nSpinning the wheel (free spin)...');
+    await safeClick('button:has-text("Бесплатная прокрутка")', 'Free spin button');
+    await page.waitForSelector('.roulette-message', { timeout: 10000 });
+    await page.waitForTimeout(500);
+    ok('Wheel spin completed');
+    await screenshot(page, 'account-bonuses-spin');
+
     console.log('\nNavigating to account dashboard...');
     await page.goto(`${BASE}/account`, { waitUntil: 'networkidle', timeout: 30000 });
     await page.waitForSelector('.account-layout', { timeout: 10000 });
