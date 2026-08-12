@@ -14,8 +14,10 @@ use App\Http\Controllers\Web\WishlistController;
 use App\Http\Controllers\Web\PageController;
 use App\Http\Controllers\Web\BlogController;
 use App\Http\Controllers\Web\SalesController;
+use App\Http\Controllers\Web\CaptchaController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/captcha', [CaptchaController::class, 'show'])->name('captcha');
 
 Route::get('/catalog/{path?}', [CatalogController::class, 'show'])
     ->where('path', '.*')->name('catalog.show');
@@ -42,7 +44,14 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.st
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/account', [AccountController::class, 'index'])->name('account.index');
+    Route::get('/account', [AccountController::class, 'dashboard'])->name('account.dashboard');
+    Route::get('/account/profile', [AccountController::class, 'profile'])->name('account.profile');
+    Route::post('/account/profile', [AccountController::class, 'updateProfile'])->name('account.profile.update');
+    Route::post('/account/password', [AccountController::class, 'updatePassword'])->name('account.password.update');
+    Route::get('/account/orders', [AccountController::class, 'orders'])->name('account.orders');
+    Route::get('/account/wishlist', [AccountController::class, 'wishlist'])->name('account.wishlist');
+    Route::get('/account/bonuses', [AccountController::class, 'bonuses'])->name('account.bonuses');
+
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 });
 
@@ -64,4 +73,4 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('page.blog.art
 Route::get('/sales', [SalesController::class, 'index'])->name('page.sales');
 Route::get('/sales/{slug}', [SalesController::class, 'show'])->name('page.sales.article');
 
-Route::post('/access-check', [AuthController::class, 'accessCheck'])->name('access.check');
+
