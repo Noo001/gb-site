@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use App\Models\BonusOperation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -38,7 +39,15 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'phone',
+        'phone_verified_at',
         'password',
+        'bonus_balance',
+        'daily_streak_count',
+        'last_daily_bonus_at',
+        'free_spins_available',
+        'last_free_spin_at',
+        'accepted_bonus_terms_at',
+        'accepted_bonus_terms_version',
     ];
 
     /**
@@ -60,13 +69,25 @@ class User extends Authenticatable implements FilamentUser
     {
         return [
             'email_verified_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
             'password' => 'hashed',
+            'bonus_balance' => 'integer',
+            'daily_streak_count' => 'integer',
+            'last_daily_bonus_at' => 'date',
+            'free_spins_available' => 'integer',
+            'last_free_spin_at' => 'datetime',
+            'accepted_bonus_terms_at' => 'datetime',
         ];
     }
 
     public function socialAccounts(): HasMany
     {
         return $this->hasMany(SocialAccount::class);
+    }
+
+    public function bonusOperations(): HasMany
+    {
+        return $this->hasMany(BonusOperation::class);
     }
 
     public function cartItems(): HasMany

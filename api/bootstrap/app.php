@@ -16,19 +16,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: ['*']);
-        $middleware->encryptCookies(except: ['cart_session_id', 'site_access']);
+        $middleware->encryptCookies(except: ['cart_session_id']);
         $middleware->web(\App\Http\Middleware\EnsureCartSession::class);
-        // Глобально, а не в web-группе: иначе заглушка не срабатывает на 404
-        // (при отсутствии маршрута групповые middleware не выполняются).
-        $middleware->append(\App\Http\Middleware\PasswordGate::class);
-        // Гейт работает до StartSession (нет сессии → csrf_token() пустой),
-        // поэтому его форма проверки пароля идёт без CSRF-токена.
-        $middleware->validateCsrfTokens(except: ['access-check']);
         $middleware->web(\App\Http\Middleware\RedirectMiddleware::class);
+        $middleware->web(\App\Http\Middleware\AntiScrapeMiddleware::class);
         $middleware->alias([
             'onec.api' => \App\Http\Middleware\OneCApiKey::class,
             'onec.log' => \App\Http\Middleware\LogOneCRequest::class,
             'bot.api' => \App\Http\Middleware\BotApiKey::class,
+            'anti.scrape' => \App\Http\Middleware\AntiScrapeMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

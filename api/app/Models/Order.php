@@ -23,10 +23,23 @@ class Order extends Model
         self::STATUS_CANCELLED => 'Отменена',
     ];
 
+    public const PAYMENT_PENDING = 'pending';
+    public const PAYMENT_PAID = 'paid';
+    public const PAYMENT_REFUNDED = 'refunded';
+
+    public static array $paymentStatuses = [
+        self::PAYMENT_PENDING => 'Не оплачен',
+        self::PAYMENT_PAID => 'Оплачен',
+        self::PAYMENT_REFUNDED => 'Возвращён',
+    ];
+
     protected $fillable = [
         'user_id',
         'session_id',
         'status',
+        'payment_status',
+        'paid_at',
+        'completed_at',
         'customer_name',
         'customer_phone',
         'customer_email',
@@ -34,11 +47,17 @@ class Order extends Model
         'customer_comment',
         'manager_comment',
         'total',
+        'bonus_discount',
+        'bonus_earned',
     ];
 
     protected $casts = [
         'quantity' => 'integer',
         'total' => 'decimal:2',
+        'bonus_discount' => 'decimal:2',
+        'bonus_earned' => 'decimal:2',
+        'paid_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -54,5 +73,10 @@ class Order extends Model
     public function statusLabel(): string
     {
         return self::$statuses[$this->status] ?? $this->status;
+    }
+
+    public function paymentStatusLabel(): string
+    {
+        return self::$paymentStatuses[$this->payment_status] ?? $this->payment_status;
     }
 }

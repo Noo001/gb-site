@@ -10,13 +10,13 @@ class ExampleTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * Сайт закрыт парольной заглушкой (PasswordGate) до запуска,
-     * поэтому анонимный запрос главной возвращает 403.
+     * Парольная заглушка снята: главная открыта.
      */
-    public function test_the_application_returns_password_gate_response(): void
+    public function test_home_page_is_public(): void
     {
         $response = $this->get('/');
 
-        $response->assertStatus(403);
+        $response->assertStatus(200);
+        $response->assertSee('Gadget');
     }
 }

@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\PageController;
 use App\Http\Controllers\Web\BlogController;
 use App\Http\Controllers\Web\SalesController;
 use App\Http\Controllers\Web\CaptchaController;
+use App\Http\Controllers\Web\BonusController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/captcha', [CaptchaController::class, 'show'])->name('captcha');
@@ -50,7 +51,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/account/password', [AccountController::class, 'updatePassword'])->name('account.password.update');
     Route::get('/account/orders', [AccountController::class, 'orders'])->name('account.orders');
     Route::get('/account/wishlist', [AccountController::class, 'wishlist'])->name('account.wishlist');
-    Route::get('/account/bonuses', [AccountController::class, 'bonuses'])->name('account.bonuses');
+    Route::get('/account/bonuses', [BonusController::class, 'index'])->name('account.bonuses');
+    Route::post('/account/bonuses/terms', [BonusController::class, 'acceptTerms'])->name('account.bonuses.terms');
+    Route::post('/account/bonuses/daily', [BonusController::class, 'daily'])->name('account.bonuses.daily');
+    Route::post('/account/bonuses/spin', [BonusController::class, 'spin'])->name('account.bonuses.spin');
 
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 });
