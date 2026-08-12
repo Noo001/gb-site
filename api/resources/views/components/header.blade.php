@@ -72,7 +72,9 @@ $infoLinks = [
                         <button type="submit" class="action-link">Выйти</button>
                     </form>
                 @else
-                    <a href="/login" class="action-link">Войти</a>
+                    <button type="button" class="action-link" @click="document.dispatchEvent(new CustomEvent('open-auth-modal'))">
+                        Войти
+                    </button>
                 @endauth
                 <a href="/wishlist" class="action-link">
                     Избранное

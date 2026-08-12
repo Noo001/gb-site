@@ -23,6 +23,9 @@
                     <div class="form-group">
                         <label>Телефон</label>
                         <input type="tel" name="phone" class="input" value="{{ old('phone') }}" required>
+                        @error('phone')
+                            <span class="form-error">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label>Пароль</label>
@@ -31,6 +34,25 @@
                     <div class="form-group">
                         <label>Подтвердите пароль</label>
                         <input type="password" name="password_confirmation" class="input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Код с картинки</label>
+                        <div class="captcha-row">
+                            <img src="/captcha" alt="Капча" onclick="this.src='/captcha?'+Date.now()">
+                            <input type="text" name="captcha" class="input" placeholder="Введите код" required maxlength="10">
+                        </div>
+                        @error('captcha')
+                            <span class="form-error">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group form-check">
+                        <label>
+                            <input type="checkbox" name="privacy" value="1" {{ old('privacy') ? 'checked' : '' }} required>
+                            Согласен с <a href="/privacy" target="_blank">политикой конфиденциальности</a>
+                        </label>
+                        @error('privacy')
+                            <span class="form-error">{{ $message }}</span>
+                        @enderror
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
                 </form>

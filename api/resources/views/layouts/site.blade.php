@@ -53,6 +53,8 @@
 
     @include('components.footer')
 
+    @include('components.auth-modal')
+
     @stack('scripts')
 </body>
 </html>

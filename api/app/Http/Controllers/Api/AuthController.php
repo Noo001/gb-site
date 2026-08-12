@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\CartItem;
 use App\Models\User;
+use App\Rules\Captcha;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -19,18 +22,22 @@ class AuthController extends Controller
             [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-                'phone' => ['nullable', 'string', 'max:50', $this->phoneRule()],
+                'phone' => ['required', 'string', 'max:50', $this->phoneRule()],
                 'password' => ['required', 'string', 'min:6', 'confirmed'],
                 'privacy' => ['required', 'accepted'],
+                'captcha' => ['required', new Captcha],
             ],
             [
                 'email.required' => 'Укажите e-mail.',
                 'email.email' => 'Введите корректный e-mail.',
                 'email.unique' => 'Этот e-mail уже зарегистрирован.',
+                'phone.required' => 'Укажите номер телефона.',
                 'phone.regex' => 'Введите корректный номер телефона.',
                 'password.min' => 'Пароль должен содержать не менее 6 символов.',
                 'privacy.required' => 'Необходимо согласиться с политикой конфиденциальности.',
                 'privacy.accepted' => 'Необходимо согласиться с политикой конфиденциальности.',
+                'captcha.required' => 'Введите код с картинки.',
+                'captcha' => 'Неверный код с картинки.',
             ]
         );
 
@@ -46,8 +53,25 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'phone' => $phone,
+            'phone_verified_at' => now(),
             'password' => Hash::make($data['password']),
         ]);
+
+        $user->increment('bonus_balance', 500);
+
+        if (Schema::hasTable('bonus_operations')) {
+            DB::table('bonus_operations')->insert([
+                'user_id' => $user->id,
+                'type' => 'registration',
+                'amount' => 500,
+                'balance_after' => $user->bonus_balance,
+                'description' => 'Бонус за регистрацию',
+                'related_id' => $user->id,
+                'related_type' => User::class,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         $token = $user->createToken('api')->plainTextToken;
 
@@ -63,6 +87,10 @@ class AuthController extends Controller
             'login' => ['required', 'string'],
             'password' => ['required', 'string'],
             'remember' => ['boolean'],
+            'captcha' => ['required', new Captcha],
+        ], [
+            'captcha.required' => 'Введите код с картинки.',
+            'captcha' => 'Неверный код с картинки.',
         ]);
 
         $isEmail = filter_var($data['login'], FILTER_VALIDATE_EMAIL);

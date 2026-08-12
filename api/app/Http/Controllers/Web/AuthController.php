@@ -15,7 +15,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $request->merge(['login' => $request->input('email')]);
+        $request->merge(['login' => $request->input('login')]);
         $response = app(ApiAuthController::class)->login($request);
         if ($response->status() >= 400) {
             return back()->withInput()->withErrors(['login' => 'Неверный логин или пароль.']);
@@ -27,7 +27,6 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->merge(['privacy' => '1']);
         $response = app(ApiAuthController::class)->register($request);
         if ($response->status() >= 400) {
             return back()->withInput()->withErrors(['register' => 'Не удалось зарегистрироваться.']);
