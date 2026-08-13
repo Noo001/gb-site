@@ -221,6 +221,7 @@ class BonusService
                 $this->addOperation($user, 'spin_cost', -$cost, 'Платная прокрутка рулетки');
             } else {
                 $user->free_spins_available -= 1;
+                $user->save(); // сразу фиксируем расход бесплатной прокрутки
             }
 
             $result = $this->awardSector($user, $sector);
