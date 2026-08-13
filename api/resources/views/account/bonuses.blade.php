@@ -5,7 +5,7 @@
 @section('account_content')
     <h1 class="section-title">Бонусная программа</h1>
 
-    <div class="bonus-balance-card">
+    <div class="bonus-balance-card" :class="{ 'pulse': $store?.bonusPulse }">
         <div class="bonus-balance-label">Баланс бонусов</div>
         <div class="bonus-balance-value">{{ number_format($balance, 0, ',', ' ') }} ₽</div>
     </div>
@@ -42,35 +42,45 @@
         </div>
     </div>
 
-    <div class="bonus-roulette-section" x-data="bonusWheel(@js($sectors), @js($needsAccept), {{ $freeSpins }}, {{ $spinCost }}, {{ $balance }})" x-init="initWheel()">
+    <div
+        class="bonus-roulette-section"
+        x-data="bonusWheel(@js($sectors), @js($needsAccept), {{ $freeSpins }}, {{ $spinCost }}, {{ $balance }}, @js($freeSpinsEnabled))"
+        x-init="initWheel()"
+    >
         <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">Колесо фортуны</h2>
 
         <div class="roulette-layout">
-            <div class="roulette-wheel-wrap">
-                <canvas x-ref="wheel" width="360" height="360" class="roulette-wheel"></canvas>
+            <div class="roulette-wheel-wrap" :class="{ 'spinning': spinning }">
+                <div class="roulette-wheel-glow"></div>
+                <canvas x-ref="wheel" width="420" height="420" class="roulette-wheel"></canvas>
                 <div class="roulette-pointer"></div>
             </div>
 
             <div class="roulette-controls">
                 <p class="roulette-info">
                     Бесплатных прокруток: <strong x-text="freeSpins">{{ $freeSpins }}</strong>
+                    @if (! $freeSpinsEnabled)
+                        <span class="bonus-badge-muted">(отключены в админке)</span>
+                    @endif
                 </p>
                 <p class="roulette-info">
                     Стоимость платной прокрутки: <strong>{{ number_format($spinCost, 0, ',', ' ') }} ₽</strong> бонусов
                 </p>
 
                 <div class="roulette-buttons">
+                    @if ($freeSpinsEnabled)
+                        <button
+                            type="button"
+                            class="btn btn-outline roulette-btn-free"
+                            :disabled="spinning || needsAccept || freeSpins <= 0"
+                            @click="spin(true)"
+                        >
+                            Бесплатная прокрутка
+                        </button>
+                    @endif
                     <button
                         type="button"
-                        class="btn btn-outline"
-                        :disabled="spinning || needsAccept || freeSpins <= 0"
-                        @click="spin(true)"
-                    >
-                        Бесплатная прокрутка
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-primary"
+                        class="btn btn-primary roulette-btn-paid"
                         :disabled="spinning || needsAccept || balance < spinCost"
                         @click="spin(false)"
                     >
@@ -128,23 +138,26 @@
         </div>
     @endif
 
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
     @push('scripts')
         <script>
-            function bonusWheel(sectors, needsAccept, freeSpins, spinCost, balance) {
+            function bonusWheel(sectors, needsAccept, freeSpins, spinCost, balance, freeSpinsEnabled) {
                 return {
                     sectors,
                     needsAccept,
                     freeSpins,
                     spinCost,
                     balance,
+                    freeSpinsEnabled,
                     spinning: false,
                     message: '',
                     messageType: '',
                     rotation: 0,
                     colors: [
-                        '#0cc0df', '#ff9f43', '#10b981', '#ef4444',
+                        '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
                         '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899',
-                        '#6366f1', '#14b8a6'
+                        '#6366f1', '#14b8a6', '#f43f5e', '#84cc16'
                     ],
                     initWheel() {
                         this.drawWheel();
@@ -155,18 +168,18 @@
                         if (!canvas) return;
                         const ctx = canvas.getContext('2d');
                         const dpr = window.devicePixelRatio || 1;
-                        const size = Math.min(360, canvas.clientWidth || 360);
-                        canvas.width = size * dpr;
-                        canvas.height = size * dpr;
-                        canvas.style.width = size + 'px';
-                        canvas.style.height = size + 'px';
+                        const cssSize = Math.min(420, canvas.clientWidth || 420);
+                        canvas.width = cssSize * dpr;
+                        canvas.height = cssSize * dpr;
+                        canvas.style.width = cssSize + 'px';
+                        canvas.style.height = cssSize + 'px';
                         ctx.scale(dpr, dpr);
 
-                        const cx = size / 2;
-                        const cy = size / 2;
-                        const radius = size / 2 - 8;
+                        const cx = cssSize / 2;
+                        const cy = cssSize / 2;
+                        const radius = cssSize / 2 - 12;
 
-                        ctx.clearRect(0, 0, size, size);
+                        ctx.clearRect(0, 0, cssSize, cssSize);
 
                         const count = this.sectors.length || 1;
                         const angle = (Math.PI * 2) / count;
@@ -180,22 +193,32 @@
                             ctx.closePath();
                             ctx.fillStyle = this.colors[i % this.colors.length];
                             ctx.fill();
+
+                            ctx.save();
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = 'rgba(255,255,255,0.5)';
                             ctx.stroke();
+                            ctx.restore();
 
                             ctx.save();
                             ctx.translate(cx, cy);
                             ctx.rotate(start + angle / 2);
                             ctx.textAlign = 'right';
                             ctx.fillStyle = '#fff';
-                            ctx.font = 'bold 12px Inter, sans-serif';
-                            ctx.fillText(this.truncate(this.sectors[i]?.label || '', 16), radius - 14, 5);
+                            ctx.font = 'bold 13px Inter, sans-serif';
+                            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                            ctx.shadowBlur = 3;
+                            ctx.fillText(this.truncate(this.sectors[i]?.label || '', 18), radius - 18, 5);
                             ctx.restore();
                         }
 
+                        // Центральный круг
                         ctx.beginPath();
-                        ctx.arc(cx, cy, 28, 0, Math.PI * 2);
+                        ctx.arc(cx, cy, 34, 0, Math.PI * 2);
                         ctx.fillStyle = '#fff';
                         ctx.fill();
+                        ctx.lineWidth = 3;
+                        ctx.strokeStyle = 'rgba(12, 192, 223, 0.4)';
                         ctx.stroke();
                     },
                     truncate(text, max) {
@@ -230,24 +253,28 @@
                             const index = this.sectors.findIndex(s => s.id === data.sector.id);
                             const count = this.sectors.length;
                             const sectorAngle = 360 / count;
-                            const randomOffset = Math.random() * (sectorAngle - 6) + 3;
+                            const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
                             const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
 
-                            const extraSpins = 5 * 360;
+                            const extraSpins = 6 * 360;
                             const newRotation = this.rotation + extraSpins + (270 - targetAngle - (this.rotation % 360));
                             this.rotation = newRotation;
 
                             const canvas = this.$refs.wheel;
-                            canvas.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+                            canvas.style.transition = 'transform 5s cubic-bezier(0.12, 0.68, 0.18, 0.99)';
                             canvas.style.transform = `rotate(${newRotation}deg)`;
 
                             setTimeout(() => {
                                 this.balance = data.new_balance;
                                 this.freeSpins = data.free_spins_left;
                                 this.message = data.message;
-                                this.messageType = data.sector.type === 'bonus' || data.sector.type === 'free_spin' ? 'success' : 'super';
+                                const isWin = data.sector.type === 'bonus' || data.sector.type === 'free_spin';
+                                this.messageType = isWin ? 'success' : 'super';
                                 this.spinning = false;
-                            }, 4100);
+                                if (isWin) {
+                                    launchConfetti();
+                                }
+                            }, 5100);
                         } catch (e) {
                             this.message = 'Не удалось связаться с сервером.';
                             this.messageType = 'error';
@@ -256,6 +283,78 @@
                     }
                 };
             }
+
+            function launchConfetti() {
+                const canvas = document.getElementById('confetti-canvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                canvas.style.opacity = '1';
+
+                const colors = ['#0cc0df', '#ff7b00', '#10b981', '#ef4444', '#8b5cf6', '#f59e0b', '#ec4899'];
+                const particles = [];
+                const count = 160;
+
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: canvas.width / 2,
+                        y: canvas.height / 2,
+                        vx: (Math.random() - 0.5) * 24,
+                        vy: (Math.random() - 1.2) * 24,
+                        size: Math.random() * 6 + 3,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        rotation: Math.random() * 360,
+                        rotationSpeed: (Math.random() - 0.5) * 10,
+                        gravity: 0.35,
+                        drag: 0.96,
+                        life: 1
+                    });
+                }
+
+                let raf;
+                function render() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    let alive = false;
+                    particles.forEach(p => {
+                        if (p.life <= 0) return;
+                        alive = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += p.gravity;
+                        p.vx *= p.drag;
+                        p.vy *= p.drag;
+                        p.rotation += p.rotationSpeed;
+                        p.life -= 0.012;
+
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate((p.rotation * Math.PI) / 180);
+                        ctx.globalAlpha = Math.max(0, p.life);
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                        ctx.restore();
+                    });
+
+                    if (alive) {
+                        raf = requestAnimationFrame(render);
+                    } else {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        canvas.style.opacity = '0';
+                    }
+                }
+
+                cancelAnimationFrame(raf);
+                render();
+            }
+
+            window.addEventListener('resize', () => {
+                const canvas = document.getElementById('confetti-canvas');
+                if (canvas) {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+            });
         </script>
     @endpush
 @endsection

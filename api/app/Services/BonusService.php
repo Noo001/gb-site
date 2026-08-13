@@ -91,6 +91,11 @@ class BonusService
         return $user->last_daily_bonus_at->timezone(self::TIMEZONE)->startOfDay()->lt($this->today());
     }
 
+    public function freeSpinsEnabled(): bool
+    {
+        return (bool) $this->setting('bonus_free_spins_enabled', true);
+    }
+
     public function collectDaily(User $user): array
     {
         return DB::transaction(function () use ($user) {
@@ -124,7 +129,9 @@ class BonusService
             }
 
             $user->last_daily_bonus_at = now();
-            $user->free_spins_available += 1; // бесплатная прокрутка за сбор
+            if ($this->freeSpinsEnabled()) {
+                $user->free_spins_available += 1; // бесплатная прокрутка за сбор
+            }
             $user->save();
 
             $this->addOperation($user, 'daily', $earned, $description);
@@ -169,7 +176,7 @@ class BonusService
 
     public function canSpinFree(User $user): bool
     {
-        return $user->free_spins_available > 0;
+        return $this->freeSpinsEnabled() && $user->free_spins_available > 0;
     }
 
     public function spin(User $user, bool $useFree = false): array
@@ -182,6 +189,11 @@ class BonusService
             $cost = $this->spinCost();
 
             if ($useFree) {
+                if (! $this->freeSpinsEnabled()) {
+                    throw ValidationException::withMessages([
+                        'spin' => ['Бесплатные прокрутки временно отключены.'],
+                    ]);
+                }
                 if ($user->free_spins_available <= 0) {
                     throw ValidationException::withMessages([
                         'spin' => ['Бесплатных попыток нет.'],
