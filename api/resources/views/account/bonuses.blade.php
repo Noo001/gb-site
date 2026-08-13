@@ -67,7 +67,7 @@
 
         <div
             class="bonus-roulette-section"
-            x-data="bonusWheel(@js($sectors), @js($needsAccept), {{ $freeSpins }}, {{ $spinCost }}, {{ $balance }}, @js($freeSpinsEnabled))"
+            x-data="bonusWheel(@js($sectors), @js($needsAccept), {{ $spinCost }}, @js($freeSpinsEnabled))"
             x-init="initWheel()"
         >
             <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">Колесо фортуны</h2>
@@ -82,7 +82,7 @@
                 <div class="roulette-controls">
                     <template x-if="freeSpinsEnabled">
                         <p class="roulette-info">
-                            Бесплатных прокруток: <strong x-text="freeSpins">{{ $freeSpins }}</strong>
+                            Бесплатных прокруток: <strong x-text="$parent.freeSpins">{{ $freeSpins }}</strong>
                         </p>
                     </template>
                     <p class="roulette-info">
@@ -94,7 +94,7 @@
                             <button
                                 type="button"
                                 class="btn btn-outline roulette-btn-free"
-                                :disabled="spinning || needsAccept || freeSpins <= 0"
+                                :disabled="spinning || needsAccept || $parent.freeSpins <= 0"
                                 @click="spin(true)"
                             >
                                 Бесплатная прокрутка
@@ -103,7 +103,7 @@
                         <button
                             type="button"
                             class="btn btn-primary roulette-btn-paid"
-                            :disabled="spinning || needsAccept || balance < spinCost"
+                            :disabled="spinning || needsAccept || $parent.balance < spinCost"
                             @click="spin(false)"
                         >
                             Прокрутить за {{ number_format($spinCost, 0, ',', ' ') }} бонусов
@@ -114,11 +114,11 @@
                         <div class="roulette-message" :class="messageType" x-text="message"></div>
                     </template>
 
-                    <template x-if="freeSpinsEnabled && !needsAccept && freeSpins <= 0">
+                    <template x-if="freeSpinsEnabled && !needsAccept && $parent.freeSpins <= 0">
                         <p class="bonus-notice">Бесплатных прокруток пока нет. Получите их за ежедневный сбор или выиграйте в рулетке.</p>
                     </template>
 
-                    <template x-if="!needsAccept && balance < spinCost">
+                    <template x-if="!needsAccept && $parent.balance < spinCost">
                         <p class="bonus-notice">Недостаточно бонусов для платной прокрутки. Соберите ежедневный бонус или дождитесь начислений за покупки.</p>
                     </template>
 
@@ -230,13 +230,11 @@
                 };
             }
 
-            function bonusWheel(sectors, needsAccept, freeSpins, spinCost, balance, freeSpinsEnabled) {
+            function bonusWheel(sectors, needsAccept, spinCost, freeSpinsEnabled) {
                 return {
                     sectors,
                     needsAccept,
-                    freeSpins,
                     spinCost,
-                    balance,
                     freeSpinsEnabled,
                     spinning: false,
                     message: '',
@@ -352,8 +350,8 @@
                             canvas.style.transform = `rotate(${newRotation}deg)`;
 
                             setTimeout(() => {
-                                this.balance = data.new_balance;
-                                this.freeSpins = data.free_spins_left;
+                                this.$parent.balance = data.new_balance;
+                                this.$parent.freeSpins = data.free_spins_left;
                                 this.message = data.message;
                                 const isWin = data.sector.type === 'bonus' || data.sector.type === 'free_spin';
                                 this.messageType = isWin ? 'success' : 'super';
