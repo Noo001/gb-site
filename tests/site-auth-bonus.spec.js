@@ -94,7 +94,7 @@ const fail = (msg) => { console.log('  ✗', msg); return msg; };
     }
 
     console.log('\nCollecting daily bonus...');
-    await safeClick('button[type="submit"].btn-primary:has-text("Собрать бонусы")', 'Daily collect button');
+    await safeClick('button:has-text("Собрать бонусы")', 'Daily collect button');
     await page.waitForTimeout(1500);
     ok('Daily bonus collected');
     await screenshot(page, 'account-bonuses-daily');

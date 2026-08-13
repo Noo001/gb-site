@@ -3893,6 +3893,23 @@ button {
     margin: 0;
 }
 
+.bonus-terms-link {
+    margin-left: 0.75rem;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    padding: 0;
+}
+
+.bonus-terms-link:hover {
+    color: var(--accent-hover);
+}
+
 .bonus-actions {
     margin-top: 1.5rem;
 }

@@ -23,7 +23,15 @@ $user = \\App\\Models\\User::firstOrCreate(
         "accepted_bonus_terms_version" => 1,
     ]
 );
-$user->update(["bonus_balance" => 500, "accepted_bonus_terms_at" => now(), "accepted_bonus_terms_version" => 1]);
+$user->update([
+    "bonus_balance" => 500,
+    "accepted_bonus_terms_at" => now(),
+    "accepted_bonus_terms_version" => 1,
+    "free_spins_available" => 0,
+    "last_daily_bonus_at" => null,
+    "last_free_spin_at" => null,
+    "daily_streak_count" => 0,
+]);
 echo \\Illuminate\\Support\\Facades\\URL::temporarySignedRoute(
     "e2e.login",
     now()->addMinutes(5),

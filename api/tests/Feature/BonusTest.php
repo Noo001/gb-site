@@ -31,7 +31,8 @@ class BonusTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Бонусная программа');
-        $response->assertSee('100 ₽');
+        $response->assertSee('100');
+        $response->assertSee('Баланс бонусов');
         $response->assertSee('Условия бонусной программы');
     }
 

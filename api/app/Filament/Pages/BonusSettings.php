@@ -57,28 +57,28 @@ class BonusSettings extends Page implements HasForms
                     ->default(true),
 
                 TextInput::make('bonus_registration_amount')
-                    ->label('Бонус за регистрацию, ₽')
+                    ->label('Бонус за регистрацию, бонусов')
                     ->numeric()
                     ->minValue(0)
                     ->required()
                     ->default(500),
 
                 TextInput::make('bonus_daily_amount')
-                    ->label('Ежедневный бонус, ₽')
+                    ->label('Ежедневный бонус, бонусов')
                     ->numeric()
                     ->minValue(0)
                     ->required()
                     ->default(10),
 
                 TextInput::make('bonus_streak_amount')
-                    ->label('Бонус за серию 7 дней, ₽')
+                    ->label('Бонус за серию 7 дней, бонусов')
                     ->numeric()
                     ->minValue(0)
                     ->required()
                     ->default(30),
 
                 TextInput::make('bonus_spin_cost')
-                    ->label('Стоимость платной прокрутки, ₽')
+                    ->label('Стоимость платной прокрутки, бонусов')
                     ->numeric()
                     ->minValue(0)
                     ->required()

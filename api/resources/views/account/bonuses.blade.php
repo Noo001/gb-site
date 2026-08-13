@@ -3,145 +3,233 @@
 @section('account_title', 'Бонусы')
 
 @section('account_content')
-    <h1 class="section-title">Бонусная программа</h1>
-
-    <div class="bonus-balance-card" :class="{ 'pulse': $store?.bonusPulse }">
-        <div class="bonus-balance-label">Баланс бонусов</div>
-        <div class="bonus-balance-value">{{ number_format($balance, 0, ',', ' ') }} ₽</div>
-    </div>
-
-    @if ($terms)
-        <div class="bonus-terms-card">
-            <h2 class="bonus-terms-title">Условия бонусной программы</h2>
-            @if ($needsAccept)
-                <div class="bonus-terms-content">
-                    {!! nl2br(e($terms->content)) !!}
-                </div>
-                <form method="POST" action="{{ route('account.bonuses.terms') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-primary">Принять условия</button>
-                </form>
-            @else
-                <p class="bonus-terms-accepted">✅ Условия приняты (версия {{ $user->accepted_bonus_terms_version ?? $terms->version }}).</p>
-            @endif
-        </div>
-    @endif
-
-    <div class="bonus-actions">
-        <div class="bonus-action-card">
-            <h3 class="bonus-action-title">Ежедневный сбор</h3>
-            <p class="bonus-action-text">Заходите каждый день и получайте бонусы. Каждые 7 дней подряд — повышенная награда.</p>
-            @if ($canCollectDaily)
-                <form method="POST" action="{{ route('account.bonuses.daily') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-primary">Собрать бонусы</button>
-                </form>
-            @else
-                <button class="btn btn-outline" disabled>Собрано сегодня, возвращайтесь завтра</button>
-            @endif
-        </div>
-    </div>
-
     <div
-        class="bonus-roulette-section"
-        x-data="bonusWheel(@js($sectors), @js($needsAccept), {{ $freeSpins }}, {{ $spinCost }}, {{ $balance }}, @js($freeSpinsEnabled))"
-        x-init="initWheel()"
+        x-data="bonusPage({{ $balance }}, {{ $freeSpins }}, {{ $canCollectDaily ? 'true' : 'false' }}, {{ $spinCost }}, {{ $freeSpinsEnabled ? 'true' : 'false' }})"
     >
-        <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">Колесо фортуны</h2>
+        <h1 class="section-title">Бонусная программа</h1>
 
-        <div class="roulette-layout">
-            <div class="roulette-wheel-wrap" :class="{ 'spinning': spinning }">
-                <div class="roulette-wheel-glow"></div>
-                <canvas x-ref="wheel" width="420" height="420" class="roulette-wheel"></canvas>
-                <div class="roulette-pointer"></div>
-            </div>
+        <div class="bonus-balance-card" :class="{ 'pulse': balancePulse }">
+            <div class="bonus-balance-label">Баланс бонусов</div>
+            <div class="bonus-balance-value"><span x-text="balanceFormatted">{{ number_format($balance, 0, ',', ' ') }}</span> <span class="bonus-currency">Б</span></div>
+        </div>
 
-            <div class="roulette-controls">
-                <p class="roulette-info">
-                    Бесплатных прокруток: <strong x-text="freeSpins">{{ $freeSpins }}</strong>
-                    @if (! $freeSpinsEnabled)
-                        <span class="bonus-badge-muted">(отключены в админке)</span>
-                    @endif
-                </p>
-                <p class="roulette-info">
-                    Стоимость платной прокрутки: <strong>{{ number_format($spinCost, 0, ',', ' ') }} ₽</strong> бонусов
-                </p>
-
-                <div class="roulette-buttons">
-                    @if ($freeSpinsEnabled)
-                        <button
-                            type="button"
-                            class="btn btn-outline roulette-btn-free"
-                            :disabled="spinning || needsAccept || freeSpins <= 0"
-                            @click="spin(true)"
-                        >
-                            Бесплатная прокрутка
-                        </button>
-                    @endif
-                    <button
-                        type="button"
-                        class="btn btn-primary roulette-btn-paid"
-                        :disabled="spinning || needsAccept || balance < spinCost"
-                        @click="spin(false)"
-                    >
-                        Прокрутить за {{ number_format($spinCost, 0, ',', ' ') }} ₽
-                    </button>
-                </div>
-
-                <template x-if="message">
-                    <div class="roulette-message" :class="messageType" x-text="message"></div>
-                </template>
-
+        @if ($terms)
+            <div class="bonus-terms-card">
+                <h2 class="bonus-terms-title">Условия бонусной программы</h2>
                 @if ($needsAccept)
-                    <p class="bonus-notice">Чтобы крутить рулетку, нужно принять условия бонусной программы.</p>
+                    <div class="bonus-terms-content">
+                        {!! nl2br(e($terms->content)) !!}
+                    </div>
+                    <form method="POST" action="{{ route('account.bonuses.terms') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Принять условия</button>
+                    </form>
+                @else
+                    <p class="bonus-terms-accepted">
+                        ✅ Условия приняты (версия {{ $user->accepted_bonus_terms_version ?? $terms->version }}).
+                        <button type="button" class="bonus-terms-link" @click="showTerms = !showTerms">
+                            <span x-show="!showTerms">Показать условия</span>
+                            <span x-show="showTerms" x-cloak>Скрыть условия</span>
+                        </button>
+                    </p>
+                    <div x-show="showTerms" x-cloak class="bonus-terms-content" style="margin-top: 0.75rem;">
+                        {!! nl2br(e($terms->content)) !!}
+                    </div>
                 @endif
             </div>
+        @endif
+
+        <div class="bonus-actions">
+            <div class="bonus-action-card">
+                <h3 class="bonus-action-title">Ежедневный сбор</h3>
+                <p class="bonus-action-text">Заходите каждый день и получайте бонусы. Каждые 7 дней подряд — повышенная награда.</p>
+                <template x-if="canCollectDaily">
+                    <div>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            :disabled="dailyCollecting"
+                            @click="collectDaily()"
+                        >
+                            <span x-show="!dailyCollecting">Собрать бонусы</span>
+                            <span x-show="dailyCollecting" x-cloak>Собираем…</span>
+                        </button>
+                        <template x-if="dailyMessage">
+                            <div class="roulette-message" :class="dailyMessageType" x-text="dailyMessage" style="margin-top: 0.75rem;"></div>
+                        </template>
+                    </div>
+                </template>
+                <template x-if="!canCollectDaily">
+                    <button class="btn btn-outline" disabled>Собрано сегодня, возвращайтесь завтра</button>
+                </template>
+            </div>
         </div>
-    </div>
 
-    <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">История операций</h2>
+        <div
+            class="bonus-roulette-section"
+            x-data="bonusWheel(@js($sectors), @js($needsAccept), {{ $freeSpins }}, {{ $spinCost }}, {{ $balance }}, @js($freeSpinsEnabled))"
+            x-init="initWheel()"
+        >
+            <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">Колесо фортуны</h2>
 
-    @if ($operations->count())
-        <div class="account-table-wrap">
-            <table class="account-table">
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Тип</th>
-                        <th>Сумма</th>
-                        <th>Баланс после</th>
-                        <th>Описание</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($operations as $operation)
+            <div class="roulette-layout">
+                <div class="roulette-wheel-wrap" :class="{ 'spinning': spinning }">
+                    <div class="roulette-wheel-glow"></div>
+                    <canvas x-ref="wheel" width="420" height="420" class="roulette-wheel"></canvas>
+                    <div class="roulette-pointer"></div>
+                </div>
+
+                <div class="roulette-controls">
+                    <template x-if="freeSpinsEnabled">
+                        <p class="roulette-info">
+                            Бесплатных прокруток: <strong x-text="freeSpins">{{ $freeSpins }}</strong>
+                        </p>
+                    </template>
+                    <p class="roulette-info">
+                        Стоимость платной прокрутки: <strong>{{ number_format($spinCost, 0, ',', ' ') }}</strong> бонусов
+                    </p>
+
+                    <div class="roulette-buttons">
+                        <template x-if="freeSpinsEnabled">
+                            <button
+                                type="button"
+                                class="btn btn-outline roulette-btn-free"
+                                :disabled="spinning || needsAccept || freeSpins <= 0"
+                                @click="spin(true)"
+                            >
+                                Бесплатная прокрутка
+                            </button>
+                        </template>
+                        <button
+                            type="button"
+                            class="btn btn-primary roulette-btn-paid"
+                            :disabled="spinning || needsAccept || balance < spinCost"
+                            @click="spin(false)"
+                        >
+                            Прокрутить за {{ number_format($spinCost, 0, ',', ' ') }} бонусов
+                        </button>
+                    </div>
+
+                    <template x-if="message">
+                        <div class="roulette-message" :class="messageType" x-text="message"></div>
+                    </template>
+
+                    <template x-if="freeSpinsEnabled && !needsAccept && freeSpins <= 0">
+                        <p class="bonus-notice">Бесплатных прокруток пока нет. Получите их за ежедневный сбор или выиграйте в рулетке.</p>
+                    </template>
+
+                    <template x-if="!needsAccept && balance < spinCost">
+                        <p class="bonus-notice">Недостаточно бонусов для платной прокрутки. Соберите ежедневный бонус или дождитесь начислений за покупки.</p>
+                    </template>
+
+                    @if ($needsAccept)
+                        <p class="bonus-notice">Чтобы крутить рулетку, нужно принять условия бонусной программы.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">История операций</h2>
+
+        @if ($operations->count())
+            <div class="account-table-wrap">
+                <table class="account-table">
+                    <thead>
                         <tr>
-                            <td>{{ $operation->created_at->format('d.m.Y H:i') }}</td>
-                            <td>{{ $operation->type }}</td>
-                            <td class="{{ $operation->amount >= 0 ? 'bonus-amount-positive' : 'bonus-amount-negative' }}">
-                                {{ $operation->amount >= 0 ? '+' : '' }}{{ number_format($operation->amount, 0, ',', ' ') }} ₽
-                            </td>
-                            <td>{{ number_format($operation->balance_after, 0, ',', ' ') }} ₽</td>
-                            <td>{{ $operation->description ?: '—' }}</td>
+                            <th>Дата</th>
+                            <th>Тип</th>
+                            <th>Сумма</th>
+                            <th>Баланс после</th>
+                            <th>Описание</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        @foreach ($operations as $operation)
+                            <tr>
+                                <td>{{ $operation->created_at->format('d.m.Y H:i') }}</td>
+                                <td>{{ $operation->type }}</td>
+                                <td class="{{ $operation->amount >= 0 ? 'bonus-amount-positive' : 'bonus-amount-negative' }}">
+                                    {{ $operation->amount >= 0 ? '+' : '' }}{{ number_format($operation->amount, 0, ',', ' ') }} бонусов
+                                </td>
+                                <td>{{ number_format($operation->balance_after, 0, ',', ' ') }} бонусов</td>
+                                <td>{{ $operation->description ?: '—' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="pagination-wrap">
-            {{ $operations->links() }}
-        </div>
-    @else
-        <div class="empty-state">
-            <p>История бонусов пуста.</p>
-        </div>
-    @endif
+            <div class="pagination-wrap">
+                {{ $operations->links() }}
+            </div>
+        @else
+            <div class="empty-state">
+                <p>История бонусов пуста.</p>
+            </div>
+        @endif
+    </div>
 
     <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
 
     @push('scripts')
         <script>
+            function bonusPage(initialBalance, initialFreeSpins, canCollectDaily, spinCost, freeSpinsEnabled) {
+                return {
+                    balance: initialBalance,
+                    freeSpins: initialFreeSpins,
+                    canCollectDaily: canCollectDaily,
+                    spinCost: spinCost,
+                    freeSpinsEnabled: freeSpinsEnabled,
+                    showTerms: false,
+                    dailyCollecting: false,
+                    dailyMessage: '',
+                    dailyMessageType: '',
+                    balancePulse: false,
+                    get balanceFormatted() {
+                        return this.balance.toLocaleString('ru-RU');
+                    },
+                    async collectDaily() {
+                        if (this.dailyCollecting) return;
+                        this.dailyCollecting = true;
+                        this.dailyMessage = '';
+
+                        try {
+                            const response = await fetch('{{ route('account.bonuses.daily') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({})
+                            });
+
+                            const data = await response.json();
+
+                            if (!response.ok || data.error) {
+                                this.dailyMessage = data.error || 'Ошибка сбора';
+                                this.dailyMessageType = 'error';
+                                this.dailyCollecting = false;
+                                return;
+                            }
+
+                            this.balance = data.new_balance;
+                            this.freeSpins = data.free_spins_available;
+                            this.canCollectDaily = data.can_collect_daily;
+                            this.dailyMessage = data.message;
+                            this.dailyMessageType = 'success';
+                            this.balancePulse = true;
+                            setTimeout(() => this.balancePulse = false, 800);
+                        } catch (e) {
+                            this.dailyMessage = 'Не удалось связаться с сервером.';
+                            this.dailyMessageType = 'error';
+                        } finally {
+                            this.dailyCollecting = false;
+                        }
+                    }
+                };
+            }
+
             function bonusWheel(sectors, needsAccept, freeSpins, spinCost, balance, freeSpinsEnabled) {
                 return {
                     sectors,
@@ -212,7 +300,6 @@
                             ctx.restore();
                         }
 
-                        // Центральный круг
                         ctx.beginPath();
                         ctx.arc(cx, cy, 34, 0, Math.PI * 2);
                         ctx.fillStyle = '#fff';
@@ -292,27 +379,79 @@
                 canvas.height = window.innerHeight;
                 canvas.style.opacity = '1';
 
-                const colors = ['#0cc0df', '#ff7b00', '#10b981', '#ef4444', '#8b5cf6', '#f59e0b', '#ec4899'];
+                const colors = ['#0cc0df', '#ff7b00', '#10b981', '#ef4444', '#8b5cf6', '#f59e0b', '#ec4899', '#ffffff', '#ffd700'];
                 const particles = [];
-                const count = 160;
+                const count = 250;
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+
+                function randomBurstAngle() {
+                    const base = Math.PI / 2; // upward
+                    return base + (Math.random() - 0.5) * 2.5;
+                }
 
                 for (let i = 0; i < count; i++) {
+                    const angle = randomBurstAngle();
+                    const speed = Math.random() * 18 + 6;
+                    const shapeType = Math.random() > 0.5 ? 'star' : 'circle';
                     particles.push({
-                        x: canvas.width / 2,
-                        y: canvas.height / 2,
-                        vx: (Math.random() - 0.5) * 24,
-                        vy: (Math.random() - 1.2) * 24,
-                        size: Math.random() * 6 + 3,
+                        x: centerX,
+                        y: centerY,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        size: Math.random() * 7 + 3,
                         color: colors[Math.floor(Math.random() * colors.length)],
                         rotation: Math.random() * 360,
-                        rotationSpeed: (Math.random() - 0.5) * 10,
-                        gravity: 0.35,
-                        drag: 0.96,
-                        life: 1
+                        rotationSpeed: (Math.random() - 0.5) * 14,
+                        gravity: 0.45,
+                        drag: 0.965,
+                        life: 1,
+                        decay: 0.008 + Math.random() * 0.01,
+                        shapeType,
+                        twinkle: Math.random() > 0.7
                     });
                 }
 
                 let raf;
+                function drawParticle(p) {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.globalAlpha = Math.max(0, p.life);
+                    ctx.fillStyle = p.color;
+
+                    if (p.shapeType === 'star') {
+                        const spikes = 5;
+                        const outer = p.size;
+                        const inner = p.size * 0.45;
+                        ctx.beginPath();
+                        for (let i = 0; i < spikes * 2; i++) {
+                            const r = i % 2 === 0 ? outer : inner;
+                            const a = (Math.PI / spikes) * i;
+                            if (i === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+                            else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                    } else if (p.twinkle) {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, p.size * 1.3, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255,255,255,' + Math.max(0, p.life * 0.6) + ')';
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = Math.max(0, p.life);
+                        ctx.fill();
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    ctx.restore();
+                }
+
                 function render() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     let alive = false;
@@ -325,15 +464,8 @@
                         p.vx *= p.drag;
                         p.vy *= p.drag;
                         p.rotation += p.rotationSpeed;
-                        p.life -= 0.012;
-
-                        ctx.save();
-                        ctx.translate(p.x, p.y);
-                        ctx.rotate((p.rotation * Math.PI) / 180);
-                        ctx.globalAlpha = Math.max(0, p.life);
-                        ctx.fillStyle = p.color;
-                        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-                        ctx.restore();
+                        p.life -= p.decay;
+                        drawParticle(p);
                     });
 
                     if (alive) {

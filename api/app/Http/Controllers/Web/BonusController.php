@@ -63,22 +63,40 @@ class BonusController extends Controller
         return back()->with('success', 'Условия бонусной программы приняты.');
     }
 
-    public function daily(Request $request): RedirectResponse
+    public function daily(Request $request): RedirectResponse|JsonResponse
     {
         /** @var User $user */
         $user = Auth::user();
 
         if (! $user->accepted_bonus_terms_at) {
-            return back()->withErrors(['terms' => 'Сначала нужно принять условия бонусной программы.']);
+            $message = 'Сначала нужно принять условия бонусной программы.';
+            return $request->expectsJson()
+                ? response()->json(['error' => $message], 422)
+                : back()->withErrors(['terms' => $message]);
         }
 
         try {
             $result = $this->bonusService->collectDaily($user);
-            return back()->with('success', "Вы получили {$result['earned']} бонусов. Новый баланс: {$result['new_balance']}.");
+            $message = "Вы получили {$result['earned']} бонусов. Новый баланс: {$result['new_balance']}.";
+
+            return $request->expectsJson()
+                ? response()->json([
+                    'success' => true,
+                    'earned' => $result['earned'],
+                    'new_balance' => $result['new_balance'],
+                    'free_spins_available' => $user->free_spins_available,
+                    'can_collect_daily' => false,
+                    'message' => $message,
+                ])
+                : back()->with('success', $message);
         } catch (\Throwable $e) {
-            return back()->withErrors(['daily' => $e instanceof \Illuminate\Validation\ValidationException
+            $message = $e instanceof \Illuminate\Validation\ValidationException
                 ? $e->validator->errors()->first('daily')
-                : 'Не удалось собрать бонусы.']);
+                : 'Не удалось собрать бонусы.';
+
+            return $request->expectsJson()
+                ? response()->json(['error' => $message], 422)
+                : back()->withErrors(['daily' => $message]);
         }
     }
 
