@@ -100,6 +100,10 @@ const fail = (msg) => { console.log('  ✗', msg); return msg; };
     await screenshot(page, 'account-bonuses-daily');
 
     console.log('\nSpinning the wheel (free spin)...');
+    await page.waitForFunction(() => {
+      const btn = document.querySelector('button.roulette-btn-free');
+      return btn && !btn.disabled;
+    }, { timeout: 10000 });
     await safeClick('button:has-text("Бесплатная прокрутка")', 'Free spin button');
     await page.waitForSelector('.roulette-message', { timeout: 10000 });
     await page.waitForTimeout(500);

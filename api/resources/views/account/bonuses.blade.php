@@ -4,7 +4,9 @@
 
 @section('account_content')
     <div
-        x-data="bonusPage({{ $balance }}, {{ $freeSpins }}, {{ $canCollectDaily ? 'true' : 'false' }}, {{ $spinCost }}, {{ $freeSpinsEnabled ? 'true' : 'false' }})"
+        class="bonus-page"
+        x-data="bonusPage({{ $balance }}, {{ $freeSpins }}, {{ $canCollectDaily ? 'true' : 'false' }}, {{ $spinCost }}, {{ $freeSpinsEnabled ? 'true' : 'false' }}, @js($sectors), @js($needsAccept))"
+        x-init="init()"
     >
         <h1 class="section-title">Бонусная программа</h1>
 
@@ -65,11 +67,7 @@
             </div>
         </div>
 
-        <div
-            class="bonus-roulette-section"
-            x-data="bonusWheel(@js($sectors), @js($needsAccept), {{ $spinCost }}, @js($freeSpinsEnabled))"
-            x-init="initWheel()"
-        >
+        <div class="bonus-roulette-section">
             <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">Колесо фортуны</h2>
 
             <div class="roulette-layout">
@@ -82,7 +80,7 @@
                 <div class="roulette-controls">
                     <template x-if="freeSpinsEnabled">
                         <p class="roulette-info">
-                            Бесплатных прокруток: <strong x-text="$parent.freeSpins">{{ $freeSpins }}</strong>
+                            Бесплатных прокруток: <strong x-text="freeSpins">{{ $freeSpins }}</strong>
                         </p>
                     </template>
                     <p class="roulette-info">
@@ -94,7 +92,7 @@
                             <button
                                 type="button"
                                 class="btn btn-outline roulette-btn-free"
-                                :disabled="spinning || needsAccept || $parent.freeSpins <= 0"
+                                :disabled="spinning || needsAccept || freeSpins <= 0"
                                 @click="spin(true)"
                             >
                                 Бесплатная прокрутка
@@ -103,7 +101,7 @@
                         <button
                             type="button"
                             class="btn btn-primary roulette-btn-paid"
-                            :disabled="spinning || needsAccept || $parent.balance < spinCost"
+                            :disabled="spinning || needsAccept || balance < spinCost"
                             @click="spin(false)"
                         >
                             Прокрутить за {{ number_format($spinCost, 0, ',', ' ') }} бонусов
@@ -114,11 +112,11 @@
                         <div class="roulette-message" :class="messageType" x-text="message"></div>
                     </template>
 
-                    <template x-if="freeSpinsEnabled && !needsAccept && $parent.freeSpins <= 0">
+                    <template x-if="freeSpinsEnabled && !needsAccept && freeSpins <= 0">
                         <p class="bonus-notice">Бесплатных прокруток пока нет. Получите их за ежедневный сбор или выиграйте в рулетке.</p>
                     </template>
 
-                    <template x-if="!needsAccept && $parent.balance < spinCost">
+                    <template x-if="!needsAccept && balance < spinCost">
                         <p class="bonus-notice">Недостаточно бонусов для платной прокрутки. Соберите ежедневный бонус или дождитесь начислений за покупки.</p>
                     </template>
 
@@ -173,8 +171,9 @@
 
     @push('scripts')
         <script>
-            function bonusPage(initialBalance, initialFreeSpins, canCollectDaily, spinCost, freeSpinsEnabled) {
+            function bonusPage(initialBalance, initialFreeSpins, canCollectDaily, spinCost, freeSpinsEnabled, sectors, needsAccept) {
                 return {
+                    // general
                     balance: initialBalance,
                     freeSpins: initialFreeSpins,
                     canCollectDaily: canCollectDaily,
@@ -188,6 +187,25 @@
                     get balanceFormatted() {
                         return this.balance.toLocaleString('ru-RU');
                     },
+
+                    // wheel
+                    sectors,
+                    needsAccept,
+                    spinning: false,
+                    message: '',
+                    messageType: '',
+                    rotation: 0,
+                    colors: [
+                        '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
+                        '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899',
+                        '#6366f1', '#14b8a6', '#f43f5e', '#84cc16'
+                    ],
+
+                    init() {
+                        this.drawWheel();
+                        window.addEventListener('resize', () => this.drawWheel());
+                    },
+
                     async collectDaily() {
                         if (this.dailyCollecting) return;
                         this.dailyCollecting = true;
@@ -226,29 +244,8 @@
                         } finally {
                             this.dailyCollecting = false;
                         }
-                    }
-                };
-            }
-
-            function bonusWheel(sectors, needsAccept, spinCost, freeSpinsEnabled) {
-                return {
-                    sectors,
-                    needsAccept,
-                    spinCost,
-                    freeSpinsEnabled,
-                    spinning: false,
-                    message: '',
-                    messageType: '',
-                    rotation: 0,
-                    colors: [
-                        '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
-                        '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899',
-                        '#6366f1', '#14b8a6', '#f43f5e', '#84cc16'
-                    ],
-                    initWheel() {
-                        this.drawWheel();
-                        window.addEventListener('resize', () => this.drawWheel());
                     },
+
                     drawWheel() {
                         const canvas = this.$refs.wheel;
                         if (!canvas) return;
@@ -306,10 +303,12 @@
                         ctx.strokeStyle = 'rgba(12, 192, 223, 0.4)';
                         ctx.stroke();
                     },
+
                     truncate(text, max) {
                         if (!text) return '';
                         return text.length > max ? text.slice(0, max - 1) + '…' : text;
                     },
+
                     async spin(useFree) {
                         if (this.spinning) return;
                         this.spinning = true;
@@ -350,8 +349,8 @@
                             canvas.style.transform = `rotate(${newRotation}deg)`;
 
                             setTimeout(() => {
-                                this.$parent.balance = data.new_balance;
-                                this.$parent.freeSpins = data.free_spins_left;
+                                this.balance = data.new_balance;
+                                this.freeSpins = data.free_spins_left;
                                 this.message = data.message;
                                 const isWin = data.sector.type === 'bonus' || data.sector.type === 'free_spin';
                                 this.messageType = isWin ? 'success' : 'super';
@@ -384,7 +383,7 @@
                 const centerY = canvas.height / 2;
 
                 function randomBurstAngle() {
-                    const base = Math.PI / 2; // upward
+                    const base = Math.PI / 2;
                     return base + (Math.random() - 0.5) * 2.5;
                 }
 
