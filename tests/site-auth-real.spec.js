@@ -19,8 +19,12 @@ const translit = (str) => {
 };
 
 const screenshot = async (page, name) => {
-  const safe = translit(name) || 'unnamed';
-  await page.screenshot({ path: path.join(SCREENSHOTS, `${safe}.png`), fullPage: false });
+  try {
+    const safe = translit(name) || 'unnamed';
+    await page.screenshot({ path: path.join(SCREENSHOTS, `${safe}.png`), fullPage: false });
+  } catch (e) {
+    console.log('  ⚠ screenshot failed:', e.message);
+  }
 };
 
 const ok = (msg) => console.log('  ✓', msg);
@@ -113,10 +117,11 @@ const getCaptchaCode = async (page) => {
       page.waitForURL(`${BASE}/**`, { timeout: 20000 }),
       page.click('form[action="/login"] button[type="submit"]'),
     ]);
-    ok('Logged in and redirected to account');
+    ok('Logged in');
     await screenshot(page, 'login-success');
 
     console.log('\nVerifying account page...');
+    await page.goto(`${BASE}/account`, { waitUntil: 'networkidle', timeout: 30000 });
     await page.waitForSelector('.account-layout', { timeout: 10000 });
     const header = await page.$eval('.account-layout h1', el => el.textContent.trim()).catch(() => null);
     if (header) {
