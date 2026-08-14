@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Колесо фортуны — «Поле чудес»</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at center, #1a1025 0%, #05030a 100%);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 4vh;
+    overflow-x: hidden;
+  }
+  h1 { font-weight: 900; margin: 0; font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: 0.06em; text-shadow: 0 0 25px rgba(255,215,0,0.35); }
+  .subtitle { color: #d4af37; margin-bottom: 2.5rem; font-size: 1rem; text-align: center; }
+  .scene {
+    perspective: 1400px;
+    width: min(520px, 95vw);
+    height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .drum {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    transform-style: preserve-3d;
+    transition: transform 6.5s cubic-bezier(0.12, 0.75, 0.18, 1);
+  }
+  .panel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 92px;
+    height: 240px;
+    margin-left: -46px;
+    margin-top: -120px;
+    backface-visibility: hidden;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.7);
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.4), 0 0 15px rgba(0,0,0,0.3);
+    padding: 0.4rem;
+  }
+  .ring {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 10px solid transparent;
+    background: linear-gradient(#1a1025, #1a1025) padding-box,
+                conic-gradient(from 0deg, #ffd700, #d4af37, #ffd700, #d4af37, #ffd700) border-box;
+    box-shadow: 0 0 50px rgba(212,175,55,0.35), inset 0 0 40px rgba(0,0,0,0.5);
+    z-index: 1;
+  }
+  .hub {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 120px; height: 120px;
+    transform: translate(-50%, -50%) translateZ(20px);
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, #ffd700 40%, #b8860b 100%);
+    box-shadow: 0 0 40px rgba(255,215,0,0.7), 0 0 10px rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; color: #3d2e08; font-size: 1.1rem;
+    z-index: 3;
+  }
+  .pointer {
+    position: absolute;
+    top: 50%; right: -10px;
+    transform: translateY(-50%);
+    width: 80px; height: 80px;
+    z-index: 10;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6));
+  }
+  .pointer svg { width: 100%; height: 100%; }
+  .controls { margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  button {
+    border: none; padding: 1rem 2rem; border-radius: 999px; font-size: 1rem; font-weight: 900; cursor: pointer;
+    transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .spin { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #2b2005; box-shadow: 0 8px 28px rgba(255, 140, 0, 0.45); }
+  .spin:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(255, 140, 0, 0.6); }
+  .free { background: transparent; color: #ffd700; border: 2px solid #ffd700; }
+  .free:hover { background: rgba(255,215,0,0.08); }
+  .message { margin-top: 1.5rem; min-height: 1.5em; font-weight: 800; font-size: 1.1rem; text-align: center; color: #ffd700; }
+  .spotlight {
+    position: absolute; top: 0; left: 50%; width: 120%; height: 100%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,215,0,0.12) 0%, transparent 60%);
+    pointer-events: none; z-index: -1;
+  }
+  @media (max-width: 540px) {
+    .scene { height: 260px; }
+    .drum, .ring { width: 260px; height: 260px; }
+    .panel { width: 70px; height: 190px; margin-left: -35px; margin-top: -95px; font-size: 0.9rem; }
+    .hub { width: 90px; height: 90px; font-size: 0.9rem; }
+  }
+</style>
+</head>
+<body>
+<div class="spotlight"></div>
+<h1>«Поле чудес»</h1>
+<p class="subtitle">3D-барабан как в телепередаче: призовые плашки на боковой поверхности, золотые диски, плавное вращение</p>
+<div class="scene">
+  <div class="drum" id="drum">
+    <div class="ring"></div>
+    <div class="hub">GO</div>
+  </div>
+  <div class="pointer">
+    <svg viewBox="0 0 80 80" fill="none">
+      <path d="M80 40L0 0V80L80 40Z" fill="url(#g)"/>
+      <defs><linearGradient id="g" x1="80" y1="40" x2="0" y2="40"><stop stop-color="#ffd700"/><stop offset="1" stop-color="#ff6b00"/></linearGradient></defs>
+      <circle cx="58" cy="40" r="8" fill="#fff" stroke="#ff6b00" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+<div class="controls">
+  <button class="spin" onclick="spin(false)">Крутить за бонусы</button>
+  <button class="free" onclick="spin(true)">Бесплатно</button>
+</div>
+<div class="message" id="msg"></div>
+<script>
+const drum = document.getElementById('drum');
+const sectors = [
+  { label: '+50', color: '#c41e3a' },
+  { label: 'Free\nspin', color: '#1e3a8a' },
+  { label: '+100', color: '#0f766e' },
+  { label: 'Суперприз', color: '#b45309' },
+  { label: '+25', color: '#7e22ce' },
+  { label: '+10', color: '#be185d' },
+  { label: '+500', color: '#0369a1' },
+  { label: 'Ещё раз', color: '#4338ca' },
+  { label: '+200', color: '#047857' },
+  { label: 'Jackpot', color: '#d97706' },
+  { label: '+5', color: '#9f1239' },
+  { label: '+1000', color: '#15803d' },
+];
+const n = sectors.length;
+const radius = 145;
+for (let i = 0; i < n; i++) {
+  const el = document.createElement('div');
+  el.className = 'panel';
+  el.style.background = `linear-gradient(160deg, ${sectors[i].color}, ${darken(sectors[i].color, 35)})`;
+  // rotate cylinder to show side faces to the camera; panels face outward
+  el.style.transform = `rotateY(${(360/n)*i}deg) translateZ(${radius}px)`;
+  el.innerHTML = sectors[i].label.replace(/\n/g, '<br>');
+  drum.appendChild(el);
+}
+let rotation = 0;
+function spin(isFree) {
+  const idx = Math.floor(Math.random() * n);
+  const sectorAngle = 360 / n;
+  // pointer is on the right, so target sector must face right (0 deg = front-facing to camera? Actually panels are placed around Y axis; right side is 90deg. We want idx panel to rotate to 90deg.)
+  const target = 90 - idx * sectorAngle;
+  rotation += 5 * 360 + target - (rotation % 360);
+  drum.style.transform = `rotateY(${rotation}deg)`;
+  setTimeout(() => {
+    document.getElementById('msg').textContent = 'Выпало: ' + sectors[idx].label.replace(/\n/g, ' ');
+  }, 6500);
+}
+function darken(hex, amount) {
+  const num = parseInt(hex.slice(1),16);
+  let r = Math.max(0,(num>>16)-amount), g = Math.max(0,((num>>8)&255)-amount), b = Math.max(0,(num&255)-amount);
+  return `rgb(${r},${g},${b})`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview — Pole Chudes wheel in Laravel</title>
+<link rel="stylesheet" href="../../api/public/css/site.css">
+<style>
+  body { background: #f5f5f5; padding: 2rem; }
+  .preview-container { max-width: 1000px; margin: 0 auto; background: #fff; border-radius: 1rem; padding: 2rem; }
+</style>
+</head>
+<body>
+<div class="preview-container">
+  <h2 class="section-title">Колесо фортуны</h2>
+  <div class="roulette-layout">
+    <div class="pc-wheel-stage">
+      <div class="pc-wheel-spotlight"></div>
+      <div class="pc-wheel-3d" id="wheel" style="transform: rotateX(62deg) rotateZ(28deg) rotateY(-6deg);">
+        <svg class="pc-wheel-svg" viewBox="0 0 420 420" id="svg">
+          <defs>
+            <radialGradient id="pcWheelGold" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fff8db"/>
+              <stop offset="35%" stop-color="#e5c86c"/>
+              <stop offset="100%" stop-color="#6b5410"/>
+            </radialGradient>
+          </defs>
+          <circle cx="210" cy="210" r="206" fill="url(#pcWheelGold)" opacity="0.95"/>
+        </svg>
+        <div class="pc-wheel-hub">GO</div>
+        <div class="pc-wheel-pointer">
+          <svg viewBox="0 0 130 130" fill="none">
+            <path d="M130 65L15 0V130L130 65Z" fill="url(#pcWheelPointerGrad)"/>
+            <defs>
+              <linearGradient id="pcWheelPointerGrad" x1="130" y1="65" x2="15" y2="65">
+                <stop stop-color="#ffd700"/><stop offset="1" stop-color="#ff3d00"/>
+              </linearGradient>
+            </defs>
+            <circle cx="88" cy="65" r="8" fill="#fff" stroke="#ff3d00" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="roulette-controls">
+      <p class="roulette-info">Бесплатных прокруток: <strong>3</strong></p>
+      <p class="roulette-info">Стоимость платной прокрутки: <strong>10</strong> бонусов</p>
+      <div class="roulette-buttons">
+        <button class="btn btn-outline roulette-btn-free" onclick="spin(true)">Бесплатная прокрутка</button>
+        <button class="btn btn-primary roulette-btn-paid" onclick="spin(false)">Прокрутить за 10 бонусов</button>
+      </div>
+      <div class="roulette-message success" id="msg" style="display:none"></div>
+    </div>
+  </div>
+</div>
+<script>
+const sectors = [
+  { id: 1, label: '+50', type: 'bonus' },
+  { id: 2, label: '+100', type: 'bonus' },
+  { id: 3, label: '+25', type: 'bonus' },
+  { id: 4, label: 'Free spin', type: 'free_spin' },
+  { id: 5, label: '+500', type: 'bonus' },
+  { id: 6, label: '+10', type: 'bonus' },
+  { id: 7, label: 'Jackpot', type: 'bonus' },
+  { id: 8, label: '+200', type: 'bonus' },
+];
+const sectorColors = ['#111111','#f5f0e1','#111111','#f5f0e1','#c41e3a','#f5f0e1','#111111','#f5f0e1'];
+let rotation = 0;
+let spinning = false;
+
+function truncate(text, max) {
+  if (!text) return '';
+  return text.length > max ? text.slice(0, max - 1) + '…' : text;
+}
+
+function drawWheel() {
+  const svg = document.getElementById('svg');
+  svg.querySelectorAll('.pc-wheel-sector, .pc-wheel-text').forEach(el => el.remove());
+  const size = 420, cx = size/2, cy = size/2, rOut = size/2 - 8, rIn = 55;
+  const n = sectors.length, angle = (Math.PI*2)/n;
+  function path(i) {
+    const start = i*angle - Math.PI/2, end = start + angle;
+    const x1 = cx + rIn*Math.cos(start), y1 = cy + rIn*Math.sin(start);
+    const x2 = cx + rOut*Math.cos(start), y2 = cy + rOut*Math.sin(start);
+    const x3 = cx + rOut*Math.cos(end), y3 = cy + rOut*Math.sin(end);
+    const x4 = cx + rIn*Math.cos(end), y4 = cy + rIn*Math.sin(end);
+    return `M ${x1} ${y1} L ${x2} ${y2} A ${rOut} ${rOut} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rIn} ${rIn} 0 0 0 ${x1} ${y1} Z`;
+  }
+  sectors.forEach((s,i) => {
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d', path(i)); p.setAttribute('fill', sectorColors[i%sectorColors.length]); p.setAttribute('class','pc-wheel-sector');
+    svg.appendChild(p);
+    const mid = i*angle + angle/2 - Math.PI/2;
+    const tr = (rIn+rOut)/2 + 2;
+    const tx = cx + tr*Math.cos(mid), ty = cy + tr*Math.sin(mid);
+    let ta = (mid*180/Math.PI)+90;
+    const norm = ((mid + Math.PI*2.5) % (Math.PI*2));
+    if (norm > Math.PI/2 && norm < 3*Math.PI/2) ta += 180;
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',tx); t.setAttribute('y',ty); t.setAttribute('class','pc-wheel-text');
+    t.setAttribute('fill', sectorColors[i%sectorColors.length] === '#f5f0e1' ? '#111' : '#fff');
+    t.setAttribute('transform', `rotate(${ta}, ${tx}, ${ty})`);
+    t.textContent = truncate(s.label, 16);
+    svg.appendChild(t);
+  });
+}
+
+function spin(isFree) {
+  if (spinning) return;
+  spinning = true;
+  const idx = Math.floor(Math.random()*sectors.length);
+  const sectorAngle = 360/sectors.length;
+  const target = idx*sectorAngle + sectorAngle/2 + (Math.random()*(sectorAngle-8) - (sectorAngle-8)/2);
+  rotation += 6*360 + (90 - target - (rotation%360));
+  document.getElementById('wheel').style.transform = `rotateX(62deg) rotateZ(28deg) rotateY(-6deg) rotateZ(${rotation}deg)`;
+  setTimeout(() => {
+    document.getElementById('msg').style.display = 'block';
+    document.getElementById('msg').textContent = 'Выпало: ' + sectors[idx].label;
+    spinning = false;
+  }, 7000);
+}
+
+drawWheel();
+</script>
+</body>
+</html>

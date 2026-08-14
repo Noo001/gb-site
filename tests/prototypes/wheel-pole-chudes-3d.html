@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Колесо фортуны — «Поле чудес» 3D</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 50% 15%, #2a1836 0%, #0a050d 60%, #050308 100%);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 3vh;
+    overflow-x: hidden;
+  }
+  h1 { font-weight: 900; margin: 0 0 0.4rem; font-size: clamp(1.9rem, 4.2vw, 3rem); letter-spacing: 0.05em; text-shadow: 0 0 30px rgba(255,215,0,0.4); }
+  .subtitle { color: #e5c86c; margin-bottom: 1.2rem; font-size: 1rem; text-align: center; max-width: 600px; padding: 0 1rem; }
+  .stage {
+    position: relative;
+    width: min(680px, 98vw);
+    height: 540px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+  }
+  .wheel-3d {
+    position: relative;
+    width: 520px;
+    height: 520px;
+    transform-style: preserve-3d;
+    transform: rotateX(62deg) rotateZ(28deg) rotateY(-6deg);
+    transition: transform 7s cubic-bezier(0.1, 0.78, 0.15, 1);
+  }
+  .wheel-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 40px 60px rgba(0,0,0,0.7));
+  }
+  .sector {
+    stroke: rgba(255,255,255,0.25);
+    stroke-width: 2;
+    transition: filter 0.2s;
+  }
+  .sector:hover { filter: brightness(1.15); }
+  .sector-text {
+    font-weight: 900;
+    font-size: 26px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .hub {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 110px; height: 110px;
+    transform: translate(-50%, -50%) translateZ(26px);
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #ffd700, #ffed8a, #d4af37, #ffd700);
+    box-shadow: 0 0 40px rgba(255,215,0,0.8), 0 10px 30px rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; color: #3d2e08; font-size: 1.1rem;
+    z-index: 3;
+  }
+  .hub::after {
+    content: ''; position: absolute; inset: -8px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,215,0,0.4);
+    box-shadow: 0 0 20px rgba(255,215,0,0.4);
+  }
+  .pointer {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 160px;
+    height: 160px;
+    transform: translate(-50%, -50%) translateZ(70px) rotateZ(-152deg);
+    z-index: 10;
+    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
+    animation: pointerWiggle 2s ease-in-out infinite;
+  }
+  @keyframes pointerWiggle { 0%,100%{ transform: translate(-50%, -50%) translateZ(70px) rotateZ(-152deg); } 50%{ transform: translate(-50%, -50%) translateZ(70px) rotateZ(-148deg); } }
+  .pointer svg { width: 100%; height: 100%; }
+  .controls { margin-top: 0.5rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  button {
+    border: none; padding: 1.1rem 2.2rem; border-radius: 999px; font-size: 1.05rem; font-weight: 900; cursor: pointer;
+    transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .spin { background: linear-gradient(135deg, #ffd700, #ff6b00); color: #2b2005; box-shadow: 0 8px 28px rgba(255, 107, 0, 0.45); }
+  .spin:hover { transform: translateY(-3px); box-shadow: 0 14px 38px rgba(255, 107, 0, 0.6); }
+  .spin:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .free { background: transparent; color: #ffd700; border: 2px solid #ffd700; }
+  .free:hover { background: rgba(255,215,0,0.08); }
+  .message { margin-top: 1.5rem; min-height: 1.5em; font-weight: 800; font-size: 1.3rem; text-align: center; color: #ffd700; }
+  .spot {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,215,0,0.1) 0%, transparent 55%);
+    pointer-events: none; z-index: -1;
+  }
+  .sparkle {
+    position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%;
+    box-shadow: 0 0 12px #ffd700; opacity: 0;
+    animation: sparkle 3s ease-in-out infinite;
+  }
+  @keyframes sparkle { 0%,100%{ opacity: 0; transform: scale(0); } 50%{ opacity: 0.9; transform: scale(1); } }
+  @media (max-width: 640px) {
+    .stage { height: 430px; }
+    .wheel-3d { width: 400px; height: 400px; }
+    .hub { width: 80px; height: 80px; font-size: 0.85rem; }
+    .pointer { width: 120px; height: 120px; }
+    .sector-text { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="spot"></div>
+<h1>«Поле чудес» 3D</h1>
+<p class="subtitle">Объёмный диск с треугольными секторами, ракурс от стрелки, как на настоящем барабане</p>
+<div class="stage" id="stage">
+  <div class="sparkle" style="top:20%;left:15%;animation-delay:0s"></div>
+  <div class="sparkle" style="top:25%;right:12%;animation-delay:1.2s"></div>
+  <div class="sparkle" style="bottom:30%;left:10%;animation-delay:2.1s"></div>
+  <div class="sparkle" style="bottom:25%;right:15%;animation-delay:0.7s"></div>
+  <div class="wheel-3d" id="wheel">
+    <svg class="wheel-svg" viewBox="0 0 520 520" id="svg">
+      <defs>
+        <radialGradient id="gold" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff8db"/>
+          <stop offset="35%" stop-color="#e5c86c"/>
+          <stop offset="100%" stop-color="#6b5410"/>
+        </radialGradient>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="6" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+      </defs>
+      <circle cx="260" cy="260" r="256" fill="url(#gold)" opacity="0.95"/>
+    </svg>
+    <div class="hub">GO</div>
+    <div class="pointer">
+      <svg viewBox="0 0 160 160" fill="none">
+        <path d="M160 80L20 0V160L160 80Z" fill="url(#g)"/>
+        <defs><linearGradient id="g" x1="160" y1="80" x2="20" y2="80"><stop stop-color="#ffd700"/><stop offset="1" stop-color="#ff3d00"/></linearGradient></defs>
+        <circle cx="105" cy="80" r="10" fill="#fff" stroke="#ff3d00" stroke-width="2"/>
+      </svg>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="spin" id="spinBtn" onclick="spin(false)">Крутить за бонусы</button>
+  <button class="free" onclick="spin(true)">Бесплатно</button>
+</div>
+<div class="message" id="msg"></div>
+<script>
+const wheel = document.getElementById('wheel');
+const svg = document.getElementById('svg');
+const sectors = [
+  { label: '+50', color: '#151515' },
+  { label: '+100', color: '#f5f0e1' },
+  { label: '+25', color: '#151515' },
+  { label: 'Free\nspin', color: '#f5f0e1' },
+  { label: '+500', color: '#c41e3a' },
+  { label: '+10', color: '#f5f0e1' },
+  { label: '+200', color: '#151515' },
+  { label: 'Jackpot', color: '#f5f0e1' },
+  { label: '+5', color: '#151515' },
+  { label: '+1000', color: '#f5f0e1' },
+  { label: 'Супер\nприз', color: '#2e8b57' },
+  { label: '+75', color: '#f5f0e1' },
+];
+const cx = 260, cy = 260, rOut = 250, rIn = 62;
+const n = sectors.length;
+const angle = (Math.PI * 2) / n;
+
+function makeSectorPath(i) {
+  const start = i * angle - Math.PI / 2;
+  const end = start + angle;
+  const x1 = cx + rIn * Math.cos(start);
+  const y1 = cy + rIn * Math.sin(start);
+  const x2 = cx + rOut * Math.cos(start);
+  const y2 = cy + rOut * Math.sin(start);
+  const x3 = cx + rOut * Math.cos(end);
+  const y3 = cy + rOut * Math.sin(end);
+  const x4 = cx + rIn * Math.cos(end);
+  const y4 = cy + rIn * Math.sin(end);
+  return `M ${x1} ${y1} L ${x2} ${y2} A ${rOut} ${rOut} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rIn} ${rIn} 0 0 0 ${x1} ${y1} Z`;
+}
+
+sectors.forEach((s, i) => {
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', makeSectorPath(i));
+  path.setAttribute('fill', s.color);
+  path.setAttribute('class', 'sector');
+  svg.appendChild(path);
+
+  const mid = i * angle + angle / 2 - Math.PI / 2;
+  const tr = (rIn + rOut) / 2 + 4;
+  const tx = cx + tr * Math.cos(mid);
+  const ty = cy + tr * Math.sin(mid);
+  const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  text.setAttribute('x', tx);
+  text.setAttribute('y', ty);
+  text.setAttribute('class', 'sector-text');
+  const isLight = ['#f5f0e1'].includes(s.color);
+  text.setAttribute('fill', isLight ? '#111' : '#fff');
+  // Keep text tangent to the wheel; flip bottom half so it always reads from above
+  let textAngle = (mid * 180 / Math.PI) + 90;
+  const normMid = ((mid + Math.PI * 2.5) % (Math.PI * 2)); // 0 at top
+  if (normMid > Math.PI / 2 && normMid < 3 * Math.PI / 2) {
+    textAngle += 180;
+  }
+  text.setAttribute('transform', `rotate(${textAngle}, ${tx}, ${ty})`);
+  const lines = s.label.split('\n');
+  if (lines.length === 1) {
+    text.textContent = lines[0];
+  } else {
+    text.textContent = lines[0];
+    const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    tspan.setAttribute('x', tx);
+    tspan.setAttribute('dy', '1.1em');
+    tspan.textContent = lines[1];
+    text.appendChild(tspan);
+    text.setAttribute('y', ty - 10);
+  }
+  svg.appendChild(text);
+});
+
+let rotation = 0;
+let spinning = false;
+function spin(isFree) {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  const idx = Math.floor(Math.random() * n);
+  const sectorAngle = 360 / n;
+  const target = -idx * sectorAngle;
+  rotation += 6 * 360 + target - (rotation % 360);
+  wheel.style.transform = `rotateX(62deg) rotateZ(28deg) rotateY(-6deg) rotateZ(${rotation}deg)`;
+  setTimeout(() => {
+    document.getElementById('msg').textContent = 'Выпало: ' + sectors[idx].label.replace(/\n/g, ' ');
+    spinning = false;
+    document.getElementById('spinBtn').disabled = false;
+  }, 7000);
+}
+</script>
+</body>
+</html>

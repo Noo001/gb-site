@@ -71,10 +71,33 @@
             <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">Колесо фортуны</h2>
 
             <div class="roulette-layout">
-                <div class="roulette-wheel-wrap" :class="{ 'spinning': spinning }">
-                    <div class="roulette-wheel-glow"></div>
-                    <canvas x-ref="wheel" width="420" height="420" class="roulette-wheel"></canvas>
-                    <div class="roulette-pointer"></div>
+                <div class="pc-wheel-stage">
+                    <div class="pc-wheel-spotlight"></div>
+                    <div class="pc-wheel-3d" x-ref="wheel" :class="{ 'spinning': spinning }">
+                        <svg class="pc-wheel-svg" :view-box.camel="wheelViewBox" x-ref="svg">
+                            <defs>
+                                <radialGradient id="pcWheelGold" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#fff8db"/>
+                                    <stop offset="35%" stop-color="#e5c86c"/>
+                                    <stop offset="100%" stop-color="#6b5410"/>
+                                </radialGradient>
+                            </defs>
+                            <circle :cx="wheelSize/2" :cy="wheelSize/2" :r="wheelSize/2 - 4" fill="url(#pcWheelGold)" opacity="0.95"/>
+                        </svg>
+                        <div class="pc-wheel-hub">GO</div>
+                        <div class="pc-wheel-pointer">
+                            <svg viewBox="0 0 130 130" fill="none">
+                                <path d="M130 65L15 0V130L130 65Z" fill="url(#pcWheelPointerGrad)"/>
+                                <defs>
+                                    <linearGradient id="pcWheelPointerGrad" x1="130" y1="65" x2="15" y2="65">
+                                        <stop stop-color="#ffd700"/>
+                                        <stop offset="1" stop-color="#ff3d00"/>
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="88" cy="65" r="8" fill="#fff" stroke="#ff3d00" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="roulette-controls">
@@ -195,15 +218,16 @@
                     message: '',
                     messageType: '',
                     rotation: 0,
-                    colors: [
-                        '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
-                        '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899',
-                        '#6366f1', '#14b8a6', '#f43f5e', '#84cc16'
+                    wheelSize: 420,
+                    wheelViewBox: '0 0 420 420',
+                    sectorColors: [
+                        '#111111', '#f5f0e1', '#111111', '#f5f0e1',
+                        '#c41e3a', '#f5f0e1', '#111111', '#f5f0e1',
+                        '#111111', '#f5f0e1', '#2e8b57', '#f5f0e1'
                     ],
 
                     init() {
-                        this.drawWheel();
-                        window.addEventListener('resize', () => this.drawWheel());
+                        this.$nextTick(() => this.drawWheel());
                     },
 
                     async collectDaily() {
@@ -247,61 +271,62 @@
                     },
 
                     drawWheel() {
-                        const canvas = this.$refs.wheel;
-                        if (!canvas) return;
-                        const ctx = canvas.getContext('2d');
-                        const dpr = window.devicePixelRatio || 1;
-                        const cssSize = Math.min(420, canvas.clientWidth || 420);
-                        canvas.width = cssSize * dpr;
-                        canvas.height = cssSize * dpr;
-                        canvas.style.width = cssSize + 'px';
-                        canvas.style.height = cssSize + 'px';
-                        ctx.scale(dpr, dpr);
+                        const svg = this.$refs.svg;
+                        if (!svg) return;
 
-                        const cx = cssSize / 2;
-                        const cy = cssSize / 2;
-                        const radius = cssSize / 2 - 12;
+                        // Clear previously generated sectors/text
+                        svg.querySelectorAll('.pc-wheel-sector, .pc-wheel-text').forEach(el => el.remove());
 
-                        ctx.clearRect(0, 0, cssSize, cssSize);
-
+                        const size = this.wheelSize;
+                        const cx = size / 2;
+                        const cy = size / 2;
+                        const rOut = size / 2 - 8;
+                        const rIn = 55;
                         const count = this.sectors.length || 1;
                         const angle = (Math.PI * 2) / count;
 
-                        for (let i = 0; i < count; i++) {
-                            const start = i * angle;
+                        const makePath = (i) => {
+                            const start = i * angle - Math.PI / 2;
                             const end = start + angle;
-                            ctx.beginPath();
-                            ctx.moveTo(cx, cy);
-                            ctx.arc(cx, cy, radius, start, end);
-                            ctx.closePath();
-                            ctx.fillStyle = this.colors[i % this.colors.length];
-                            ctx.fill();
+                            const x1 = cx + rIn * Math.cos(start);
+                            const y1 = cy + rIn * Math.sin(start);
+                            const x2 = cx + rOut * Math.cos(start);
+                            const y2 = cy + rOut * Math.sin(start);
+                            const x3 = cx + rOut * Math.cos(end);
+                            const y3 = cy + rOut * Math.sin(end);
+                            const x4 = cx + rIn * Math.cos(end);
+                            const y4 = cy + rIn * Math.sin(end);
+                            return `M ${x1} ${y1} L ${x2} ${y2} A ${rOut} ${rOut} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rIn} ${rIn} 0 0 0 ${x1} ${y1} Z`;
+                        };
 
-                            ctx.save();
-                            ctx.lineWidth = 2;
-                            ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-                            ctx.stroke();
-                            ctx.restore();
+                        const ns = 'http://www.w3.org/2000/svg';
+                        this.sectors.forEach((s, i) => {
+                            const path = document.createElementNS(ns, 'path');
+                            path.setAttribute('d', makePath(i));
+                            path.setAttribute('fill', this.sectorColors[i % this.sectorColors.length]);
+                            path.setAttribute('class', 'pc-wheel-sector');
+                            svg.appendChild(path);
 
-                            ctx.save();
-                            ctx.translate(cx, cy);
-                            ctx.rotate(start + angle / 2);
-                            ctx.textAlign = 'right';
-                            ctx.fillStyle = '#fff';
-                            ctx.font = 'bold 13px Inter, sans-serif';
-                            ctx.shadowColor = 'rgba(0,0,0,0.3)';
-                            ctx.shadowBlur = 3;
-                            ctx.fillText(this.truncate(this.sectors[i]?.label || '', 18), radius - 18, 5);
-                            ctx.restore();
-                        }
+                            const mid = i * angle + angle / 2 - Math.PI / 2;
+                            const tr = (rIn + rOut) / 2 + 2;
+                            const tx = cx + tr * Math.cos(mid);
+                            const ty = cy + tr * Math.sin(mid);
 
-                        ctx.beginPath();
-                        ctx.arc(cx, cy, 34, 0, Math.PI * 2);
-                        ctx.fillStyle = '#fff';
-                        ctx.fill();
-                        ctx.lineWidth = 3;
-                        ctx.strokeStyle = 'rgba(12, 192, 223, 0.4)';
-                        ctx.stroke();
+                            let textAngle = (mid * 180 / Math.PI) + 90;
+                            const normMid = ((mid + Math.PI * 2.5) % (Math.PI * 2));
+                            if (normMid > Math.PI / 2 && normMid < 3 * Math.PI / 2) {
+                                textAngle += 180;
+                            }
+
+                            const text = document.createElementNS(ns, 'text');
+                            text.setAttribute('x', tx);
+                            text.setAttribute('y', ty);
+                            text.setAttribute('class', 'pc-wheel-text');
+                            text.setAttribute('fill', this.sectorColors[i % this.sectorColors.length] === '#f5f0e1' ? '#111' : '#fff');
+                            text.setAttribute('transform', `rotate(${textAngle}, ${tx}, ${ty})`);
+                            text.textContent = this.truncate(s.label || s.name || '', 16);
+                            svg.appendChild(text);
+                        });
                     },
 
                     truncate(text, max) {
@@ -349,12 +374,11 @@
                             const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
 
                             const extraSpins = 6 * 360;
-                            const newRotation = this.rotation + extraSpins + (270 - targetAngle - (this.rotation % 360));
+                            const newRotation = this.rotation + extraSpins + (90 - targetAngle - (this.rotation % 360));
                             this.rotation = newRotation;
 
-                            const canvas = this.$refs.wheel;
-                            canvas.style.transition = 'transform 5s cubic-bezier(0.12, 0.68, 0.18, 0.99)';
-                            canvas.style.transform = `rotate(${newRotation}deg)`;
+                            const wheelEl = this.$refs.wheel;
+                            wheelEl.style.transform = `rotateX(62deg) rotateZ(28deg) rotateY(-6deg) rotateZ(${newRotation}deg)`;
 
                             setTimeout(() => {
                                 this.message = data.message;
@@ -364,7 +388,7 @@
                                 if (isWin) {
                                     launchConfetti();
                                 }
-                            }, 5100);
+                            }, 7000);
                         } catch (e) {
                             this.message = 'Не удалось связаться с сервером.';
                             this.messageType = 'error';
