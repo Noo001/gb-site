@@ -35,14 +35,12 @@ const getCaptchaCode = async (page) => {
   }).trim();
   if (!signedUrl.startsWith('http')) throw new Error('unexpected captcha url: ' + signedUrl);
 
-  // Make sure the session cookie is set by visiting the captcha image first.
-  await page.goto(`${BASE}/captcha`, { waitUntil: 'networkidle', timeout: 30000 });
-  await page.waitForTimeout(300);
+  // Set the session cookie by requesting the captcha image in the same context,
+  // without leaving the registration/login page.
+  await page.request.get(`${BASE}/captcha`);
 
-  const response = await page.evaluate(async (url) => {
-    const res = await fetch(url, { credentials: 'include' });
-    return res.json();
-  }, signedUrl);
+  const res = await page.request.get(signedUrl);
+  const response = await res.json();
 
   if (!response.code) throw new Error('captcha code not returned: ' + JSON.stringify(response));
   return response.code;
