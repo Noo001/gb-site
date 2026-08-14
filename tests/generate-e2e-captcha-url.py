@@ -8,7 +8,7 @@ import ssh_exec
 
 php = r"""
 echo \Illuminate\Support\Facades\URL::temporarySignedRoute(
-    'e2e.captcha',
+    "e2e.captcha",
     now()->addMinutes(5)
 );
 """.strip()

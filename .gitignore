@@ -91,3 +91,22 @@ test3d*.png
 test_*.js
 dump_pc3d.js
 pc3d_dump.html
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Ad-hoc diagnostic scripts at repo root (keep them locally, do not commit)
+/check_*.php
+/check-*.php
+/test_*.php
+/test-*.php
+/tmp_*.php
+/tmp_*.py
+/tmp_*.txt
+/tmp_*.js
+/deploy_beget_now.py
+/run_php_utf8.py
+/update_n8n_workflow.py
+/upload_and_run.py
+
