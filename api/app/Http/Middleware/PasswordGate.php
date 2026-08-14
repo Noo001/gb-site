@@ -14,26 +14,8 @@ class PasswordGate
 
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->is('admin*', 'api/*', 'up', '_debugbar/*', 'images/*', 'css/*', 'js/*', 'favicon.ico', 'livewire*', 'pc*')) {
-            return $next($request);
-        }
-
-        if ($request->isMethod('post') && $request->is('access-check')) {
-            return $next($request);
-        }
-
-        if ($request->cookie(self::COOKIE_NAME) === self::COOKIE_VALUE) {
-            return $next($request);
-        }
-
-        if ($request->query(self::COOKIE_NAME) === self::COOKIE_VALUE) {
-            return $next($request);
-        }
-
-        if ($request->expectsJson()) {
-            return response()->json(['message' => 'Требуется пароль.'], 403);
-        }
-
-        return response()->view('auth.password-gate', [], 403);
+        // Заглушка на вход отключена по требованию заказчика (август 2026).
+        // Оставляем класс и константы на случай, если понадобится вернуть позже.
+        return $next($request);
     }
 }

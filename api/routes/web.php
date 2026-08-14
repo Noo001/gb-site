@@ -48,6 +48,12 @@ Route::get('/e2e/login', [\App\Http\Controllers\Web\E2ELoginController::class, '
     ->name('e2e.login')
     ->middleware('signed');
 
+Route::get('/e2e/captcha', [\App\Http\Controllers\Web\E2ECaptchaController::class, '__invoke'])
+    ->name('e2e.captcha')
+    ->middleware('signed');
+
+Route::post('/access-check', [AuthController::class, 'accessCheck'])->name('access.check');
+
 Route::middleware('auth')->group(function () {
     Route::get('/account', [AccountController::class, 'dashboard'])->name('account.dashboard');
     Route::get('/account/profile', [AccountController::class, 'profile'])->name('account.profile');

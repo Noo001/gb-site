@@ -7,33 +7,53 @@ use App\Http\Controllers\Api\AuthController as ApiAuthController;
 use App\Http\Middleware\PasswordGate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function loginForm()  { return view('auth.login'); }
-    public function registerForm() { return view('auth.register'); }
+    public function loginForm()
+    {
+        return view('auth.login');
+    }
+
+    public function registerForm()
+    {
+        return view('auth.register');
+    }
 
     public function login(Request $request)
     {
-        $request->merge(['login' => $request->input('login')]);
-        $response = app(ApiAuthController::class)->login($request);
-        if ($response->status() >= 400) {
-            return back()->withInput()->withErrors(['login' => 'Неверный логин или пароль.']);
+        try {
+            $response = app(ApiAuthController::class)->login($request);
+            $data = $response->getData(true);
+            Auth::loginUsingId($data['user']['id'], $request->boolean('remember'));
+
+            return redirect()->intended(route('home'));
+        } catch (ValidationException $e) {
+            return back()->withInput()->withErrors($e->errors());
+        } catch (\Throwable $e) {
+            Log::error('Web login failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+
+            return back()->withInput()->withErrors(['login' => 'Не удалось войти. Попробуйте ещё раз позже.']);
         }
-        $data = $response->getData(true);
-        Auth::loginUsingId($data['user']['id']);
-        return redirect()->intended(route('home'));
     }
 
     public function register(Request $request)
     {
-        $response = app(ApiAuthController::class)->register($request);
-        if ($response->status() >= 400) {
-            return back()->withInput()->withErrors(['register' => 'Не удалось зарегистрироваться.']);
+        try {
+            $response = app(ApiAuthController::class)->register($request);
+            $data = $response->getData(true);
+            Auth::loginUsingId($data['user']['id']);
+
+            return redirect()->route('home');
+        } catch (ValidationException $e) {
+            return back()->withInput()->withErrors($e->errors());
+        } catch (\Throwable $e) {
+            Log::error('Web registration failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+
+            return back()->withInput()->withErrors(['register' => 'Не удалось зарегистрироваться. Попробуйте ещё раз позже.']);
         }
-        $data = $response->getData(true);
-        Auth::loginUsingId($data['user']['id']);
-        return redirect()->route('home');
     }
 
     public function logout(Request $request)
@@ -41,25 +61,20 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('home');
     }
 
     public function accessCheck(Request $request)
     {
-        if ($request->input('password') === PasswordGate::PASSWORD) {
-            $cookie = cookie(PasswordGate::COOKIE_NAME, PasswordGate::COOKIE_VALUE, 60 * 24 * 30, '/', null, false, false, false, 'Lax');
-
-            if ($request->expectsJson()) {
-                return response()->json(['success' => true])->withCookie($cookie);
-            }
-
-            return redirect()->intended(route('home'))->withCookie($cookie);
-        }
+        // Заглушка отключена: сразу выдаём «доступ разрешён» и куку, чтобы старые
+        // закладки / формы не ломались. См. PasswordGate.
+        $cookie = cookie(PasswordGate::COOKIE_NAME, PasswordGate::COOKIE_VALUE, 60 * 24 * 30, '/', null, false, false, false, 'Lax');
 
         if ($request->expectsJson()) {
-            return response()->json(['success' => false, 'message' => 'Неверный пароль.'], 422);
+            return response()->json(['success' => true])->withCookie($cookie);
         }
 
-        return back()->withErrors(['password' => 'Неверный пароль.']);
+        return redirect()->intended(route('home'))->withCookie($cookie);
     }
 }

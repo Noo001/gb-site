@@ -60,4 +60,46 @@ class AuthModalTest extends TestCase
             'email' => 'ivan2@example.com',
         ]);
     }
+
+    public function test_login_with_valid_credentials_redirects(): void
+    {
+        $user = \App\Models\User::factory()->create([
+            'email' => 'login-test@example.com',
+            'phone' => '79001234567',
+            'password' => \Illuminate\Support\Facades\Hash::make('secret123'),
+        ]);
+
+        $this->get('/captcha');
+        $captcha = session('captcha_code');
+
+        $response = $this->post('/login', [
+            'login' => 'login-test@example.com',
+            'password' => 'secret123',
+            'captcha' => $captcha,
+        ]);
+
+        $response->assertRedirect('/');
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_login_fails_with_wrong_password(): void
+    {
+        \App\Models\User::factory()->create([
+            'email' => 'login-wrong@example.com',
+            'phone' => '79001234568',
+            'password' => \Illuminate\Support\Facades\Hash::make('secret123'),
+        ]);
+
+        $this->get('/captcha');
+        $captcha = session('captcha_code');
+
+        $response = $this->post('/login', [
+            'login' => 'login-wrong@example.com',
+            'password' => 'wrong-password',
+            'captcha' => $captcha,
+        ]);
+
+        $response->assertSessionHasErrors('login');
+        $this->assertGuest();
+    }
 }
