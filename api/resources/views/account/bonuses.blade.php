@@ -334,6 +334,14 @@
                                 return;
                             }
 
+                            // Баланс и оставшиеся бесплатные попытки обновляем сразу,
+                            // без ожидания анимации, чтобы пользователь видел актуальное
+                            // количество бонусов.
+                            this.balance = data.new_balance;
+                            this.freeSpins = data.free_spins_left;
+                            this.balancePulse = true;
+                            setTimeout(() => this.balancePulse = false, 800);
+
                             const index = this.sectors.findIndex(s => s.id === data.sector.id);
                             const count = this.sectors.length;
                             const sectorAngle = 360 / count;
@@ -349,8 +357,6 @@
                             canvas.style.transform = `rotate(${newRotation}deg)`;
 
                             setTimeout(() => {
-                                this.balance = data.new_balance;
-                                this.freeSpins = data.free_spins_left;
                                 this.message = data.message;
                                 const isWin = data.sector.type === 'bonus' || data.sector.type === 'free_spin';
                                 this.messageType = isWin ? 'success' : 'super';

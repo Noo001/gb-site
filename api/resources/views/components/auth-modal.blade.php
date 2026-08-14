@@ -106,7 +106,7 @@ $startTab = ($hasRegisterError && ! $hasLoginError) ? 'register' : 'login';
                 <button
                     type="button"
                     class="auth-modal__link"
-                    @click="document.dispatchEvent(new CustomEvent('open-register-modal'))"
+                    @click="window.dispatchEvent(new CustomEvent('open-register-modal'))"
                 >Зарегистрироваться</button>
             </div>
 
@@ -226,7 +226,7 @@ $startTab = ($hasRegisterError && ! $hasLoginError) ? 'register' : 'login';
                 <button
                     type="button"
                     class="auth-modal__link"
-                    @click="document.dispatchEvent(new CustomEvent('open-auth-modal'))"
+                    @click="window.dispatchEvent(new CustomEvent('open-auth-modal'))"
                 >Войти</button>
             </div>
 

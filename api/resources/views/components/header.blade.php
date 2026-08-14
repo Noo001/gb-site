@@ -72,7 +72,7 @@ $infoLinks = [
                         <button type="submit" class="action-link">Выйти</button>
                     </form>
                 @else
-                    <button type="button" class="action-link" @click="document.dispatchEvent(new CustomEvent('open-auth-modal'))">
+                    <button type="button" class="action-link" @click="window.dispatchEvent(new CustomEvent('open-auth-modal'))">
                         Войти
                     </button>
                 @endauth
