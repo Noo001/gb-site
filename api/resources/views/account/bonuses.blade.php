@@ -70,11 +70,36 @@
         <div class="bonus-roulette-section">
             <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">Колесо фортуны</h2>
 
+            <div class="wheel-tabs" role="tablist">
+                <button
+                    type="button"
+                    class="wheel-tab"
+                    :class="{ 'active': wheelVariant === 'pole' }"
+                    @click="switchVariant('pole')"
+                    :disabled="spinning"
+                >Поле чудес 3D</button>
+                <button
+                    type="button"
+                    class="wheel-tab"
+                    :class="{ 'active': wheelVariant === 'market' }"
+                    @click="switchVariant('market')"
+                    :disabled="spinning"
+                >Маркетплейс</button>
+                <button
+                    type="button"
+                    class="wheel-tab"
+                    :class="{ 'active': wheelVariant === 'neon' }"
+                    @click="switchVariant('neon')"
+                    :disabled="spinning"
+                >Neon Fusion</button>
+            </div>
+
             <div class="roulette-layout">
-                <div class="pc-wheel-stage">
+                <!-- Pole Chudes 3D -->
+                <div class="pc-wheel-stage" x-show="wheelVariant === 'pole'" x-cloak>
                     <div class="pc-wheel-spotlight"></div>
-                    <div class="pc-wheel-3d" x-ref="wheel" :class="{ 'spinning': spinning }">
-                        <svg class="pc-wheel-svg" :view-box.camel="wheelViewBox" x-ref="svg">
+                    <div class="pc-wheel-3d" x-ref="poleWheel" :class="{ 'spinning': spinning }">
+                        <svg class="pc-wheel-svg" :view-box.camel="wheelViewBox" x-ref="poleSvg">
                             <defs>
                                 <radialGradient id="pcWheelGold" cx="50%" cy="50%" r="50%">
                                     <stop offset="0%" stop-color="#fff8db"/>
@@ -97,6 +122,36 @@
                                 <circle cx="88" cy="65" r="8" fill="#fff" stroke="#ff3d00" stroke-width="2"/>
                             </svg>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Marketplace -->
+                <div class="market-wheel-stage" x-show="wheelVariant === 'market'" x-cloak>
+                    <div class="market-wheel-rim"></div>
+                    <canvas x-ref="marketWheel" width="420" height="420" class="market-wheel"></canvas>
+                    <div class="market-wheel-center">GO</div>
+                    <div class="market-pointer">
+                        <svg viewBox="0 0 44 60" fill="none">
+                            <path d="M22 0L44 48H0L22 0Z" fill="#ff3d00"/>
+                            <path d="M22 48L14 60H30L22 48Z" fill="#ffd700"/>
+                            <circle cx="22" cy="18" r="5" fill="#fff"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Neon -->
+                <div class="neon-wheel-stage" x-show="wheelVariant === 'neon'" x-cloak>
+                    <div class="neon-bg-grid"></div>
+                    <div class="neon-glow-ring"></div>
+                    <div class="neon-outer-ring"></div>
+                    <div class="neon-wheel-bg"></div>
+                    <canvas x-ref="neonWheel" width="420" height="420" class="neon-wheel"></canvas>
+                    <div class="neon-center-hub">SPIN</div>
+                    <div class="neon-pointer">
+                        <svg viewBox="0 0 40 56" fill="none">
+                            <path d="M20 56L0 16H40L20 56Z" fill="#ff7b00"/>
+                            <path d="M20 0L0 16H40L20 0Z" fill="#fff"/>
+                        </svg>
                     </div>
                 </div>
 
@@ -217,7 +272,8 @@
                     spinning: false,
                     message: '',
                     messageType: '',
-                    rotation: 0,
+                    wheelVariant: 'pole',
+                    rotation: { pole: 0, market: 0, neon: 0 },
                     wheelSize: 420,
                     wheelViewBox: '0 0 420 420',
                     sectorColors: [
@@ -225,9 +281,28 @@
                         '#c41e3a', '#f5f0e1', '#111111', '#f5f0e1',
                         '#111111', '#f5f0e1', '#2e8b57', '#f5f0e1'
                     ],
+                    marketColors: [
+                        '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
+                        '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899',
+                        '#6366f1', '#14b8a6', '#f43f5e', '#84cc16'
+                    ],
+                    neonColors: [
+                        '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
+                        '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899'
+                    ],
 
                     init() {
-                        this.$nextTick(() => this.drawWheel());
+                        this.$nextTick(() => {
+                            this.drawPoleWheel();
+                            this.drawMarketWheel();
+                            this.drawNeonWheel();
+                        });
+                    },
+
+                    switchVariant(variant) {
+                        if (this.spinning) return;
+                        this.wheelVariant = variant;
+                        this.message = '';
                     },
 
                     async collectDaily() {
@@ -270,8 +345,8 @@
                         }
                     },
 
-                    drawWheel() {
-                        const svg = this.$refs.svg;
+                    drawPoleWheel() {
+                        const svg = this.$refs.poleSvg;
                         if (!svg) return;
 
                         // Clear previously generated sectors/text
@@ -367,33 +442,203 @@
                             this.balancePulse = true;
                             setTimeout(() => this.balancePulse = false, 800);
 
-                            const index = this.sectors.findIndex(s => s.id === data.sector.id);
-                            const count = this.sectors.length;
-                            const sectorAngle = 360 / count;
-                            const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
-                            const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
-
-                            const extraSpins = 6 * 360;
-                            const newRotation = this.rotation + extraSpins + (90 - targetAngle - (this.rotation % 360));
-                            this.rotation = newRotation;
-
-                            const wheelEl = this.$refs.wheel;
-                            wheelEl.style.transform = `rotateX(62deg) rotateZ(28deg) rotateY(-6deg) rotateZ(${newRotation}deg)`;
-
-                            setTimeout(() => {
-                                this.message = data.message;
-                                const isWin = data.sector.type === 'bonus' || data.sector.type === 'free_spin';
-                                this.messageType = isWin ? 'success' : 'super';
-                                this.spinning = false;
-                                if (isWin) {
-                                    launchConfetti();
-                                }
-                            }, 7000);
+                            if (this.wheelVariant === 'pole') {
+                                this.spinPole(data);
+                            } else if (this.wheelVariant === 'market') {
+                                this.spinMarket(data);
+                            } else {
+                                this.spinNeon(data);
+                            }
                         } catch (e) {
                             this.message = 'Не удалось связаться с сервером.';
                             this.messageType = 'error';
                             this.spinning = false;
                         }
+                    },
+
+                    finishSpin(data) {
+                        this.message = data.message;
+                        const isWin = data.sector.type === 'bonus' || data.sector.type === 'free_spin';
+                        this.messageType = isWin ? 'success' : 'super';
+                        this.spinning = false;
+                        if (isWin) {
+                            launchConfetti();
+                        }
+                    },
+
+                    spinPole(data) {
+                        const index = this.sectors.findIndex(s => s.id === data.sector.id);
+                        const count = this.sectors.length;
+                        const sectorAngle = 360 / count;
+                        const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
+                        const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
+
+                        const extraSpins = 6 * 360;
+                        const newRotation = this.rotation.pole + extraSpins + (90 - targetAngle - (this.rotation.pole % 360));
+                        this.rotation.pole = newRotation;
+
+                        const wheelEl = this.$refs.poleWheel;
+                        wheelEl.style.transform = `rotateX(62deg) rotateZ(28deg) rotateY(-6deg) rotateZ(${newRotation}deg)`;
+
+                        setTimeout(() => this.finishSpin(data), 7000);
+                    },
+
+                    spinMarket(data) {
+                        const index = this.sectors.findIndex(s => s.id === data.sector.id);
+                        const count = this.sectors.length;
+                        const sectorAngle = 360 / count;
+                        const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
+                        const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
+
+                        const extraSpins = 6 * 360;
+                        const newRotation = this.rotation.market + extraSpins + (270 - targetAngle - (this.rotation.market % 360));
+                        this.rotation.market = newRotation;
+
+                        const canvas = this.$refs.marketWheel;
+                        canvas.style.transition = 'transform 5s cubic-bezier(0.12, 0.68, 0.18, 0.99)';
+                        canvas.style.transform = `rotate(${newRotation}deg)`;
+
+                        setTimeout(() => this.finishSpin(data), 5100);
+                    },
+
+                    spinNeon(data) {
+                        const index = this.sectors.findIndex(s => s.id === data.sector.id);
+                        const count = this.sectors.length;
+                        const sectorAngle = 360 / count;
+                        const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
+                        const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
+
+                        const extraSpins = 6 * 360;
+                        const newRotation = this.rotation.neon + extraSpins + (270 - targetAngle - (this.rotation.neon % 360));
+                        this.rotation.neon = newRotation;
+
+                        const canvas = this.$refs.neonWheel;
+                        canvas.style.transition = 'transform 5.5s cubic-bezier(0.12, 0.75, 0.18, 1)';
+                        canvas.style.transform = `rotate(${newRotation}deg)`;
+
+                        setTimeout(() => this.finishSpin(data), 5500);
+                    },
+
+                    drawMarketWheel() {
+                        const canvas = this.$refs.marketWheel;
+                        if (!canvas) return;
+                        const ctx = canvas.getContext('2d');
+                        const dpr = window.devicePixelRatio || 1;
+                        const cssSize = Math.min(420, canvas.clientWidth || 420);
+                        canvas.width = cssSize * dpr;
+                        canvas.height = cssSize * dpr;
+                        canvas.style.width = cssSize + 'px';
+                        canvas.style.height = cssSize + 'px';
+                        ctx.scale(dpr, dpr);
+
+                        const cx = cssSize / 2;
+                        const cy = cssSize / 2;
+                        const radius = cssSize / 2 - 16;
+
+                        ctx.clearRect(0, 0, cssSize, cssSize);
+
+                        const count = this.sectors.length || 1;
+                        const angle = (Math.PI * 2) / count;
+
+                        for (let i = 0; i < count; i++) {
+                            const start = i * angle;
+                            const end = start + angle;
+                            ctx.beginPath();
+                            ctx.moveTo(cx, cy);
+                            ctx.arc(cx, cy, radius, start, end);
+                            ctx.closePath();
+
+                            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+                            const base = this.marketColors[i % this.marketColors.length];
+                            grad.addColorStop(0, base);
+                            grad.addColorStop(1, this.darken(base, 30));
+                            ctx.fillStyle = grad;
+                            ctx.fill();
+
+                            ctx.save();
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+                            ctx.stroke();
+                            ctx.restore();
+
+                            ctx.save();
+                            ctx.translate(cx, cy);
+                            ctx.rotate(start + angle / 2);
+                            ctx.textAlign = 'right';
+                            ctx.fillStyle = '#fff';
+                            ctx.font = 'bold 13px Inter, sans-serif';
+                            ctx.shadowColor = 'rgba(0,0,0,0.35)';
+                            ctx.shadowBlur = 4;
+                            ctx.fillText(this.truncate(this.sectors[i]?.label || '', 18), radius - 18, 5);
+                            ctx.restore();
+                        }
+                    },
+
+                    drawNeonWheel() {
+                        const canvas = this.$refs.neonWheel;
+                        if (!canvas) return;
+                        const ctx = canvas.getContext('2d');
+                        const dpr = window.devicePixelRatio || 1;
+                        const cssSize = Math.min(420, canvas.clientWidth || 420);
+                        canvas.width = cssSize * dpr;
+                        canvas.height = cssSize * dpr;
+                        canvas.style.width = cssSize + 'px';
+                        canvas.style.height = cssSize + 'px';
+                        ctx.scale(dpr, dpr);
+
+                        const cx = cssSize / 2;
+                        const cy = cssSize / 2;
+                        const radius = cssSize / 2 - 16;
+
+                        ctx.clearRect(0, 0, cssSize, cssSize);
+
+                        const count = this.sectors.length || 1;
+                        const angle = (Math.PI * 2) / count;
+
+                        for (let i = 0; i < count; i++) {
+                            const start = i * angle;
+                            const end = start + angle;
+                            ctx.beginPath();
+                            ctx.moveTo(cx, cy);
+                            ctx.arc(cx, cy, radius, start, end);
+                            ctx.closePath();
+
+                            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+                            const base = this.neonColors[i % this.neonColors.length];
+                            grad.addColorStop(0, base + '55');
+                            grad.addColorStop(0.6, base + 'aa');
+                            grad.addColorStop(1, base);
+                            ctx.fillStyle = grad;
+                            ctx.fill();
+
+                            ctx.save();
+                            ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            ctx.moveTo(cx, cy);
+                            ctx.arc(cx, cy, radius, start, end);
+                            ctx.stroke();
+                            ctx.restore();
+
+                            ctx.save();
+                            ctx.translate(cx, cy);
+                            ctx.rotate(start + angle / 2);
+                            ctx.textAlign = 'right';
+                            ctx.fillStyle = '#fff';
+                            ctx.font = 'bold 15px Inter, sans-serif';
+                            ctx.shadowColor = base;
+                            ctx.shadowBlur = 12;
+                            ctx.fillText(this.truncate(this.sectors[i]?.label || '', 16), radius - 22, 5);
+                            ctx.restore();
+                        }
+                    },
+
+                    darken(hex, amount) {
+                        const num = parseInt(hex.slice(1), 16);
+                        let r = Math.max(0, (num >> 16) - amount);
+                        let g = Math.max(0, ((num >> 8) & 255) - amount);
+                        let b = Math.max(0, (num & 255) - amount);
+                        return `rgb(${r},${g},${b})`;
                     }
                 };
             }
