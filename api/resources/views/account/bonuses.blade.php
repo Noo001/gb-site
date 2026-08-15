@@ -593,7 +593,7 @@
                         const count = this.sectors.length;
                         const sectorAngle = 360 / count;
                         const randomOffset = (Math.random() * (sectorAngle - 6)) - (sectorAngle - 6) / 2;
-                        const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
+                        const targetAngle = index * sectorAngle + sectorAngle + randomOffset;
 
                         const extraSpins = 4 * 360;
                         const newRotation = this.rotation.pole + extraSpins + (270 - targetAngle - (this.rotation.pole % 360));
