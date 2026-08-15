@@ -601,7 +601,7 @@
 
                         const cylinder = this.$refs.poleCylinder;
                         if (cylinder) {
-                            cylinder.style.transform = `rotateX(25deg) rotateZ(-2deg) scale(1.4) rotateY(${newRotation}deg)`;
+                            cylinder.style.transform = `rotateX(25deg) scale(1.3) rotateY(${newRotation}deg)`;
                         }
 
                         setTimeout(() => this.finishSpin(data), 14000);
