@@ -105,25 +105,28 @@
                     </div>
                     <div class="pc-wheel-pointer">
                         <svg viewBox="0 0 100 100" fill="none">
-                            <path d="M100 50L0 0V100L100 50Z" fill="#d90429"/>
-                            <path d="M85 50L15 20V80L85 50Z" fill="#ef233c"/>
-                            <circle cx="75" cy="50" r="6" fill="#fff"/>
+                            <path d="M0 50L100 0V100L0 50Z" fill="#d90429"/>
+                            <path d="M15 50L85 20V80L15 50Z" fill="#ef233c"/>
+                            <circle cx="25" cy="50" r="6" fill="#fff"/>
                         </svg>
                     </div>
                 </div>
 
                 <!-- Marketplace / re:premium cards -->
                 <div class="rp-stage" x-show="wheelVariant === 'market'" x-cloak>
+                    <div class="rp-butterfly b1">🦋</div>
+                    <div class="rp-butterfly b2">🦋</div>
+                    <div class="rp-butterfly b3">🦋</div>
                     <div class="rp-header">
-                        <div class="rp-logo">ТЕХНОДРОП</div>
-                        <p class="rp-subtitle">Gadget Bar</p>
+                        <div class="rp-badge">Летний технодроп</div>
+                        <div class="rp-title">ПОЛЕ ПРИЗОВ<br><span>от Gadget Bar</span></div>
                     </div>
                     <div class="rp-cards-wrap">
                         <div class="rp-pointer"></div>
                         <div class="rp-cards-track" x-ref="marketTrack">
                             <template x-for="(sector, index) in marketCards" :key="index">
                                 <div class="rp-card" :data-index="index % sectors.length" :class="{ 'active': marketActiveIndex === index % sectors.length }">
-                                    <div class="rp-card-visual" :style="`background: radial-gradient(circle at 30% 30%, ${sector.color}, ${sector.darkColor})`">
+                                    <div class="rp-card-visual" :style="`--card-light: ${sector.light}; --card-dark: ${sector.dark};`">
                                         <span x-text="sector.icon"></span>
                                     </div>
                                     <div class="rp-card-label" x-text="sector.label"></div>
@@ -285,14 +288,14 @@
                     marketCardRealWidth: 220,
                     marketVisibleCenter: 0,
                     marketCardTemplates: [
-                        { color: '#ff6b00', icon: '💰', sub: 'Маленький бонус' },
-                        { color: '#3b82f6', icon: '🔄', sub: 'Следующий раз' },
-                        { color: '#10b981', icon: '💎', sub: 'Бонус' },
-                        { color: '#8b5cf6', icon: '🎁', sub: 'Ещё попытка' },
-                        { color: '#ef4444', icon: '🔥', sub: 'Бонус' },
-                        { color: '#f59e0b', icon: '👑', sub: 'Крупный бонус' },
-                        { color: '#ec4899', icon: '💵', sub: 'Бонус' },
-                        { color: '#0cc0df', icon: '🏆', sub: 'Джекпот' },
+                        { icon: '📱', light: '#e0f2fe', dark: '#38bdf8' },
+                        { icon: '🎧', light: '#fef3c7', dark: '#fbbf24' },
+                        { icon: '⌚', light: '#fce7f3', dark: '#f472b6' },
+                        { icon: '💻', light: '#dcfce7', dark: '#4ade80' },
+                        { icon: '📷', light: '#ede9fe', dark: '#a78bfa' },
+                        { icon: '🎮', light: '#ffedd5', dark: '#fb923c' },
+                        { icon: '💰', light: '#ecfccb', dark: '#a3e635' },
+                        { icon: '🏆', light: '#fef9c3', dark: '#facc15' },
                     ],
 
                     get marketCards() {
@@ -308,8 +311,8 @@
                             list.push({
                                 label: this.truncate(s.label || s.name || '', 18),
                                 sub: sub,
-                                color: t.color,
-                                darkColor: this.darken(t.color, 40),
+                                light: t.light,
+                                dark: t.dark,
                                 icon: t.icon,
                                 index: i % count
                             });
@@ -453,13 +456,13 @@
                         cylinder.querySelectorAll('.pc-wheel-side').forEach(el => el.remove());
 
                         const count = this.sectors.length || 1;
-                        const R = 280;
-                        const H = 240;
+                        const R = 520;
+                        const H = 360;
                         const angle = 360 / count;
                         const sideW = 2 * R * Math.tan(Math.PI / count);
 
                         const palette = {
-                            white: '#f5f0e1', black: '#111', red: '#d90429', green: '#1b6e22', gold: '#c9a227'
+                            white: '#f5f0e1', black: '#1a1a1a', red: '#d90429', green: '#1b6e22', gold: '#c9a227'
                         };
 
                         const getClass = (i) => {
@@ -477,7 +480,7 @@
                             div.style.setProperty('--h', H + 'px');
                             div.style.setProperty('--r', R + 'px');
                             div.style.setProperty('--a', (i * angle) + 'deg');
-                            div.textContent = this.truncate(s.label || s.name || '', 14);
+                            div.textContent = this.truncate(s.label || s.name || '', 12);
                             cylinder.appendChild(div);
                         });
 
@@ -514,10 +517,10 @@
                         const ring = document.createElementNS(ns, 'circle');
                         ring.setAttribute('cx', cx);
                         ring.setAttribute('cy', cy);
-                        ring.setAttribute('r', r * 0.15);
-                        ring.setAttribute('fill', 'rgba(0,0,0,0.25)');
-                        ring.setAttribute('stroke', 'rgba(255,255,255,0.2)');
-                        ring.setAttribute('stroke-width', '2');
+                        ring.setAttribute('r', r * 0.12);
+                        ring.setAttribute('fill', 'rgba(0,0,0,0.35)');
+                        ring.setAttribute('stroke', 'rgba(255,255,255,0.25)');
+                        ring.setAttribute('stroke-width', '3');
                         svg.appendChild(ring);
 
                         topEl.innerHTML = '';
@@ -592,19 +595,19 @@
                         const index = this.sectors.findIndex(s => s.id === data.sector.id);
                         const count = this.sectors.length;
                         const sectorAngle = 360 / count;
-                        const randomOffset = (Math.random() * (sectorAngle - 6)) - (sectorAngle - 6) / 2;
+                        const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
                         const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
 
-                        const extraSpins = 4 * 360;
+                        const extraSpins = 3 * 360;
                         const newRotation = this.rotation.pole + extraSpins + (targetAngle - 90 - (this.rotation.pole % 360));
                         this.rotation.pole = newRotation;
 
                         const cylinder = this.$refs.poleCylinder;
                         if (cylinder) {
-                            cylinder.style.transform = `rotateX(25deg) scale(1.2) rotateY(${-newRotation}deg)`;
+                            cylinder.style.transform = `rotateX(18deg) scale(1.55) translateX(220px) rotateY(${-newRotation}deg)`;
                         }
 
-                        setTimeout(() => this.finishSpin(data), 14000);
+                        setTimeout(() => this.finishSpin(data), 16000);
                     },
 
                     spinMarket(data) {
