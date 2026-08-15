@@ -440,7 +440,7 @@
                             }
 
                             const label = (s.label || s.name || '').toString();
-                            const maxLine = 14;
+                            const maxLine = 12;
                             const lines = [];
                             for (let i = 0; i < label.length; i += maxLine) {
                                 lines.push(label.slice(i, i + maxLine));
