@@ -378,19 +378,32 @@
                         if (!cardWidth || !realWidth) return;
 
                         let activeIndex = this.marketActiveIndex;
+                        let minDist = Infinity;
+                        let closestIndex = activeIndex;
+
                         cards.forEach((card, i) => {
                             const cardLeft = this.marketOffset + i * cardWidth;
                             const cardCenter = cardLeft + realWidth / 2;
                             const dist = (cardCenter - center) / cardWidth;
                             const absDist = Math.min(3, Math.abs(dist));
+                            const sign = dist < 0 ? -1 : 1;
+
                             const scale = absDist < 0.5 ? 1.15 : Math.max(0.72, 1 - absDist * 0.22);
                             const opacity = absDist < 0.5 ? 1 : Math.max(0.35, 1 - absDist * 0.55);
                             const blur = absDist < 0.5 ? 0 : Math.min(5, absDist * 2.2);
-                            card.style.transform = `scale(${scale})`;
+                            const rotateY = absDist < 0.5 ? 0 : sign * Math.min(35, absDist * 25);
+                            const z = absDist < 0.5 ? 40 : -absDist * 30;
+
+                            card.style.transform = `scale(${scale}) perspective(1000px) translateZ(${z}px) rotateY(${-rotateY}deg)`;
                             card.style.opacity = opacity;
                             card.style.filter = `blur(${blur}px)`;
+                            card.style.zIndex = absDist < 0.5 ? 2 : 1;
                             const isActive = absDist < 0.5;
                             card.classList.toggle('active', isActive);
+                            if (absDist < minDist) {
+                                minDist = absDist;
+                                closestIndex = i % count;
+                            }
                             if (isActive) {
                                 activeIndex = i % count;
                             }
@@ -638,13 +651,14 @@
                                 requestAnimationFrame(animate);
                             } else {
                                 this.marketOffset = finalOffset;
-                                this.marketActiveIndex = index;
                                 if (track) track.style.transform = `translateX(${finalOffset}px)`;
-                                this.updateMarketCards();
-                                this.finishSpin(data);
+                                this.marketActiveIndex = index;
+                                this.$nextTick(() => {
+                                    this.updateMarketCards();
+                                    this.marketActiveIndex = index;
+                                });
+                                setTimeout(() => this.finishSpin(data), 350);
                             }
-                        };
-                        requestAnimationFrame(animate);
                     },
 
                     spinNeon(data) {

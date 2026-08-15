@@ -4411,6 +4411,7 @@ button {
     width: 100%;
     overflow: hidden;
     padding: 2.5rem 0 2rem;
+    perspective: 1000px;
 }
 
 .rp-cards-track {
@@ -4419,6 +4420,7 @@ button {
     align-items: center;
     gap: 1.5rem;
     will-change: transform;
+    transform-style: preserve-3d;
 }
 
 .rp-card {
@@ -4434,12 +4436,14 @@ button {
     align-items: center;
     justify-content: flex-start;
     transition: transform 0.35s, box-shadow 0.35s, opacity 0.35s, filter 0.35s;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 .rp-card.active {
     border-color: #ffd700;
     box-shadow: 0 0 50px rgba(255, 215, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.3);
-    transform: scale(1.15);
+    transform: scale(1.15) translateZ(40px) !important;
     z-index: 2;
 }
 
