@@ -659,6 +659,8 @@
                                 });
                                 setTimeout(() => this.finishSpin(data), 350);
                             }
+                        });
+                        requestAnimationFrame(animate);
                     },
 
                     spinNeon(data) {
