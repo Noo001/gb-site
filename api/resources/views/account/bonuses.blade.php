@@ -108,13 +108,13 @@
                             <circle :cx="wheelSize/2" :cy="wheelSize/2" :r="wheelSize/2 - 4" fill="url(#pcWheelCardboard)" stroke="#5a4a3a" stroke-width="2"/>
                         </svg>
                         <div class="pc-wheel-hub"></div>
-                        <div class="pc-wheel-pointer">
-                            <svg viewBox="0 0 100 100" fill="none">
-                                <path d="M100 50L0 0V100L100 50Z" fill="#d90429"/>
-                                <path d="M85 50L15 20V80L85 50Z" fill="#ef233c"/>
-                                <circle cx="75" cy="50" r="6" fill="#fff"/>
-                            </svg>
-                        </div>
+                    </div>
+                    <div class="pc-wheel-pointer">
+                        <svg viewBox="0 0 100 100" fill="none">
+                            <path d="M100 50L0 0V100L100 50Z" fill="#d90429"/>
+                            <path d="M85 50L15 20V80L85 50Z" fill="#ef233c"/>
+                            <circle cx="75" cy="50" r="6" fill="#fff"/>
+                        </svg>
                     </div>
                 </div>
 

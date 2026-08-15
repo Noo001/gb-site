@@ -4204,9 +4204,9 @@ button {
 
 .pc-wheel-pointer {
     position: absolute;
-    left: -50px;
+    left: 50%;
     top: 50%;
-    transform: translateY(-50%) translateZ(60px);
+    transform: translate(-50%, -50%) translateX(-280px);
     width: 100px;
     height: 100px;
     z-index: 10;
@@ -4237,7 +4237,7 @@ button {
     .pc-wheel-pointer {
         width: 60px;
         height: 60px;
-        left: -30px;
+        transform: translate(-50%, -50%) translateX(-170px);
     }
 
     .pc-wheel-text {
