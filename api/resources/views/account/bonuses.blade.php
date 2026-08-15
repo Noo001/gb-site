@@ -97,17 +97,11 @@
             <div class="roulette-layout">
                 <!-- Pole Chudes 3D -->
                 <div class="pc-wheel-stage" x-show="wheelVariant === 'pole'" x-cloak>
-                    <div class="pc-wheel-wrap" x-ref="poleWheel" :class="{ 'spinning': spinning }">
-                        <svg class="pc-wheel-svg" :view-box.camel="wheelViewBox" x-ref="poleSvg">
-                            <defs>
-                                <radialGradient id="pcWheelCardboard" cx="50%" cy="50%" r="50%">
-                                    <stop offset="0%" stop-color="#4a3b2a"/>
-                                    <stop offset="100%" stop-color="#2a1f15"/>
-                                </radialGradient>
-                            </defs>
-                            <circle :cx="wheelSize/2" :cy="wheelSize/2" :r="wheelSize/2 - 4" fill="url(#pcWheelCardboard)" stroke="#5a4a3a" stroke-width="2"/>
-                        </svg>
-                        <div class="pc-wheel-hub"></div>
+                    <div class="pc-wheel-scene">
+                        <div class="pc-wheel-cylinder" x-ref="poleCylinder">
+                            <div class="pc-wheel-top" x-ref="poleTop"></div>
+                            <div class="pc-wheel-bottom" x-ref="poleBottom"></div>
+                        </div>
                     </div>
                     <div class="pc-wheel-pointer">
                         <svg viewBox="0 0 100 100" fill="none">
@@ -128,11 +122,12 @@
                         <div class="rp-pointer"></div>
                         <div class="rp-cards-track" x-ref="marketTrack">
                             <template x-for="(sector, index) in marketCards" :key="index">
-                                <div class="rp-card" :class="{ 'active': marketActiveIndex === index % sectors.length }">
-                                    <div class="rp-card-visual" :style="`background:${sector.bg}`">
-                                        <svg viewBox="0 0 100 100" fill="none" x-html="sector.icon"></svg>
+                                <div class="rp-card" :data-index="index % sectors.length" :class="{ 'active': marketActiveIndex === index % sectors.length }">
+                                    <div class="rp-card-visual" :style="`background: radial-gradient(circle at 30% 30%, ${sector.color}, ${sector.darkColor})`">
+                                        <span x-text="sector.icon"></span>
                                     </div>
                                     <div class="rp-card-label" x-text="sector.label"></div>
+                                    <div class="rp-card-sub" x-text="sector.sub"></div>
                                 </div>
                             </template>
                         </div>
@@ -279,37 +274,45 @@
                     messageType: '',
                     wheelVariant: 'pole',
                     rotation: { pole: 0, neon: 0 },
-                    wheelSize: 460,
-                    wheelViewBox: '0 0 460 460',
-                    sectorColors: [
-                        '#f5f0e1', '#1a1a1a', '#f5f0e1', '#1a1a1a',
-                        '#f5f0e1', '#1a1a1a', '#d90429', '#1a1a1a',
-                        '#f5f0e1', '#1a1a1a', '#f5f0e1', '#1a1a1a'
-                    ],
                     neonColors: [
                         '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
                         '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899'
                     ],
                     marketActiveIndex: 0,
+                    marketActiveCard: 0,
                     marketOffset: 0,
                     marketCardWidth: 240,
+                    marketCardRealWidth: 220,
                     marketVisibleCenter: 0,
                     marketCardTemplates: [
-                        { bg: '#dbeafe', icon: '<rect x="30" y="10" width="40" height="80" rx="8" fill="#1e3a8a"/><rect x="35" y="18" width="30" height="60" rx="3" fill="#dbeafe"/><circle cx="50" cy="85" r="4" fill="#fff"/>' },
-                        { bg: '#dcfce7', icon: '<rect x="15" y="15" width="70" height="70" rx="10" fill="#1e3a8a"/><rect x="22" y="22" width="56" height="56" rx="6" fill="#dbeafe"/><circle cx="50" cy="80" r="3" fill="#fff"/>' },
-                        { bg: '#fce7f3', icon: '<path d="M50 25c-16 0-29 13-29 29v16a6 6 0 0 0 6 6h6a6 6 0 0 0 6-6v-12a6 6 0 0 0-6-6h-6c0-14 11-25 25-25s25 11 25 25h-6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h6a6 6 0 0 0 6-6v-16c0-16-13-29-29-29z" fill="#1e3a8a"/><rect x="27" y="54" width="12" height="22" rx="6" fill="#2563eb"/><rect x="61" y="54" width="12" height="22" rx="6" fill="#2563eb"/>' },
-                        { bg: '#fef3c7', icon: '<rect x="35" y="20" width="30" height="60" rx="10" fill="#1e3a8a"/><rect x="40" y="28" width="20" height="44" rx="6" fill="#dbeafe"/><path d="M35 30h-5a5 5 0 0 0-5 5v30a5 5 0 0 0 5 5h5M65 30h5a5 5 0 0 1 5 5v30a5 5 0 0 1-5 5h-5" stroke="#1e3a8a" stroke-width="4"/>' },
-                        { bg: '#f3e8ff', icon: '<rect x="15" y="20" width="70" height="50" rx="6" fill="#1e3a8a"/><rect x="20" y="25" width="60" height="40" rx="3" fill="#dbeafe"/><path d="M10 70h80l-5 10H15l-5-10z" fill="#1e3a8a"/>' },
-                        { bg: '#e0f2fe', icon: '<rect x="20" y="30" width="60" height="40" rx="8" fill="#1e3a8a"/><circle cx="50" cy="50" r="14" fill="#dbeafe" stroke="#fff" stroke-width="3"/><circle cx="50" cy="50" r="7" fill="#1e3a8a"/><circle cx="72" cy="38" r="4" fill="#fff"/>' }
+                        { color: '#ff6b00', icon: '💰', sub: 'Маленький бонус' },
+                        { color: '#3b82f6', icon: '🔄', sub: 'Следующий раз' },
+                        { color: '#10b981', icon: '💎', sub: 'Бонус' },
+                        { color: '#8b5cf6', icon: '🎁', sub: 'Ещё попытка' },
+                        { color: '#ef4444', icon: '🔥', sub: 'Бонус' },
+                        { color: '#f59e0b', icon: '👑', sub: 'Крупный бонус' },
+                        { color: '#ec4899', icon: '💵', sub: 'Бонус' },
+                        { color: '#0cc0df', icon: '🏆', sub: 'Джекпот' },
                     ],
 
                     get marketCards() {
                         const list = [];
                         const templates = this.marketCardTemplates;
-                        for (let i = 0; i < 5 * this.sectors.length; i++) {
-                            const s = this.sectors[i % this.sectors.length];
+                        const count = this.sectors.length || 1;
+                        for (let i = 0; i < 5 * count; i++) {
+                            const s = this.sectors[i % count];
                             const t = templates[i % templates.length];
-                            list.push({ label: this.truncate(s.label || s.name || '', 18), bg: t.bg, icon: t.icon });
+                            let sub = 'Приз';
+                            if (s.type === 'free_spin') sub = 'Ещё попытка';
+                            else if (s.type === 'bonus') sub = 'Бонус';
+                            list.push({
+                                label: this.truncate(s.label || s.name || '', 18),
+                                sub: sub,
+                                color: t.color,
+                                darkColor: this.darken(t.color, 40),
+                                icon: t.icon,
+                                index: i % count
+                            });
                         }
                         return list;
                     },
@@ -319,6 +322,16 @@
                             this.measureMarket();
                             this.drawPoleWheel();
                             this.drawNeonWheel();
+                            this.updateMarketCards();
+                        });
+
+                        window.addEventListener('resize', () => {
+                            this.measureMarket();
+                            this.drawPoleWheel();
+                            this.drawNeonWheel();
+                            if (this.wheelVariant === 'market') {
+                                this.updateMarketCards();
+                            }
                         });
                     },
 
@@ -327,8 +340,10 @@
                         const wrap = track?.parentElement;
                         const card = track?.querySelector('.rp-card');
                         if (!track || !wrap || !card) return;
-                        const gap = parseFloat(getComputedStyle(track).gap) || 20;
-                        this.marketCardWidth = card.getBoundingClientRect().width + gap;
+                        const gap = parseFloat(getComputedStyle(track).gap) || 24;
+                        const realWidth = card.getBoundingClientRect().width;
+                        this.marketCardRealWidth = realWidth;
+                        this.marketCardWidth = realWidth + gap;
                         this.marketVisibleCenter = wrap.clientWidth / 2;
                     },
 
@@ -336,10 +351,48 @@
                         this.$nextTick(() => {
                             this.measureMarket();
                             this.marketActiveIndex = 0;
-                            this.marketOffset = 0;
+                            this.marketActiveCard = 0;
                             const track = this.$refs.marketTrack;
-                            if (track) track.style.transform = 'translateX(0px)';
+                            if (!track) return;
+                            const cardWidth = this.marketCardWidth;
+                            const realWidth = this.marketCardRealWidth;
+                            const visibleCenter = this.marketVisibleCenter || track.parentElement.clientWidth / 2;
+                            this.marketOffset = visibleCenter - realWidth / 2;
+                            track.style.transform = `translateX(${this.marketOffset}px)`;
+                            this.updateMarketCards();
                         });
+                    },
+
+                    updateMarketCards() {
+                        const track = this.$refs.marketTrack;
+                        if (!track) return;
+                        const cards = track.querySelectorAll('.rp-card');
+                        const center = this.marketVisibleCenter;
+                        const cardWidth = this.marketCardWidth;
+                        const realWidth = this.marketCardRealWidth;
+                        const count = this.sectors.length || 1;
+
+                        if (!cardWidth || !realWidth) return;
+
+                        let activeIndex = 0;
+                        cards.forEach((card, i) => {
+                            const cardLeft = this.marketOffset + i * cardWidth;
+                            const cardCenter = cardLeft + realWidth / 2;
+                            const dist = (cardCenter - center) / cardWidth;
+                            const absDist = Math.min(3, Math.abs(dist));
+                            const scale = Math.max(0.78, 1 - absDist * 0.18);
+                            const opacity = Math.max(0.45, 1 - absDist * 0.45);
+                            const blur = Math.min(4, absDist * 2.5);
+                            card.style.transform = `scale(${scale})`;
+                            card.style.opacity = opacity;
+                            card.style.filter = `blur(${blur}px)`;
+                            const isActive = absDist < 0.4;
+                            card.classList.toggle('active', isActive);
+                            if (isActive) {
+                                activeIndex = i % count;
+                            }
+                        });
+                        this.marketActiveIndex = activeIndex;
                     },
 
                     switchVariant(variant) {
@@ -392,78 +445,85 @@
                     },
 
                     drawPoleWheel() {
-                        const svg = this.$refs.poleSvg;
-                        if (!svg) return;
+                        const cylinder = this.$refs.poleCylinder;
+                        const topEl = this.$refs.poleTop;
+                        const bottomEl = this.$refs.poleBottom;
+                        if (!cylinder || !topEl || !bottomEl) return;
 
-                        svg.querySelectorAll('.pc-wheel-sector, .pc-wheel-text').forEach(el => el.remove());
+                        cylinder.querySelectorAll('.pc-wheel-side').forEach(el => el.remove());
 
-                        const size = this.wheelSize;
-                        const cx = size / 2;
-                        const cy = size / 2;
-                        const rOut = size / 2 - 10;
-                        const rIn = 45;
                         const count = this.sectors.length || 1;
-                        const angle = (Math.PI * 2) / count;
+                        const R = 280;
+                        const H = 240;
+                        const angle = 360 / count;
+                        const sideW = 2 * R * Math.tan(Math.PI / count);
 
-                        const makePath = (i) => {
-                            const start = i * angle - Math.PI / 2;
-                            const end = start + angle;
-                            const x1 = cx + rIn * Math.cos(start);
-                            const y1 = cy + rIn * Math.sin(start);
-                            const x2 = cx + rOut * Math.cos(start);
-                            const y2 = cy + rOut * Math.sin(start);
-                            const x3 = cx + rOut * Math.cos(end);
-                            const y3 = cy + rOut * Math.sin(end);
-                            const x4 = cx + rIn * Math.cos(end);
-                            const y4 = cy + rIn * Math.sin(end);
-                            return `M ${x1} ${y1} L ${x2} ${y2} A ${rOut} ${rOut} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rIn} ${rIn} 0 0 0 ${x1} ${y1} Z`;
+                        const palette = {
+                            white: '#f5f0e1', black: '#111', red: '#d90429', green: '#1b6e22', gold: '#c9a227'
                         };
 
-                        const ns = 'http://www.w3.org/2000/svg';
+                        const getClass = (i) => {
+                            const p = i % 12;
+                            if (p === 6) return 'red';
+                            if (p === 8) return 'green';
+                            if (p === 11) return 'gold';
+                            return p % 2 === 0 ? 'white' : 'black';
+                        };
+
                         this.sectors.forEach((s, i) => {
-                            const color = this.sectorColors[i % this.sectorColors.length];
+                            const div = document.createElement('div');
+                            div.className = 'pc-wheel-side ' + getClass(i);
+                            div.style.setProperty('--w', sideW + 'px');
+                            div.style.setProperty('--h', H + 'px');
+                            div.style.setProperty('--r', R + 'px');
+                            div.style.setProperty('--a', (i * angle) + 'deg');
+                            div.textContent = this.truncate(s.label || s.name || '', 14);
+                            cylinder.appendChild(div);
+                        });
+
+                        topEl.style.setProperty('--d', (R * 2) + 'px');
+                        topEl.style.setProperty('--h', H + 'px');
+                        bottomEl.style.setProperty('--d', (R * 2) + 'px');
+                        bottomEl.style.setProperty('--h', H + 'px');
+
+                        const d = R * 2;
+                        const cx = d / 2, cy = d / 2, r = d / 2 - 2;
+                        const ns = 'http://www.w3.org/2000/svg';
+                        const svg = document.createElementNS(ns, 'svg');
+                        svg.setAttribute('width', '100%');
+                        svg.setAttribute('height', '100%');
+                        svg.setAttribute('viewBox', `0 0 ${d} ${d}`);
+
+                        const makePath = (i) => {
+                            const a1 = i * (Math.PI * 2) / count - Math.PI / 2;
+                            const a2 = a1 + (Math.PI * 2) / count;
+                            const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+                            const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+                            return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`;
+                        };
+
+                        this.sectors.forEach((s, i) => {
                             const path = document.createElementNS(ns, 'path');
                             path.setAttribute('d', makePath(i));
-                            path.setAttribute('fill', color);
-                            path.setAttribute('class', 'pc-wheel-sector');
+                            path.setAttribute('fill', palette[getClass(i)]);
+                            path.setAttribute('stroke', 'rgba(255,255,255,0.15)');
+                            path.setAttribute('stroke-width', '1');
                             svg.appendChild(path);
-
-                            const mid = i * angle + angle / 2 - Math.PI / 2;
-                            const tr = (rIn + rOut) / 2 + 6;
-                            const tx = cx + tr * Math.cos(mid);
-                            const ty = cy + tr * Math.sin(mid);
-
-                            let textAngle = (mid * 180 / Math.PI) + 90;
-                            const normMid = ((mid + Math.PI * 2.5) % (Math.PI * 2));
-                            if (normMid > Math.PI / 2 && normMid < 3 * Math.PI / 2) {
-                                textAngle += 180;
-                            }
-
-                            const label = (s.label || s.name || '').toString();
-                            const maxLine = 12;
-                            const lines = [];
-                            for (let i = 0; i < label.length; i += maxLine) {
-                                lines.push(label.slice(i, i + maxLine));
-                            }
-                            if (lines.length === 0) lines.push('');
-
-                            const text = document.createElementNS(ns, 'text');
-                            text.setAttribute('x', tx);
-                            text.setAttribute('y', ty);
-                            text.setAttribute('class', 'pc-wheel-text');
-                            text.setAttribute('fill', color === '#f5f0e1' ? '#1a1a1a' : '#f5f0e1');
-                            text.setAttribute('transform', `rotate(${textAngle}, ${tx}, ${ty})`);
-
-                            lines.forEach((line, idx) => {
-                                const tspan = document.createElementNS(ns, 'tspan');
-                                tspan.setAttribute('x', tx);
-                                tspan.setAttribute('dy', idx === 0 ? '0' : '1.05em');
-                                tspan.textContent = line;
-                                text.appendChild(tspan);
-                            });
-
-                            svg.appendChild(text);
                         });
+
+                        const ring = document.createElementNS(ns, 'circle');
+                        ring.setAttribute('cx', cx);
+                        ring.setAttribute('cy', cy);
+                        ring.setAttribute('r', r * 0.15);
+                        ring.setAttribute('fill', 'rgba(0,0,0,0.25)');
+                        ring.setAttribute('stroke', 'rgba(255,255,255,0.2)');
+                        ring.setAttribute('stroke-width', '2');
+                        svg.appendChild(ring);
+
+                        topEl.innerHTML = '';
+                        bottomEl.innerHTML = '';
+                        topEl.appendChild(svg);
+                        bottomEl.appendChild(svg.cloneNode(true));
                     },
 
                     truncate(text, max) {
@@ -532,61 +592,54 @@
                         const index = this.sectors.findIndex(s => s.id === data.sector.id);
                         const count = this.sectors.length;
                         const sectorAngle = 360 / count;
-                        const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
+                        const randomOffset = (Math.random() * (sectorAngle - 6)) - (sectorAngle - 6) / 2;
                         const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
 
-                        const extraSpins = 5 * 360;
+                        const extraSpins = 4 * 360;
                         const newRotation = this.rotation.pole + extraSpins + (270 - targetAngle - (this.rotation.pole % 360));
                         this.rotation.pole = newRotation;
 
-                        const wheelEl = this.$refs.poleWheel;
-                        wheelEl.style.transform = `translate(-50%, -50%) rotateX(28deg) rotateY(-12deg) rotateZ(8deg) rotateZ(${newRotation}deg)`;
+                        const cylinder = this.$refs.poleCylinder;
+                        if (cylinder) {
+                            cylinder.style.transform = `rotateX(25deg) rotateZ(-2deg) scale(1.4) rotateY(${newRotation}deg)`;
+                        }
 
-                        setTimeout(() => this.finishSpin(data), 6500);
+                        setTimeout(() => this.finishSpin(data), 14000);
                     },
 
                     spinMarket(data) {
                         const index = this.sectors.findIndex(s => s.id === data.sector.id);
-                        const loops = 3 + Math.floor(Math.random() * 2);
+                        const count = this.sectors.length;
+                        const loops = 4 + Math.floor(Math.random() * 2);
                         const cardWidth = this.marketCardWidth;
+                        const realWidth = this.marketCardRealWidth;
                         const visibleCenter = this.marketVisibleCenter || (this.$refs.marketTrack?.parentElement?.clientWidth / 2) || 360;
-                        const finalOffset = -(this.sectors.length * loops + index) * cardWidth + visibleCenter - cardWidth / 2;
+
+                        const finalCardIndex = count * loops + index;
+                        const finalOffset = visibleCenter - (finalCardIndex * cardWidth + realWidth / 2);
                         const startOffset = this.marketOffset;
                         const distance = finalOffset - startOffset;
-                        const duration = 4000;
+                        const duration = 5500;
                         const start = performance.now();
 
                         const animate = (now) => {
                             const elapsed = now - start;
                             const t = Math.min(elapsed / duration, 1);
-                            const eased = 1 - Math.pow(1 - t, 3);
+                            const eased = 1 - Math.pow(1 - t, 3.5);
                             this.marketOffset = startOffset + distance * eased;
                             const track = this.$refs.marketTrack;
                             if (track) track.style.transform = `translateX(${this.marketOffset}px)`;
-
-                            const center = -this.marketOffset + visibleCenter;
-                            const idx = Math.round((center - cardWidth / 2) / cardWidth) % this.sectors.length;
-                            const normalizedIdx = (idx + this.sectors.length) % this.sectors.length;
-                            if (normalizedIdx !== this.marketActiveIndex) {
-                                this.marketActiveIndex = normalizedIdx;
-                            }
+                            this.updateMarketCards();
 
                             if (t < 1) {
                                 requestAnimationFrame(animate);
                             } else {
+                                this.marketActiveIndex = index;
+                                this.marketActiveCard = finalCardIndex;
                                 this.finishSpin(data);
                             }
                         };
                         requestAnimationFrame(animate);
-                    },
-
-                    drawMarketWheel() {
-                        // cards are rendered by Alpine x-for; just reset active state
-                        this.marketActiveIndex = 0;
-                        this.marketOffset = 0;
-                        const track = this.$refs.marketTrack;
-                        if (track) track.style.transform = 'translateX(0px)';
-                        this.$nextTick(() => this.measureMarket());
                     },
 
                     spinNeon(data) {
@@ -605,61 +658,6 @@
                         canvas.style.transform = `rotate(${newRotation}deg)`;
 
                         setTimeout(() => this.finishSpin(data), 5500);
-                    },
-
-                    drawMarketWheel() {
-                        const canvas = this.$refs.marketWheel;
-                        if (!canvas) return;
-                        const ctx = canvas.getContext('2d');
-                        const dpr = window.devicePixelRatio || 1;
-                        const cssSize = Math.min(420, canvas.clientWidth || 420);
-                        canvas.width = cssSize * dpr;
-                        canvas.height = cssSize * dpr;
-                        canvas.style.width = cssSize + 'px';
-                        canvas.style.height = cssSize + 'px';
-                        ctx.scale(dpr, dpr);
-
-                        const cx = cssSize / 2;
-                        const cy = cssSize / 2;
-                        const radius = cssSize / 2 - 16;
-
-                        ctx.clearRect(0, 0, cssSize, cssSize);
-
-                        const count = this.sectors.length || 1;
-                        const angle = (Math.PI * 2) / count;
-
-                        for (let i = 0; i < count; i++) {
-                            const start = i * angle;
-                            const end = start + angle;
-                            ctx.beginPath();
-                            ctx.moveTo(cx, cy);
-                            ctx.arc(cx, cy, radius, start, end);
-                            ctx.closePath();
-
-                            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-                            const base = this.marketColors[i % this.marketColors.length];
-                            grad.addColorStop(0, base);
-                            grad.addColorStop(1, this.darken(base, 30));
-                            ctx.fillStyle = grad;
-                            ctx.fill();
-
-                            ctx.save();
-                            ctx.lineWidth = 2;
-                            ctx.strokeStyle = 'rgba(255,255,255,0.45)';
-                            ctx.stroke();
-                            ctx.restore();
-
-                            ctx.save();
-                            ctx.translate(cx, cy);
-                            ctx.rotate(start + angle / 2);
-                            ctx.textAlign = 'right';
-                            ctx.fillStyle = '#fff';
-                            ctx.font = 'bold 13px Inter, sans-serif';
-                            ctx.shadowColor = 'rgba(0,0,0,0.35)';
-                            ctx.shadowBlur = 4;
-                            ctx.fillText(this.truncate(this.sectors[i]?.label || '', 18), radius - 18, 5);
-                            ctx.restore();
-                        }
                     },
 
                     drawNeonWheel() {

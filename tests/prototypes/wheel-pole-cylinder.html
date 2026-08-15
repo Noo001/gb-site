@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Поле чудес — 3D цилиндр</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at 70% 30%, #2a1a10 0%, #0f0805 100%);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #fff;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  h1 { font-weight: 900; margin: 0 0 1rem; font-size: clamp(1.4rem, 4vw, 2rem); text-shadow: 0 0 20px rgba(255,255,255,0.15); text-align: center; }
+  .scene {
+    position: relative;
+    width: min(100vw, 980px);
+    height: min(76vh, 680px);
+    perspective: 1200px;
+    overflow: hidden;
+  }
+  .cylinder {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 0; height: 0;
+    transform-style: preserve-3d;
+    /* Ось Y цилиндра горизонтальна — видна боковая цилиндрическая поверхность */
+    transform: rotateX(25deg) rotateZ(-2deg) scale(1.4);
+  }
+  .spinner {
+    position: absolute;
+    left: 0; top: 0;
+    width: 0; height: 0;
+    transform-style: preserve-3d;
+    transition: transform 14s cubic-bezier(0.06, 0.55, 0.1, 1);
+  }
+  .side {
+    position: absolute;
+    left: 0; top: 0;
+    width: var(--w);
+    height: var(--h);
+    margin-left: calc(var(--w) / -2);
+    margin-top: calc(var(--h) / -2);
+    background: var(--bg);
+    transform: rotateY(var(--a)) translateZ(var(--r));
+    border: 1px solid rgba(255,255,255,0.12);
+    backface-visibility: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900;
+    font-size: clamp(14px, 2.8vw, 24px);
+    color: var(--fg);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    letter-spacing: 0.06em;
+  }
+  .side.red    { --bg: #d90429; --fg: #fff; }
+  .side.black  { --bg: #111;    --fg: #f5f0e1; }
+  .side.white  { --bg: #f5f0e1; --fg: #111; }
+  .side.green  { --bg: #1b6e22; --fg: #fff; }
+  .side.gold   { --bg: #c9a227; --fg: #1a1200; }
+
+  .top, .bottom {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: var(--d); height: var(--d);
+    margin-left: calc(var(--d) / -2);
+    margin-top: calc(var(--d) / -2);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+  }
+  .top    { transform: translateY(calc(var(--h) / -2)) rotateX(90deg); }
+  .bottom { transform: translateY(calc(var(--h) / 2)) rotateX(-90deg); }
+
+  .pointer {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%) translateX(-310px) translateY(-20px);
+    width: 120px; height: 120px;
+    z-index: 10;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));
+  }
+  .pointer svg { width: 100%; height: 100%; }
+  .controls { margin-top: 1.5rem; display: flex; gap: 1rem; }
+  button {
+    border: none; padding: 1rem 2.5rem; border-radius: 999px; font-size: 1.1rem; font-weight: 900;
+    cursor: pointer; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .spin { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #2b2005; box-shadow: 0 8px 28px rgba(255, 140, 0, 0.45); }
+  .spin:hover { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(255, 140, 0, 0.55); }
+  .spin:active { transform: translateY(1px); }
+  .message { margin-top: 1rem; font-weight: 800; font-size: 1.3rem; color: #ffd700; min-height: 1.5em; text-align: center; }
+
+  @media (max-width: 640px) {
+    .scene { height: 58vh; }
+    .pointer { width: 80px; height: 80px; transform: translate(-50%, -50%) translateX(-150px) translateY(-10px); }
+  }
+</style>
+</head>
+<body>
+<h1>«Поле чудес» — 3D барабан</h1>
+<div class="scene">
+  <div class="cylinder">
+    <div class="spinner" id="spinner">
+      <div class="top" id="top" style="--d:560px; --h:240px;"></div>
+      <div class="bottom" id="bottom" style="--d:560px; --h:240px;"></div>
+    </div>
+  </div>
+  <div class="pointer">
+    <svg viewBox="0 0 100 100" fill="none">
+      <path d="M100 50L0 0V100L100 50Z" fill="#d90429"/>
+      <path d="M85 50L15 20V80L85 50Z" fill="#ef233c"/>
+      <circle cx="75" cy="50" r="6" fill="#fff"/>
+    </svg>
+  </div>
+</div>
+<div class="controls">
+  <button class="spin" onclick="spin()">Крутить</button>
+</div>
+<div class="message" id="msg"></div>
+
+<script>
+const sectors = [
+  { label: '500', cls: 'white' },
+  { label: '100', cls: 'black' },
+  { label: '200', cls: 'white' },
+  { label: '50', cls: 'black' },
+  { label: '1000', cls: 'white' },
+  { label: '25', cls: 'black' },
+  { label: 'Супер\nприз', cls: 'red' },
+  { label: '10', cls: 'black' },
+  { label: 'Free\nspin', cls: 'green' },
+  { label: '75', cls: 'black' },
+  { label: '500', cls: 'white' },
+  { label: '200', cls: 'black' },
+];
+const n = sectors.length;
+const R = 280;
+const H = 240;
+const angle = 360 / n;
+const sideW = 2 * R * Math.tan(Math.PI / n);
+
+const spinner = document.getElementById('spinner');
+const topEl = document.getElementById('top');
+const bottomEl = document.getElementById('bottom');
+
+// Build sides
+sectors.forEach((s, i) => {
+  const div = document.createElement('div');
+  div.className = 'side ' + s.cls;
+  div.style.setProperty('--w', sideW + 'px');
+  div.style.setProperty('--h', H + 'px');
+  div.style.setProperty('--r', R + 'px');
+  div.style.setProperty('--a', (i * angle) + 'deg');
+  div.textContent = s.label.replace(/\n/g, ' ');
+  spinner.appendChild(div);
+});
+
+// Build top/bottom SVG pie faces
+function buildFace() {
+  const d = 560;
+  const cx = d/2, cy = d/2, r = d/2 - 2;
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.setAttribute('viewBox', `0 0 ${d} ${d}`);
+  const palette = { white: '#f5f0e1', black: '#111', red: '#d90429', green: '#1b6e22', gold: '#c9a227' };
+  const makePath = (i) => {
+    const a1 = i * (Math.PI*2)/n - Math.PI/2;
+    const a2 = a1 + (Math.PI*2)/n;
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+    return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`;
+  };
+  sectors.forEach((s, i) => {
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', makePath(i));
+    path.setAttribute('fill', palette[s.cls]);
+    path.setAttribute('stroke', 'rgba(255,255,255,0.15)');
+    path.setAttribute('stroke-width', '1');
+    svg.appendChild(path);
+  });
+  const ring = document.createElementNS(ns, 'circle');
+  ring.setAttribute('cx', cx); ring.setAttribute('cy', cy); ring.setAttribute('r', r * 0.15);
+  ring.setAttribute('fill', 'rgba(0,0,0,0.25)');
+  ring.setAttribute('stroke', 'rgba(255,255,255,0.2)'); ring.setAttribute('stroke-width', '2');
+  svg.appendChild(ring);
+  return svg;
+}
+const faceSvg = buildFace();
+topEl.appendChild(faceSvg);
+bottomEl.appendChild(faceSvg.cloneNode(true));
+
+let rotation = 0;
+function spin() {
+  const idx = Math.floor(Math.random() * n);
+  const sectorAngle = 360 / n;
+  const randomOffset = (Math.random() * (sectorAngle - 6)) - (sectorAngle - 6) / 2;
+  const target = idx * sectorAngle + sectorAngle/2 + randomOffset;
+  rotation += 4 * 360 + (270 - target - (rotation % 360));
+  spinner.style.transform = `rotateY(${rotation}deg)`;
+  setTimeout(() => {
+    document.getElementById('msg').textContent = 'Выпало: ' + sectors[idx].label.replace(/\n/g, ' ');
+  }, 14000);
+}
+</script>
+</body>
+</html>
