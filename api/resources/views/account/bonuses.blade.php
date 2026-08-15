@@ -97,45 +97,50 @@
             <div class="roulette-layout">
                 <!-- Pole Chudes 3D -->
                 <div class="pc-wheel-stage" x-show="wheelVariant === 'pole'" x-cloak>
-                    <div class="pc-wheel-spotlight"></div>
-                    <div class="pc-wheel-3d" x-ref="poleWheel" :class="{ 'spinning': spinning }">
+                    <div class="pc-wheel-wrap" x-ref="poleWheel" :class="{ 'spinning': spinning }">
                         <svg class="pc-wheel-svg" :view-box.camel="wheelViewBox" x-ref="poleSvg">
                             <defs>
-                                <radialGradient id="pcWheelGold" cx="50%" cy="50%" r="50%">
-                                    <stop offset="0%" stop-color="#fff8db"/>
-                                    <stop offset="35%" stop-color="#e5c86c"/>
-                                    <stop offset="100%" stop-color="#6b5410"/>
+                                <radialGradient id="pcWheelCardboard" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#4a3b2a"/>
+                                    <stop offset="100%" stop-color="#2a1f15"/>
                                 </radialGradient>
                             </defs>
-                            <circle :cx="wheelSize/2" :cy="wheelSize/2" :r="wheelSize/2 - 4" fill="url(#pcWheelGold)" opacity="0.95"/>
+                            <circle :cx="wheelSize/2" :cy="wheelSize/2" :r="wheelSize/2 - 4" fill="url(#pcWheelCardboard)" stroke="#5a4a3a" stroke-width="2"/>
                         </svg>
-                        <div class="pc-wheel-hub">GO</div>
+                        <div class="pc-wheel-hub"></div>
                         <div class="pc-wheel-pointer">
-                            <svg viewBox="0 0 130 130" fill="none">
-                                <path d="M130 65L15 0V130L130 65Z" fill="url(#pcWheelPointerGrad)"/>
-                                <defs>
-                                    <linearGradient id="pcWheelPointerGrad" x1="130" y1="65" x2="15" y2="65">
-                                        <stop stop-color="#ffd700"/>
-                                        <stop offset="1" stop-color="#ff3d00"/>
-                                    </linearGradient>
-                                </defs>
-                                <circle cx="88" cy="65" r="8" fill="#fff" stroke="#ff3d00" stroke-width="2"/>
+                            <svg viewBox="0 0 100 100" fill="none">
+                                <path d="M100 50L0 0V100L100 50Z" fill="#d90429"/>
+                                <path d="M85 50L15 20V80L85 50Z" fill="#ef233c"/>
+                                <circle cx="75" cy="50" r="6" fill="#fff"/>
                             </svg>
                         </div>
                     </div>
                 </div>
 
-                <!-- Marketplace -->
-                <div class="market-wheel-stage" x-show="wheelVariant === 'market'" x-cloak>
-                    <div class="market-wheel-rim"></div>
-                    <canvas x-ref="marketWheel" width="420" height="420" class="market-wheel"></canvas>
-                    <div class="market-wheel-center">GO</div>
-                    <div class="market-pointer">
-                        <svg viewBox="0 0 44 60" fill="none">
-                            <path d="M22 0L44 48H0L22 0Z" fill="#ff3d00"/>
-                            <path d="M22 48L14 60H30L22 48Z" fill="#ffd700"/>
-                            <circle cx="22" cy="18" r="5" fill="#fff"/>
-                        </svg>
+                <!-- Marketplace / re:premium cards -->
+                <div class="rp-stage" x-show="wheelVariant === 'market'" x-cloak>
+                    <div class="rp-header">
+                        <div class="rp-logo">ТЕХНОДРОП</div>
+                        <p class="rp-subtitle">Gadget Bar</p>
+                    </div>
+                    <div class="rp-cards-wrap">
+                        <div class="rp-pointer"></div>
+                        <div class="rp-cards-track" x-ref="marketTrack">
+                            <template x-for="(sector, index) in marketCards" :key="index">
+                                <div class="rp-card" :class="{ 'active': marketActiveIndex === index % sectors.length }">
+                                    <div class="rp-card-visual" :style="`background:${sector.bg}`">
+                                        <svg viewBox="0 0 100 100" fill="none" x-html="sector.icon"></svg>
+                                    </div>
+                                    <div class="rp-card-label" x-text="sector.label"></div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="rp-dots">
+                        <template x-for="(sector, index) in sectors" :key="index">
+                            <div class="rp-dot" :class="{ 'active': marketActiveIndex === index }"></div>
+                        </template>
                     </div>
                 </div>
 
@@ -273,29 +278,67 @@
                     message: '',
                     messageType: '',
                     wheelVariant: 'pole',
-                    rotation: { pole: 0, market: 0, neon: 0 },
-                    wheelSize: 420,
-                    wheelViewBox: '0 0 420 420',
+                    rotation: { pole: 0, neon: 0 },
+                    wheelSize: 460,
+                    wheelViewBox: '0 0 460 460',
                     sectorColors: [
-                        '#111111', '#f5f0e1', '#111111', '#f5f0e1',
-                        '#c41e3a', '#f5f0e1', '#111111', '#f5f0e1',
-                        '#111111', '#f5f0e1', '#2e8b57', '#f5f0e1'
-                    ],
-                    marketColors: [
-                        '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
-                        '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899',
-                        '#6366f1', '#14b8a6', '#f43f5e', '#84cc16'
+                        '#f5f0e1', '#1a1a1a', '#f5f0e1', '#1a1a1a',
+                        '#f5f0e1', '#1a1a1a', '#d90429', '#1a1a1a',
+                        '#f5f0e1', '#1a1a1a', '#f5f0e1', '#1a1a1a'
                     ],
                     neonColors: [
                         '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
                         '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899'
                     ],
+                    marketActiveIndex: 0,
+                    marketOffset: 0,
+                    marketCardWidth: 240,
+                    marketVisibleCenter: 0,
+                    marketCardTemplates: [
+                        { bg: '#dbeafe', icon: '<rect x="30" y="10" width="40" height="80" rx="8" fill="#1e3a8a"/><rect x="35" y="18" width="30" height="60" rx="3" fill="#dbeafe"/><circle cx="50" cy="85" r="4" fill="#fff"/>' },
+                        { bg: '#dcfce7', icon: '<rect x="15" y="15" width="70" height="70" rx="10" fill="#1e3a8a"/><rect x="22" y="22" width="56" height="56" rx="6" fill="#dbeafe"/><circle cx="50" cy="80" r="3" fill="#fff"/>' },
+                        { bg: '#fce7f3', icon: '<path d="M50 25c-16 0-29 13-29 29v16a6 6 0 0 0 6 6h6a6 6 0 0 0 6-6v-12a6 6 0 0 0-6-6h-6c0-14 11-25 25-25s25 11 25 25h-6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h6a6 6 0 0 0 6-6v-16c0-16-13-29-29-29z" fill="#1e3a8a"/><rect x="27" y="54" width="12" height="22" rx="6" fill="#2563eb"/><rect x="61" y="54" width="12" height="22" rx="6" fill="#2563eb"/>' },
+                        { bg: '#fef3c7', icon: '<rect x="35" y="20" width="30" height="60" rx="10" fill="#1e3a8a"/><rect x="40" y="28" width="20" height="44" rx="6" fill="#dbeafe"/><path d="M35 30h-5a5 5 0 0 0-5 5v30a5 5 0 0 0 5 5h5M65 30h5a5 5 0 0 1 5 5v30a5 5 0 0 1-5 5h-5" stroke="#1e3a8a" stroke-width="4"/>' },
+                        { bg: '#f3e8ff', icon: '<rect x="15" y="20" width="70" height="50" rx="6" fill="#1e3a8a"/><rect x="20" y="25" width="60" height="40" rx="3" fill="#dbeafe"/><path d="M10 70h80l-5 10H15l-5-10z" fill="#1e3a8a"/>' },
+                        { bg: '#e0f2fe', icon: '<rect x="20" y="30" width="60" height="40" rx="8" fill="#1e3a8a"/><circle cx="50" cy="50" r="14" fill="#dbeafe" stroke="#fff" stroke-width="3"/><circle cx="50" cy="50" r="7" fill="#1e3a8a"/><circle cx="72" cy="38" r="4" fill="#fff"/>' }
+                    ],
+
+                    get marketCards() {
+                        const list = [];
+                        const templates = this.marketCardTemplates;
+                        for (let i = 0; i < 5 * this.sectors.length; i++) {
+                            const s = this.sectors[i % this.sectors.length];
+                            const t = templates[i % templates.length];
+                            list.push({ label: this.truncate(s.label || s.name || '', 18), bg: t.bg, icon: t.icon });
+                        }
+                        return list;
+                    },
 
                     init() {
                         this.$nextTick(() => {
+                            this.measureMarket();
                             this.drawPoleWheel();
-                            this.drawMarketWheel();
                             this.drawNeonWheel();
+                        });
+                    },
+
+                    measureMarket() {
+                        const track = this.$refs.marketTrack;
+                        const wrap = track?.parentElement;
+                        const card = track?.querySelector('.rp-card');
+                        if (!track || !wrap || !card) return;
+                        const gap = parseFloat(getComputedStyle(track).gap) || 20;
+                        this.marketCardWidth = card.getBoundingClientRect().width + gap;
+                        this.marketVisibleCenter = wrap.clientWidth / 2;
+                    },
+
+                    drawMarketWheel() {
+                        this.$nextTick(() => {
+                            this.measureMarket();
+                            this.marketActiveIndex = 0;
+                            this.marketOffset = 0;
+                            const track = this.$refs.marketTrack;
+                            if (track) track.style.transform = 'translateX(0px)';
                         });
                     },
 
@@ -303,6 +346,9 @@
                         if (this.spinning) return;
                         this.wheelVariant = variant;
                         this.message = '';
+                        if (variant === 'market') {
+                            this.drawMarketWheel();
+                        }
                     },
 
                     async collectDaily() {
@@ -349,14 +395,13 @@
                         const svg = this.$refs.poleSvg;
                         if (!svg) return;
 
-                        // Clear previously generated sectors/text
                         svg.querySelectorAll('.pc-wheel-sector, .pc-wheel-text').forEach(el => el.remove());
 
                         const size = this.wheelSize;
                         const cx = size / 2;
                         const cy = size / 2;
-                        const rOut = size / 2 - 8;
-                        const rIn = 55;
+                        const rOut = size / 2 - 10;
+                        const rIn = 45;
                         const count = this.sectors.length || 1;
                         const angle = (Math.PI * 2) / count;
 
@@ -376,14 +421,15 @@
 
                         const ns = 'http://www.w3.org/2000/svg';
                         this.sectors.forEach((s, i) => {
+                            const color = this.sectorColors[i % this.sectorColors.length];
                             const path = document.createElementNS(ns, 'path');
                             path.setAttribute('d', makePath(i));
-                            path.setAttribute('fill', this.sectorColors[i % this.sectorColors.length]);
+                            path.setAttribute('fill', color);
                             path.setAttribute('class', 'pc-wheel-sector');
                             svg.appendChild(path);
 
                             const mid = i * angle + angle / 2 - Math.PI / 2;
-                            const tr = (rIn + rOut) / 2 + 2;
+                            const tr = (rIn + rOut) / 2 + 6;
                             const tx = cx + tr * Math.cos(mid);
                             const ty = cy + tr * Math.sin(mid);
 
@@ -393,13 +439,24 @@
                                 textAngle += 180;
                             }
 
+                            const label = (s.label || s.name || '').toString();
+                            const lines = label.includes('\n') ? label.split('\n') : (label.length > 10 ? [label.slice(0, 10), label.slice(10)] : [label]);
+
                             const text = document.createElementNS(ns, 'text');
                             text.setAttribute('x', tx);
                             text.setAttribute('y', ty);
                             text.setAttribute('class', 'pc-wheel-text');
-                            text.setAttribute('fill', this.sectorColors[i % this.sectorColors.length] === '#f5f0e1' ? '#111' : '#fff');
+                            text.setAttribute('fill', color === '#f5f0e1' ? '#1a1a1a' : '#f5f0e1');
                             text.setAttribute('transform', `rotate(${textAngle}, ${tx}, ${ty})`);
-                            text.textContent = this.truncate(s.label || s.name || '', 16);
+
+                            lines.forEach((line, idx) => {
+                                const tspan = document.createElementNS(ns, 'tspan');
+                                tspan.setAttribute('x', tx);
+                                tspan.setAttribute('dy', idx === 0 ? '0' : '1.05em');
+                                tspan.textContent = line;
+                                text.appendChild(tspan);
+                            });
+
                             svg.appendChild(text);
                         });
                     },
@@ -473,32 +530,58 @@
                         const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
                         const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
 
-                        const extraSpins = 6 * 360;
-                        const newRotation = this.rotation.pole + extraSpins + (90 - targetAngle - (this.rotation.pole % 360));
+                        const extraSpins = 5 * 360;
+                        const newRotation = this.rotation.pole + extraSpins + (270 - targetAngle - (this.rotation.pole % 360));
                         this.rotation.pole = newRotation;
 
                         const wheelEl = this.$refs.poleWheel;
-                        wheelEl.style.transform = `rotateX(62deg) rotateZ(28deg) rotateY(-6deg) rotateZ(${newRotation}deg)`;
+                        wheelEl.style.transform = `translate(-50%, -50%) rotateX(28deg) rotateY(-12deg) rotateZ(8deg) rotateZ(${newRotation}deg)`;
 
-                        setTimeout(() => this.finishSpin(data), 7000);
+                        setTimeout(() => this.finishSpin(data), 6500);
                     },
 
                     spinMarket(data) {
                         const index = this.sectors.findIndex(s => s.id === data.sector.id);
-                        const count = this.sectors.length;
-                        const sectorAngle = 360 / count;
-                        const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
-                        const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
+                        const loops = 3 + Math.floor(Math.random() * 2);
+                        const cardWidth = this.marketCardWidth;
+                        const visibleCenter = this.marketVisibleCenter || (this.$refs.marketTrack?.parentElement?.clientWidth / 2) || 360;
+                        const finalOffset = -(this.sectors.length * loops + index) * cardWidth + visibleCenter - cardWidth / 2;
+                        const startOffset = this.marketOffset;
+                        const distance = finalOffset - startOffset;
+                        const duration = 4000;
+                        const start = performance.now();
 
-                        const extraSpins = 6 * 360;
-                        const newRotation = this.rotation.market + extraSpins + (270 - targetAngle - (this.rotation.market % 360));
-                        this.rotation.market = newRotation;
+                        const animate = (now) => {
+                            const elapsed = now - start;
+                            const t = Math.min(elapsed / duration, 1);
+                            const eased = 1 - Math.pow(1 - t, 3);
+                            this.marketOffset = startOffset + distance * eased;
+                            const track = this.$refs.marketTrack;
+                            if (track) track.style.transform = `translateX(${this.marketOffset}px)`;
 
-                        const canvas = this.$refs.marketWheel;
-                        canvas.style.transition = 'transform 5s cubic-bezier(0.12, 0.68, 0.18, 0.99)';
-                        canvas.style.transform = `rotate(${newRotation}deg)`;
+                            const center = -this.marketOffset + visibleCenter;
+                            const idx = Math.round((center - cardWidth / 2) / cardWidth) % this.sectors.length;
+                            const normalizedIdx = (idx + this.sectors.length) % this.sectors.length;
+                            if (normalizedIdx !== this.marketActiveIndex) {
+                                this.marketActiveIndex = normalizedIdx;
+                            }
 
-                        setTimeout(() => this.finishSpin(data), 5100);
+                            if (t < 1) {
+                                requestAnimationFrame(animate);
+                            } else {
+                                this.finishSpin(data);
+                            }
+                        };
+                        requestAnimationFrame(animate);
+                    },
+
+                    drawMarketWheel() {
+                        // cards are rendered by Alpine x-for; just reset active state
+                        this.marketActiveIndex = 0;
+                        this.marketOffset = 0;
+                        const track = this.$refs.marketTrack;
+                        if (track) track.style.transform = 'translateX(0px)';
+                        this.$nextTick(() => this.measureMarket());
                     },
 
                     spinNeon(data) {

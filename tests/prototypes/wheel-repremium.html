@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Колесо фортуны — re:premium style</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: radial-gradient(circle at 50% 20%, #4a9eff 0%, #2563eb 40%, #1d4ed8 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    color: #fff;
+    overflow-x: hidden;
+    position: relative;
+  }
+  .bg-rays {
+    position: fixed;
+    inset: 0;
+    background: repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,255,255,0.05) 5deg, transparent 10deg);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .logo {
+    display: inline-block;
+    background: #fff;
+    color: #2563eb;
+    padding: 0.4rem 1.2rem;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .subtitle {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+  .stage {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .cards-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 2rem 0;
+  }
+  .cards-track {
+    display: flex;
+    gap: 1.25rem;
+    transition: transform 0.1s linear;
+    will-change: transform;
+  }
+  .card {
+    flex: 0 0 220px;
+    height: 260px;
+    background: #fff;
+    border-radius: 1.5rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.18), inset 0 0 0 4px rgba(255,255,255,0.4);
+    position: relative;
+  }
+  .card.active::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border: 4px solid #ffd700;
+    border-radius: 1.7rem;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+    pointer-events: none;
+  }
+  .card-visual {
+    width: 140px;
+    height: 140px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    position: relative;
+  }
+  .card-visual svg { width: 80%; height: 80%; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.12)); }
+  .card-label {
+    background: #fff;
+    color: #1e3a8a;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .pointer {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-top: 28px solid #ffd700;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+    z-index: 5;
+  }
+  .dots {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    transition: background 0.2s;
+  }
+  .dot.active { background: #ffd700; }
+  .spin-btn {
+    background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #1e3a8a;
+    cursor: pointer;
+    box-shadow: 0 8px 0 #b45309, 0 12px 24px rgba(0,0,0,0.25);
+    transition: transform 0.1s, box-shadow 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .spin-btn:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0 #b45309, 0 8px 16px rgba(0,0,0,0.25);
+  }
+  .spin-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .spin-btn svg { width: 28px; height: 28px; }
+  .message {
+    margin-top: 1.25rem;
+    min-height: 1.5em;
+    font-weight: 800;
+    font-size: 1.1rem;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  }
+  .decor {
+    position: fixed;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+  .butterfly { width: 40px; height: 40px; }
+  @media (max-width: 640px) {
+    .card { flex: 0 0 160px; height: 200px; border-radius: 1.2rem; }
+    .card-visual { width: 100px; height: 100px; }
+    .card-label { font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-rays"></div>
+
+<svg class="decor butterfly" style="top:12%;left:8%;" viewBox="0 0 40 40" fill="none"><path d="M20 20c-5-10-15-12-18-5s5 14 18 5c13 9 21 2 18-5s-13-5-18 5z" fill="#fff" opacity="0.8"/></svg>
+<svg class="decor butterfly" style="top:22%;right:10%;" viewBox="0 0 40 40" fill="none"><path d="M20 20c-5-10-15-12-18-5s5 14 18 5c13 9 21 2 18-5s-13-5-18 5z" fill="#fff" opacity="0.7"/></svg>
+<svg class="decor butterfly" style="bottom:25%;left:12%;" viewBox="0 0 40 40" fill="none"><path d="M20 20c-5-10-15-12-18-5s5 14 18 5c13 9 21 2 18-5s-13-5-18 5z" fill="#fff" opacity="0.75"/></svg>
+
+<div class="header">
+  <div class="logo">ЛЕТНИЙ ТЕХНОДРОП</div>
+  <p class="subtitle">от re:premium · Gadget Bar</p>
+</div>
+
+<div class="stage">
+  <div class="cards-wrap">
+    <div class="pointer"></div>
+    <div class="cards-track" id="track"></div>
+  </div>
+  <div class="dots" id="dots"></div>
+  <button class="spin-btn" id="spinBtn" onclick="spin()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+    Крутить
+  </button>
+  <div class="message" id="msg"></div>
+</div>
+
+<script>
+const svgPhone = `<svg viewBox="0 0 100 100" fill="none"><rect x="30" y="10" width="40" height="80" rx="8" fill="#1e3a8a"/><rect x="35" y="18" width="30" height="60" rx="3" fill="#dbeafe"/><circle cx="50" cy="85" r="4" fill="#fff"/></svg>`;
+const svgTablet = `<svg viewBox="0 0 100 100" fill="none"><rect x="15" y="15" width="70" height="70" rx="10" fill="#1e3a8a"/><rect x="22" y="22" width="56" height="56" rx="6" fill="#dbeafe"/><circle cx="50" cy="80" r="3" fill="#fff"/></svg>`;
+const svgHeadphones = `<svg viewBox="0 0 100 100" fill="none"><path d="M50 25c-16 0-29 13-29 29v16a6 6 0 0 0 6 6h6a6 6 0 0 0 6-6v-12a6 6 0 0 0-6-6h-6c0-14 11-25 25-25s25 11 25 25h-6a6 6 0 0 0-6 6v12a6 6 0 0 0 6 6h6a6 6 0 0 0 6-6v-16c0-16-13-29-29-29z" fill="#1e3a8a"/><rect x="27" y="54" width="12" height="22" rx="6" fill="#2563eb"/><rect x="61" y="54" width="12" height="22" rx="6" fill="#2563eb"/></svg>`;
+const svgWatch = `<svg viewBox="0 0 100 100" fill="none"><rect x="35" y="20" width="30" height="60" rx="10" fill="#1e3a8a"/><rect x="40" y="28" width="20" height="44" rx="6" fill="#dbeafe"/><path d="M35 30h-5a5 5 0 0 0-5 5v30a5 5 0 0 0 5 5h5M65 30h5a5 5 0 0 1 5 5v30a5 5 0 0 1-5 5h-5" stroke="#1e3a8a" stroke-width="4"/></svg>`;
+const svgLaptop = `<svg viewBox="0 0 100 100" fill="none"><rect x="15" y="20" width="70" height="50" rx="6" fill="#1e3a8a"/><rect x="20" y="25" width="60" height="40" rx="3" fill="#dbeafe"/><path d="M10 70h80l-5 10H15l-5-10z" fill="#1e3a8a"/></svg>`;
+const svgCamera = `<svg viewBox="0 0 100 100" fill="none"><rect x="20" y="30" width="60" height="40" rx="8" fill="#1e3a8a"/><circle cx="50" cy="50" r="14" fill="#dbeafe" stroke="#fff" stroke-width="3"/><circle cx="50" cy="50" r="7" fill="#1e3a8a"/><circle cx="72" cy="38" r="4" fill="#fff"/></svg>`;
+
+const prizes = [
+  { label: 'iPhone 17 Pro', bg: '#dbeafe', icon: svgPhone },
+  { label: 'iPad 11 2025', bg: '#dcfce7', icon: svgTablet },
+  { label: 'AirPods 3 Pro', bg: '#fce7f3', icon: svgHeadphones },
+  { label: 'Apple Watch', bg: '#fef3c7', icon: svgWatch },
+  { label: 'MacBook Air', bg: '#f3e8ff', icon: svgLaptop },
+  { label: 'Sony Camera', bg: '#e0f2fe', icon: svgCamera },
+];
+
+const track = document.getElementById('track');
+const dots = document.getElementById('dots');
+const cardWidth = 220 + 20;
+const visibleCenter = 360;
+
+function render() {
+  track.innerHTML = '';
+  dots.innerHTML = '';
+  const total = prizes.length * 5;
+  for (let i = 0; i < total; i++) {
+    const p = prizes[i % prizes.length];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="card-visual" style="background:${p.bg}">${p.icon}</div><div class="card-label">${p.label}</div>`;
+    track.appendChild(card);
+  }
+  for (let i = 0; i < prizes.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    dots.appendChild(d);
+  }
+}
+render();
+
+let offset = 0;
+let currentIndex = 0;
+let spinning = false;
+
+function updateActive() {
+  const cards = track.querySelectorAll('.card');
+  const dotsEls = dots.querySelectorAll('.dot');
+  cards.forEach((c, i) => c.classList.toggle('active', i % prizes.length === currentIndex));
+  dotsEls.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+}
+updateActive();
+
+function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+function spin() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('msg').textContent = '';
+
+  const targetIndex = Math.floor(Math.random() * prizes.length);
+  const loops = 3 + Math.floor(Math.random() * 2);
+  const finalOffset = -(prizes.length * loops + targetIndex) * cardWidth + visibleCenter - cardWidth / 2;
+  const startOffset = offset;
+  const distance = finalOffset - startOffset;
+  const duration = 4000;
+  const start = performance.now();
+
+  function frame(now) {
+    const elapsed = now - start;
+    const t = Math.min(elapsed / duration, 1);
+    const eased = easeOutCubic(t);
+    offset = startOffset + distance * eased;
+    track.style.transform = `translateX(${offset}px)`;
+
+    const center = -offset + visibleCenter;
+    const idx = Math.round((center - cardWidth / 2) / cardWidth) % prizes.length;
+    if (idx !== currentIndex) {
+      currentIndex = (idx + prizes.length) % prizes.length;
+      updateActive();
+    }
+
+    if (t < 1) {
+      requestAnimationFrame(frame);
+    } else {
+      spinning = false;
+      document.getElementById('spinBtn').disabled = false;
+      document.getElementById('msg').textContent = 'Выпало: ' + prizes[targetIndex].label;
+    }
+  }
+  requestAnimationFrame(frame);
+}
+</script>
+</body>
+</html>

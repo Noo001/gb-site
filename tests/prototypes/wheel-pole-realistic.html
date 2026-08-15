@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Колесо фортуны — «Поле чудес» по фото</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 70% 30%, #2a1a10 0%, #0f0805 100%);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow: hidden;
+  }
+  h1 { font-weight: 900; margin-bottom: 1.5rem; font-size: 1.8rem; text-shadow: 0 0 20px rgba(255,255,255,0.15); }
+  .scene {
+    position: relative;
+    width: 620px;
+    height: 520px;
+    perspective: 900px;
+  }
+  .wheel {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 460px;
+    height: 460px;
+    transform: translate(-50%, -50%) rotateX(28deg) rotateY(-12deg) rotateZ(8deg);
+    transform-style: preserve-3d;
+    transition: transform 6.5s cubic-bezier(0.12, 0.75, 0.18, 1);
+  }
+  .wheel-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 40px 60px rgba(0,0,0,0.8));
+  }
+  .sector { stroke: rgba(255,255,255,0.15); stroke-width: 1; }
+  .sector-text {
+    font-weight: 900;
+    font-size: 26px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+  .hub {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 80px; height: 80px;
+    transform: translate(-50%, -50%) translateZ(20px);
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #e8e0d0, #8a7a60, #3a3228);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.2);
+    z-index: 3;
+  }
+  .pointer {
+    position: absolute;
+    left: -50px;
+    top: 50%;
+    transform: translateY(-50%) translateZ(60px);
+    width: 100px;
+    height: 100px;
+    z-index: 10;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));
+  }
+  .pointer svg { width: 100%; height: 100%; }
+  .controls { margin-top: 2rem; display: flex; gap: 1rem; }
+  button {
+    border: none; padding: 1rem 2rem; border-radius: 999px; font-size: 1rem; font-weight: 900; cursor: pointer;
+    transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .spin { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #2b2005; box-shadow: 0 8px 28px rgba(255, 140, 0, 0.45); }
+  .spin:hover { transform: translateY(-2px); }
+  .free { background: transparent; color: #ffd700; border: 2px solid #ffd700; }
+  .message { margin-top: 1rem; font-weight: 800; font-size: 1.2rem; color: #ffd700; }
+  @media (max-width: 640px) {
+    .scene { width: 360px; height: 340px; }
+    .wheel { width: 280px; height: 280px; }
+    .pointer { width: 60px; height: 60px; left: -30px; }
+    .sector-text { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<h1>«Поле чудес»</h1>
+<div class="scene">
+  <div class="wheel" id="wheel">
+    <svg class="wheel-svg" viewBox="0 0 460 460" id="svg">
+      <defs>
+        <radialGradient id="cardboard" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#4a3b2a"/>
+          <stop offset="100%" stop-color="#2a1f15"/>
+        </radialGradient>
+      </defs>
+      <circle cx="230" cy="230" r="228" fill="url(#cardboard)" stroke="#5a4a3a" stroke-width="2"/>
+    </svg>
+    <div class="hub"></div>
+    <div class="pointer">
+      <svg viewBox="0 0 100 100" fill="none">
+        <path d="M100 50L0 0V100L100 50Z" fill="#d90429"/>
+        <path d="M85 50L15 20V80L85 50Z" fill="#ef233c"/>
+        <circle cx="75" cy="50" r="6" fill="#fff"/>
+      </svg>
+    </div>
+  </div>
+</div>
+<div class="controls">
+  <button class="spin" onclick="spin()">Крутить</button>
+  <button class="free" onclick="spin()">Бесплатно</button>
+</div>
+<div class="message" id="msg"></div>
+<script>
+const sectors = [
+  { label: '500', color: '#f5f0e1' },
+  { label: '100', color: '#1a1a1a' },
+  { label: '200', color: '#f5f0e1' },
+  { label: '50', color: '#1a1a1a' },
+  { label: '1000', color: '#f5f0e1' },
+  { label: '25', color: '#1a1a1a' },
+  { label: 'Супер\nприз', color: '#d90429' },
+  { label: '10', color: '#1a1a1a' },
+  { label: 'Free\nspin', color: '#f5f0e1' },
+  { label: '75', color: '#1a1a1a' },
+  { label: '500', color: '#f5f0e1' },
+  { label: '200', color: '#1a1a1a' },
+];
+const cx = 230, cy = 230, rOut = 220, rIn = 45;
+const n = sectors.length;
+const angle = (Math.PI * 2) / n;
+
+function path(i) {
+  const start = i * angle - Math.PI / 2;
+  const end = start + angle;
+  const x1 = cx + rIn * Math.cos(start), y1 = cy + rIn * Math.sin(start);
+  const x2 = cx + rOut * Math.cos(start), y2 = cy + rOut * Math.sin(start);
+  const x3 = cx + rOut * Math.cos(end), y3 = cy + rOut * Math.sin(end);
+  const x4 = cx + rIn * Math.cos(end), y4 = cy + rIn * Math.sin(end);
+  return `M ${x1} ${y1} L ${x2} ${y2} A ${rOut} ${rOut} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${rIn} ${rIn} 0 0 0 ${x1} ${y1} Z`;
+}
+
+const svg = document.getElementById('svg');
+const ns = 'http://www.w3.org/2000/svg';
+sectors.forEach((s, i) => {
+  const p = document.createElementNS(ns, 'path');
+  p.setAttribute('d', path(i));
+  p.setAttribute('fill', s.color);
+  p.setAttribute('class', 'sector');
+  svg.appendChild(p);
+
+  const mid = i * angle + angle / 2 - Math.PI / 2;
+  const tr = (rIn + rOut) / 2 + 6;
+  const tx = cx + tr * Math.cos(mid);
+  const ty = cy + tr * Math.sin(mid);
+  let ta = (mid * 180 / Math.PI) + 90;
+  const norm = ((mid + Math.PI * 2.5) % (Math.PI * 2));
+  if (norm > Math.PI / 2 && norm < 3 * Math.PI / 2) ta += 180;
+
+  const t = document.createElementNS(ns, 'text');
+  t.setAttribute('x', tx);
+  t.setAttribute('y', ty);
+  t.setAttribute('class', 'sector-text');
+  t.setAttribute('fill', s.color === '#f5f0e1' ? '#1a1a1a' : '#f5f0e1');
+  t.setAttribute('transform', `rotate(${ta}, ${tx}, ${ty})`);
+  const lines = s.label.split('\n');
+  t.textContent = lines[0];
+  if (lines[1]) {
+    const ts = document.createElementNS(ns, 'tspan');
+    ts.setAttribute('x', tx);
+    ts.setAttribute('dy', '1.05em');
+    ts.textContent = lines[1];
+    t.appendChild(ts);
+    t.setAttribute('y', ty - 10);
+  }
+  svg.appendChild(t);
+});
+
+let rotation = 0;
+function spin() {
+  const idx = Math.floor(Math.random() * n);
+  const sectorAngle = 360 / n;
+  const target = idx * sectorAngle + sectorAngle / 2 + (Math.random() * sectorAngle * 0.8 - sectorAngle * 0.4);
+  rotation += 5 * 360 + (270 - target - (rotation % 360));
+  document.getElementById('wheel').style.transform = `translate(-50%, -50%) rotateX(28deg) rotateY(-12deg) rotateZ(8deg) rotateZ(${rotation}deg)`;
+  setTimeout(() => {
+    document.getElementById('msg').textContent = 'Выпало: ' + sectors[idx].label.replace(/\n/g, ' ');
+  }, 6500);
+}
+</script>
+</body>
+</html>
