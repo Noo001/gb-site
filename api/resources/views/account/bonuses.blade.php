@@ -599,7 +599,7 @@
                         const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
 
                         const extraSpins = 3 * 360;
-                        const newRotation = this.rotation.pole + extraSpins + (targetAngle - 90 - (this.rotation.pole % 360));
+                        const newRotation = this.rotation.pole + extraSpins + (targetAngle + 90 - (this.rotation.pole % 360));
                         this.rotation.pole = newRotation;
 
                         const cylinder = this.$refs.poleCylinder;
