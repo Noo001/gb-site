@@ -440,7 +440,12 @@
                             }
 
                             const label = (s.label || s.name || '').toString();
-                            const lines = label.includes('\n') ? label.split('\n') : (label.length > 10 ? [label.slice(0, 10), label.slice(10)] : [label]);
+                            const maxLine = 14;
+                            const lines = [];
+                            for (let i = 0; i < label.length; i += maxLine) {
+                                lines.push(label.slice(i, i + maxLine));
+                            }
+                            if (lines.length === 0) lines.push('');
 
                             const text = document.createElementNS(ns, 'text');
                             text.setAttribute('x', tx);

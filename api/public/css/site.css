@@ -4184,7 +4184,7 @@ button {
 
 .pc-wheel-text {
     font-weight: 900;
-    font-size: 26px;
+    font-size: 17px;
     text-anchor: middle;
     dominant-baseline: middle;
 }
@@ -4241,7 +4241,7 @@ button {
     }
 
     .pc-wheel-text {
-        font-size: 18px;
+        font-size: 12px;
     }
 }
 
