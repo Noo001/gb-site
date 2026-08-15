@@ -377,19 +377,19 @@
 
                         if (!cardWidth || !realWidth) return;
 
-                        let activeIndex = 0;
+                        let activeIndex = this.marketActiveIndex;
                         cards.forEach((card, i) => {
                             const cardLeft = this.marketOffset + i * cardWidth;
                             const cardCenter = cardLeft + realWidth / 2;
                             const dist = (cardCenter - center) / cardWidth;
                             const absDist = Math.min(3, Math.abs(dist));
-                            const scale = Math.max(0.78, 1 - absDist * 0.18);
-                            const opacity = Math.max(0.45, 1 - absDist * 0.45);
-                            const blur = Math.min(4, absDist * 2.5);
+                            const scale = absDist < 0.5 ? 1.15 : Math.max(0.72, 1 - absDist * 0.22);
+                            const opacity = absDist < 0.5 ? 1 : Math.max(0.35, 1 - absDist * 0.55);
+                            const blur = absDist < 0.5 ? 0 : Math.min(5, absDist * 2.2);
                             card.style.transform = `scale(${scale})`;
                             card.style.opacity = opacity;
                             card.style.filter = `blur(${blur}px)`;
-                            const isActive = absDist < 0.4;
+                            const isActive = absDist < 0.5;
                             card.classList.toggle('active', isActive);
                             if (isActive) {
                                 activeIndex = i % count;
@@ -613,7 +613,7 @@
                     spinMarket(data) {
                         const index = this.sectors.findIndex(s => s.id === data.sector.id);
                         const count = this.sectors.length;
-                        const loops = 4 + Math.floor(Math.random() * 2);
+                        const loops = 5 + Math.floor(Math.random() * 2);
                         const cardWidth = this.marketCardWidth;
                         const realWidth = this.marketCardRealWidth;
                         const visibleCenter = this.marketVisibleCenter || (this.$refs.marketTrack?.parentElement?.clientWidth / 2) || 360;
@@ -622,13 +622,13 @@
                         const finalOffset = visibleCenter - (finalCardIndex * cardWidth + realWidth / 2);
                         const startOffset = this.marketOffset;
                         const distance = finalOffset - startOffset;
-                        const duration = 5500;
+                        const duration = 6500;
                         const start = performance.now();
 
                         const animate = (now) => {
                             const elapsed = now - start;
                             const t = Math.min(elapsed / duration, 1);
-                            const eased = 1 - Math.pow(1 - t, 3.5);
+                            const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
                             this.marketOffset = startOffset + distance * eased;
                             const track = this.$refs.marketTrack;
                             if (track) track.style.transform = `translateX(${this.marketOffset}px)`;
@@ -637,8 +637,10 @@
                             if (t < 1) {
                                 requestAnimationFrame(animate);
                             } else {
+                                this.marketOffset = finalOffset;
                                 this.marketActiveIndex = index;
-                                this.marketActiveCard = finalCardIndex;
+                                if (track) track.style.transform = `translateX(${finalOffset}px)`;
+                                this.updateMarketCards();
                                 this.finishSpin(data);
                             }
                         };

@@ -4439,7 +4439,7 @@ button {
 .rp-card.active {
     border-color: #ffd700;
     box-shadow: 0 0 50px rgba(255, 215, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.3);
-    transform: scale(1.08);
+    transform: scale(1.15);
     z-index: 2;
 }
 
