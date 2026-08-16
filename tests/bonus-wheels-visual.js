@@ -17,7 +17,11 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
   if (!signedUrl.startsWith('http')) throw new Error('unexpected url: ' + signedUrl);
 
   const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({ userAgent: USER_AGENT, viewport: { width: 1440, height: 900 } });
+  const context = await browser.newContext({
+    userAgent: USER_AGENT,
+    viewport: { width: 1440, height: 900 },
+    extraHTTPHeaders: { 'Cache-Control': 'no-cache' },
+  });
   const page = await context.newPage();
 
   try {

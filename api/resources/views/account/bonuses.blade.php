@@ -458,7 +458,7 @@
 
                         const count = this.sectors.length || 1;
                         const R = 380;
-                        const H = 240;
+                        const H = 210;
                         const angle = 360 / count;
                         const sideW = 2 * R * Math.tan(Math.PI / count);
 
@@ -614,7 +614,7 @@
 
                         const cylinder = this.$refs.poleCylinder;
                         if (cylinder) {
-                            cylinder.style.transform = `rotateX(16deg) scale(1.05) translateX(50px) rotateY(${-newRotation}deg)`;
+                            cylinder.style.transform = `rotateX(16deg) scale(0.95) translateX(-20px) rotateY(${-newRotation}deg)`;
                         }
 
                         setTimeout(() => this.finishSpin(data), 26000);
