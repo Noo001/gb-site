@@ -378,32 +378,22 @@
                         if (!cardWidth || !realWidth) return;
 
                         let activeIndex = this.marketActiveIndex;
-                        let minDist = Infinity;
-                        let closestIndex = activeIndex;
-
                         cards.forEach((card, i) => {
                             const cardLeft = this.marketOffset + i * cardWidth;
                             const cardCenter = cardLeft + realWidth / 2;
                             const dist = (cardCenter - center) / cardWidth;
                             const absDist = Math.min(3, Math.abs(dist));
-                            const sign = dist < 0 ? -1 : 1;
 
-                            const scale = absDist < 0.5 ? 1.15 : Math.max(0.72, 1 - absDist * 0.22);
-                            const opacity = absDist < 0.5 ? 1 : Math.max(0.35, 1 - absDist * 0.55);
-                            const blur = absDist < 0.5 ? 0 : Math.min(5, absDist * 2.2);
-                            const rotateY = absDist < 0.5 ? 0 : sign * Math.min(35, absDist * 25);
-                            const z = absDist < 0.5 ? 40 : -absDist * 30;
+                            const scale = absDist < 0.5 ? 1.12 : Math.max(0.78, 1 - absDist * 0.18);
+                            const opacity = absDist < 0.5 ? 1 : Math.max(0.45, 1 - absDist * 0.45);
+                            const blur = absDist < 0.5 ? 0 : Math.min(4, absDist * 2.5);
 
-                            card.style.transform = `scale(${scale}) perspective(1000px) translateZ(${z}px) rotateY(${-rotateY}deg)`;
+                            card.style.transform = `scale(${scale})`;
                             card.style.opacity = opacity;
                             card.style.filter = `blur(${blur}px)`;
                             card.style.zIndex = absDist < 0.5 ? 2 : 1;
                             const isActive = absDist < 0.5;
                             card.classList.toggle('active', isActive);
-                            if (absDist < minDist) {
-                                minDist = absDist;
-                                closestIndex = i % count;
-                            }
                             if (isActive) {
                                 activeIndex = i % count;
                             }
@@ -469,13 +459,13 @@
                         cylinder.querySelectorAll('.pc-wheel-side').forEach(el => el.remove());
 
                         const count = this.sectors.length || 1;
-                        const R = 520;
-                        const H = 360;
+                        const R = 400;
+                        const H = 320;
                         const angle = 360 / count;
                         const sideW = 2 * R * Math.tan(Math.PI / count);
 
                         const palette = {
-                            white: '#f5f0e1', black: '#1a1a1a', red: '#d90429', green: '#1b6e22', gold: '#c9a227'
+                            white: '#fff8e7', black: '#222', red: '#e81c3e', green: '#228b22', gold: '#e6b800'
                         };
 
                         const getClass = (i) => {
@@ -617,7 +607,7 @@
 
                         const cylinder = this.$refs.poleCylinder;
                         if (cylinder) {
-                            cylinder.style.transform = `rotateX(18deg) scale(1.55) translateX(220px) rotateY(${-newRotation}deg)`;
+                            cylinder.style.transform = `rotateX(18deg) scale(1.25) translateX(80px) rotateY(${-newRotation}deg)`;
                         }
 
                         setTimeout(() => this.finishSpin(data), 16000);
