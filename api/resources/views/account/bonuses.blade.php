@@ -104,10 +104,10 @@
                         </div>
                     </div>
                     <div class="pc-wheel-pointer">
-                        <svg viewBox="0 0 60 40" fill="none">
-                            <path d="M0 20 L48 4 L48 36 Z" fill="#d90429"/>
-                            <path d="M6 20 L44 10 L44 30 Z" fill="#ef233c"/>
-                            <circle cx="44" cy="20" r="4" fill="#fff"/>
+                        <svg viewBox="0 0 40 40" fill="none">
+                            <path d="M2 20 L30 8 L30 32 Z" fill="#d90429"/>
+                            <path d="M2 20 L26 11 L26 29 Z" fill="#ef233c"/>
+                            <circle cx="30" cy="20" r="3" fill="#fff"/>
                         </svg>
                     </div>
                 </div>
@@ -379,22 +379,24 @@
 
                         let activeIndex = this.marketActiveIndex;
                         const nearestIndex = Math.round((center - realWidth / 2 - this.marketOffset) / cardWidth);
-                        const start = Math.max(0, nearestIndex - 6);
-                        const end = Math.min(cards.length, nearestIndex + 7);
+                        const start = Math.max(0, nearestIndex - 8);
+                        const end = Math.min(cards.length, nearestIndex + 9);
 
                         for (let i = start; i < end; i++) {
                             const card = cards[i];
                             const cardLeft = this.marketOffset + i * cardWidth;
                             const cardCenter = cardLeft + realWidth / 2;
                             const dist = (cardCenter - center) / cardWidth;
-                            const absDist = Math.min(3, Math.abs(dist));
+                            const absDist = Math.min(4, Math.abs(dist));
 
                             const isActive = absDist < 0.5;
-                            const scale = isActive ? 1.14 : Math.max(0.85, 1 - absDist * 0.12);
-                            const opacity = isActive ? 1 : Math.max(0.55, 1 - absDist * 0.32);
+                            const scale = isActive ? 1.16 : Math.max(0.78, 1 - absDist * 0.11);
+                            const opacity = isActive ? 1 : Math.max(0.45, 1 - absDist * 0.28);
+                            const blur = isActive ? 0 : Math.min(2.5, absDist * 0.5);
 
                             card.style.transform = `scale(${scale})`;
                             card.style.opacity = opacity;
+                            card.style.filter = blur > 0.1 ? `blur(${blur}px)` : 'none';
                             card.style.zIndex = isActive ? 2 : 1;
                             card.classList.toggle('active', isActive);
                             if (isActive) {
@@ -462,8 +464,8 @@
                         cylinder.querySelectorAll('.pc-wheel-side').forEach(el => el.remove());
 
                         const count = this.sectors.length || 1;
-                        const R = 380;
-                        const H = 240;
+                        const R = 400;
+                        const H = 280;
                         const angle = 360 / count;
                         const sideW = 2 * R * Math.tan(Math.PI / count);
 
@@ -480,13 +482,13 @@
 
                         const formatSideLabel = (text) => {
                             if (!text) return '';
-                            if (text.length <= 12) return text;
+                            if (text.length <= 10) return text;
                             const words = text.split(/\s+/).filter(Boolean);
-                            if (words.length < 2) return this.truncate(text, 14);
+                            if (words.length < 2) return this.truncate(text, 12);
                             const mid = Math.floor(words.length / 2);
                             const first = words.slice(0, mid).join(' ');
                             const second = words.slice(mid).join(' ');
-                            if (first.length > 16 || second.length > 16) return this.truncate(text, 14);
+                            if (first.length > 14 || second.length > 14) return this.truncate(text, 12);
                             return first + '\n' + second;
                         };
 
@@ -526,9 +528,48 @@
                             const path = document.createElementNS(ns, 'path');
                             path.setAttribute('d', makePath(i));
                             path.setAttribute('fill', palette[getClass(i, s)]);
-                            path.setAttribute('stroke', 'rgba(255,255,255,0.2)');
-                            path.setAttribute('stroke-width', '2');
+                            path.setAttribute('stroke', 'rgba(255,255,255,0.35)');
+                            path.setAttribute('stroke-width', '3');
                             svg.appendChild(path);
+
+                            // Label on the top lid so the result is readable from above
+                            const mid = i * (Math.PI * 2) / count + (Math.PI / count) - Math.PI / 2;
+                            const tx = cx + Math.cos(mid) * (r * 0.62);
+                            const ty = cy + Math.sin(mid) * (r * 0.62);
+                            const g = document.createElementNS(ns, 'g');
+                            g.setAttribute('transform', `translate(${tx}, ${ty}) rotate(${mid * 180 / Math.PI + 90})`);
+
+                            const label = document.createElementNS(ns, 'text');
+                            label.setAttribute('text-anchor', 'middle');
+                            label.setAttribute('dominant-baseline', 'middle');
+                            label.setAttribute('fill', '#fff');
+                            label.setAttribute('font-size', '26');
+                            label.setAttribute('font-weight', '900');
+                            label.setAttribute('paint-order', 'stroke');
+                            label.setAttribute('stroke', 'rgba(0,0,0,0.55)');
+                            label.setAttribute('stroke-width', '4');
+                            label.setAttribute('stroke-linecap', 'round');
+                            label.setAttribute('stroke-linejoin', 'round');
+                            label.textContent = this.truncate(s.label || s.name || '', 14);
+                            g.appendChild(label);
+
+                            const sub = document.createElementNS(ns, 'text');
+                            sub.setAttribute('text-anchor', 'middle');
+                            sub.setAttribute('dominant-baseline', 'middle');
+                            sub.setAttribute('y', '28');
+                            sub.setAttribute('fill', '#fff');
+                            sub.setAttribute('font-size', '18');
+                            sub.setAttribute('font-weight', '700');
+                            sub.setAttribute('paint-order', 'stroke');
+                            sub.setAttribute('stroke', 'rgba(0,0,0,0.55)');
+                            sub.setAttribute('stroke-width', '3');
+                            sub.setAttribute('stroke-linecap', 'round');
+                            sub.setAttribute('stroke-linejoin', 'round');
+                            const subText = s.type === 'super' ? 'Суперприз' : (s.type === 'free_spin' ? '+спин' : (s.type === 'bonus' ? 'Бонус' : ''));
+                            sub.textContent = subText;
+                            g.appendChild(sub);
+
+                            svg.appendChild(g);
                         });
 
                         const ring = document.createElementNS(ns, 'circle');
@@ -633,7 +674,7 @@
                             cylinder.style.setProperty('--pole-rotation', `${-newRotation}deg`);
                         }
 
-                        setTimeout(() => this.finishSpin(data), 18000);
+                        setTimeout(() => this.finishSpin(data), 12000);
                     },
 
                     spinMarket(data) {
@@ -653,7 +694,7 @@
                         const finalOffset = visibleCenter - (finalCardIndex * cardWidth + realWidth / 2);
                         const startOffset = this.marketOffset;
                         const distance = finalOffset - startOffset;
-                        const duration = 5200;
+                        const duration = 4200;
 
                         const track = this.$refs.marketTrack;
                         if (!track) {
@@ -666,6 +707,7 @@
                             card.style.transition = 'none';
                             card.style.transform = 'scale(1)';
                             card.style.opacity = '1';
+                            card.style.filter = 'blur(0px)';
                             card.classList.remove('active');
                         });
                         track.style.transition = 'none';
@@ -680,6 +722,12 @@
                             const currentOffset = startOffset + distance * eased;
                             this.marketOffset = currentOffset;
                             track.style.transform = `translate3d(${currentOffset}px, 0, 0)`;
+
+                            // motion blur fades as the wheel slows
+                            const blur = Math.max(0, (1 - eased) * 2.5);
+                            track.querySelectorAll('.rp-card').forEach(card => {
+                                card.style.filter = blur > 0.1 ? `blur(${blur}px)` : 'none';
+                            });
                             this.updateMarketCards();
 
                             if (t < 1) {
@@ -689,6 +737,7 @@
                                 track.style.transform = `translate3d(${finalOffset}px, 0, 0)`;
                                 track.querySelectorAll('.rp-card').forEach(card => {
                                     card.style.transition = '';
+                                    card.style.filter = 'none';
                                 });
                                 this.updateMarketCards(true);
                                 this.marketActiveIndex = index;
