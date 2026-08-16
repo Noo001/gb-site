@@ -46,6 +46,15 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
       console.log(`  screenshot ${v.key}-static.png`);
     }
 
+    // Mobile snapshots for pole only
+    console.log('\nMobile pole snapshot...');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.click('.wheel-tab:has-text("Поле чудес 3D")');
+    await wait(1200);
+    await page.screenshot({ path: path.join(SCREENSHOTS, 'pole-mobile-static.png'), fullPage: false });
+    console.log('  screenshot pole-mobile-static.png');
+    await page.setViewportSize({ width: 1440, height: 900 });
+
     // Test spins on each variant (low balance is fine, just verify animation starts)
     for (const v of variants) {
       console.log(`\nSpinning ${v.name}...`);

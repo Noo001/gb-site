@@ -4171,7 +4171,7 @@ button {
     width: 0;
     height: 0;
     transform-style: preserve-3d;
-    transform: rotateX(16deg) scale(0.95) translateX(-20px) rotateY(0deg);
+    transform: rotateX(16deg) scale(0.9) translateX(-40px) rotateY(0deg);
     transition: transform 26s cubic-bezier(0.04, 0.58, 0.08, 1);
 }
 
