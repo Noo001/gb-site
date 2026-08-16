@@ -4277,7 +4277,7 @@ button {
     }
 
     .pc-wheel-cylinder {
-        transform: rotateX(-9deg) scale(0.9) translateX(-95px) translateY(-4px) rotateY(90deg) rotateY(var(--pole-rotation, 0deg));
+        transform: rotateX(-9deg) scale(0.82) translateX(-92px) translateY(-4px) rotateY(90deg) rotateY(var(--pole-rotation, 0deg));
     }
 
     .pc-wheel-pointer {
@@ -4293,11 +4293,11 @@ button {
 
 @media (max-width: 480px) {
     .pc-wheel-stage {
-        aspect-ratio: 1 / 0.72;
+        aspect-ratio: 1 / 0.68;
     }
 
     .pc-wheel-cylinder {
-        transform: rotateX(-8deg) scale(0.78) translateX(-78px) translateY(0px) rotateY(90deg) rotateY(var(--pole-rotation, 0deg));
+        transform: rotateX(-8deg) scale(0.68) translateX(-75px) translateY(0px) rotateY(90deg) rotateY(var(--pole-rotation, 0deg));
     }
 
     .pc-wheel-pointer {
