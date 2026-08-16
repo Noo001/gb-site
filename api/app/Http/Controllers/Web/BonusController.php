@@ -87,6 +87,7 @@ class BonusController extends Controller
                     'new_balance' => $result['new_balance'],
                     'free_spins_available' => $user->free_spins_available,
                     'can_collect_daily' => false,
+                    'week_collect_data' => $this->bonusService->weekCollectData($user),
                     'message' => $message,
                 ])
                 : back()->with('success', $message);

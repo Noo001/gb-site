@@ -52,13 +52,16 @@
                             'collected': day.is_collected,
                             'today': day.is_today,
                             'can-collect': day.can_collect,
-                            'future': !day.is_collected && !day.can_collect && !day.is_today
+                            'past-missed': day.is_past && !day.is_collected,
+                            'future': !day.is_past && !day.is_today
                         }">
+                            <div class="daily-day-number" x-text="'День ' + day.day_number"></div>
                             <div class="daily-day-dot">
                                 <svg x-show="day.is_collected" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                <span x-show="!day.is_collected" x-text="day.day"></span>
+                                <span x-show="!day.is_collected" x-text="day.day_number"></span>
                             </div>
-                            <div class="daily-day-label" x-text="day.weekday"></div>
+                            <div class="daily-day-label" x-text="day.weekday + ', ' + day.day"></div>
+                            <div class="daily-day-reward" :class="{ 'streak': day.is_streak_day }" x-text="'+' + day.reward + ' Б'"></div>
                             <div class="daily-day-badge" x-show="day.is_today">сегодня</div>
                         </div>
                     </template>
@@ -467,10 +470,8 @@
                             this.dailyMessage = data.message;
                             this.dailyMessageType = 'success';
                             this.balancePulse = true;
-                            const todayIndex = this.weekCollectData.findIndex(d => d.is_today);
-                            if (todayIndex !== -1) {
-                                this.weekCollectData[todayIndex].is_collected = true;
-                                this.weekCollectData[todayIndex].can_collect = false;
+                            if (data.week_collect_data) {
+                                this.weekCollectData = data.week_collect_data;
                             }
                             setTimeout(() => this.balancePulse = false, 800);
                         } catch (e) {

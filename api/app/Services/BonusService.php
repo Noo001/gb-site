@@ -94,31 +94,50 @@ class BonusService
     public function weekCollectData(User $user): array
     {
         $today = $this->today();
-        $days = [];
+
+        // Find the start of the current streak window.
+        $startOfStreak = $today->copy();
+        if ($user->last_daily_bonus_at) {
+            $last = $user->last_daily_bonus_at->timezone(self::TIMEZONE)->startOfDay();
+            if ($last->equalTo($today) || $last->equalTo($today->copy()->subDay())) {
+                $streak = max(1, $user->daily_streak_count);
+                $startOfStreak = $last->copy()->subDays($streak - 1);
+            }
+        }
 
         $operations = BonusOperation::where('user_id', $user->id)
             ->where('type', 'daily')
-            ->whereDate('created_at', '>=', $today->copy()->subDays(6)->toDateString())
+            ->whereDate('created_at', '>=', $startOfStreak->toDateString())
             ->whereDate('created_at', '<=', $today->toDateString())
             ->get()
             ->keyBy(fn ($op) => $op->created_at->timezone(self::TIMEZONE)->format('Y-m-d'));
 
         $weekdayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+        $daily = $this->dailyAmount();
+        $streakBonus = $this->streakAmount();
+        $days = [];
 
-        for ($i = 6; $i >= 0; $i--) {
-            $date = $today->copy()->subDays($i);
+        for ($i = 0; $i < 7; $i++) {
+            $date = $startOfStreak->copy()->addDays($i);
             $dateKey = $date->format('Y-m-d');
-            $isToday = $i === 0;
+            $isToday = $date->equalTo($today);
+            $isPast = $date->lt($today);
             $isCollected = $operations->has($dateKey);
             $canCollect = $isToday && $this->canCollectDaily($user);
+            $dayNumber = $i + 1;
+            $reward = $dayNumber === 7 ? $daily + $streakBonus : $daily;
 
             $days[] = [
                 'date' => $dateKey,
                 'day' => $date->day,
                 'weekday' => $weekdayNames[(int) $date->format('w')],
                 'is_today' => $isToday,
+                'is_past' => $isPast,
                 'is_collected' => $isCollected,
                 'can_collect' => $canCollect,
+                'day_number' => $dayNumber,
+                'reward' => $reward,
+                'is_streak_day' => $dayNumber === 7,
             ];
         }
 
