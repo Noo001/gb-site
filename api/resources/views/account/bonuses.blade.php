@@ -481,7 +481,7 @@
                             div.style.setProperty('--h', H + 'px');
                             div.style.setProperty('--r', R + 'px');
                             div.style.setProperty('--a', (i * angle) + 'deg');
-                            div.textContent = this.truncate(s.label || s.name || '', 10);
+                            div.textContent = this.truncate(s.label || s.name || '', 8);
                             cylinder.appendChild(div);
                         });
 
