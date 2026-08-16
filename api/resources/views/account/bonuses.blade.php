@@ -302,7 +302,7 @@
                         const list = [];
                         const templates = this.marketCardTemplates;
                         const count = this.sectors.length || 1;
-                        for (let i = 0; i < 5 * count; i++) {
+                        for (let i = 0; i < 8 * count; i++) {
                             const s = this.sectors[i % count];
                             const t = templates[i % templates.length];
                             let sub = 'Приз';
