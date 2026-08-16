@@ -366,7 +366,7 @@
                         });
                     },
 
-                    updateMarketCards() {
+                    updateMarketCards(animate = false) {
                         const track = this.$refs.marketTrack;
                         if (!track) return;
                         const cards = track.querySelectorAll('.rp-card');
@@ -384,15 +384,13 @@
                             const dist = (cardCenter - center) / cardWidth;
                             const absDist = Math.min(3, Math.abs(dist));
 
-                            const scale = absDist < 0.5 ? 1.12 : Math.max(0.78, 1 - absDist * 0.18);
-                            const opacity = absDist < 0.5 ? 1 : Math.max(0.45, 1 - absDist * 0.45);
-                            const blur = absDist < 0.5 ? 0 : Math.min(4, absDist * 2.5);
+                            const isActive = absDist < 0.5;
+                            const scale = isActive ? 1.14 : Math.max(0.85, 1 - absDist * 0.12);
+                            const opacity = isActive ? 1 : Math.max(0.55, 1 - absDist * 0.32);
 
                             card.style.transform = `scale(${scale})`;
                             card.style.opacity = opacity;
-                            card.style.filter = `blur(${blur}px)`;
-                            card.style.zIndex = absDist < 0.5 ? 2 : 1;
-                            const isActive = absDist < 0.5;
+                            card.style.zIndex = isActive ? 2 : 1;
                             card.classList.toggle('active', isActive);
                             if (isActive) {
                                 activeIndex = i % count;
@@ -459,13 +457,13 @@
                         cylinder.querySelectorAll('.pc-wheel-side').forEach(el => el.remove());
 
                         const count = this.sectors.length || 1;
-                        const R = 400;
-                        const H = 320;
+                        const R = 560;
+                        const H = 440;
                         const angle = 360 / count;
                         const sideW = 2 * R * Math.tan(Math.PI / count);
 
                         const palette = {
-                            white: '#fff8e7', black: '#222', red: '#e81c3e', green: '#228b22', gold: '#e6b800'
+                            white: '#fffdf5', black: '#2a2a2a', red: '#ff1a3c', green: '#2ecc40', gold: '#ffcc00'
                         };
 
                         const getClass = (i) => {
@@ -483,7 +481,7 @@
                             div.style.setProperty('--h', H + 'px');
                             div.style.setProperty('--r', R + 'px');
                             div.style.setProperty('--a', (i * angle) + 'deg');
-                            div.textContent = this.truncate(s.label || s.name || '', 12);
+                            div.textContent = this.truncate(s.label || s.name || '', 10);
                             cylinder.appendChild(div);
                         });
 
@@ -512,8 +510,8 @@
                             const path = document.createElementNS(ns, 'path');
                             path.setAttribute('d', makePath(i));
                             path.setAttribute('fill', palette[getClass(i)]);
-                            path.setAttribute('stroke', 'rgba(255,255,255,0.15)');
-                            path.setAttribute('stroke-width', '1');
+                            path.setAttribute('stroke', 'rgba(255,255,255,0.2)');
+                            path.setAttribute('stroke-width', '2');
                             svg.appendChild(path);
                         });
 
@@ -521,10 +519,19 @@
                         ring.setAttribute('cx', cx);
                         ring.setAttribute('cy', cy);
                         ring.setAttribute('r', r * 0.12);
-                        ring.setAttribute('fill', 'rgba(0,0,0,0.35)');
-                        ring.setAttribute('stroke', 'rgba(255,255,255,0.25)');
-                        ring.setAttribute('stroke-width', '3');
+                        ring.setAttribute('fill', 'rgba(0,0,0,0.45)');
+                        ring.setAttribute('stroke', 'rgba(255,255,255,0.35)');
+                        ring.setAttribute('stroke-width', '4');
                         svg.appendChild(ring);
+
+                        const center = document.createElementNS(ns, 'circle');
+                        center.setAttribute('cx', cx);
+                        center.setAttribute('cy', cy);
+                        center.setAttribute('r', r * 0.06);
+                        center.setAttribute('fill', '#ffcc00');
+                        center.setAttribute('stroke', 'rgba(0,0,0,0.5)');
+                        center.setAttribute('stroke-width', '3');
+                        svg.appendChild(center);
 
                         topEl.innerHTML = '';
                         bottomEl.innerHTML = '';
@@ -607,10 +614,10 @@
 
                         const cylinder = this.$refs.poleCylinder;
                         if (cylinder) {
-                            cylinder.style.transform = `rotateX(18deg) scale(1.25) translateX(80px) rotateY(${-newRotation}deg)`;
+                            cylinder.style.transform = `rotateX(10deg) scale(2.05) translateX(220px) rotateY(${-newRotation}deg)`;
                         }
 
-                        setTimeout(() => this.finishSpin(data), 16000);
+                        setTimeout(() => this.finishSpin(data), 18000);
                     },
 
                     spinMarket(data) {
@@ -625,32 +632,51 @@
                         const finalOffset = visibleCenter - (finalCardIndex * cardWidth + realWidth / 2);
                         const startOffset = this.marketOffset;
                         const distance = finalOffset - startOffset;
-                        const duration = 6500;
-                        const start = performance.now();
+                        const duration = 6800;
 
-                        const animate = (now) => {
-                            const elapsed = now - start;
-                            const t = Math.min(elapsed / duration, 1);
-                            const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-                            this.marketOffset = startOffset + distance * eased;
-                            const track = this.$refs.marketTrack;
-                            if (track) track.style.transform = `translateX(${this.marketOffset}px)`;
-                            this.updateMarketCards();
+                        const track = this.$refs.marketTrack;
+                        if (!track) {
+                            this.finishSpin(data);
+                            return;
+                        }
 
-                            if (t < 1) {
-                                requestAnimationFrame(animate);
-                            } else {
-                                this.marketOffset = finalOffset;
-                                if (track) track.style.transform = `translateX(${finalOffset}px)`;
-                                this.marketActiveIndex = index;
-                                this.$nextTick(() => {
-                                    this.updateMarketCards();
-                                    this.marketActiveIndex = index;
-                                });
-                                setTimeout(() => this.finishSpin(data), 350);
-                            }
+                        // Reset per-card transforms to avoid mixed transforms during the spin.
+                        track.querySelectorAll('.rp-card').forEach(card => {
+                            card.style.transition = 'none';
+                            card.style.transform = 'scale(1)';
+                            card.style.opacity = '1';
+                            card.classList.remove('active');
+                        });
+
+                        track.style.transition = 'none';
+                        track.style.transform = `translate3d(${startOffset}px, 0, 0)`;
+                        track.offsetHeight; // force reflow
+
+                        track.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0.75, 0.18, 1)`;
+                        track.style.transform = `translate3d(${finalOffset}px, 0, 0)`;
+
+                        const updateEffects = () => {
+                            this.marketOffset = finalOffset;
+                            track.querySelectorAll('.rp-card').forEach(card => {
+                                card.style.transition = '';
+                            });
+                            this.updateMarketCards(true);
+                            this.marketActiveIndex = index;
+                            setTimeout(() => this.finishSpin(data), 500);
                         };
-                        requestAnimationFrame(animate);
+
+                        const onTransitionEnd = (e) => {
+                            if (e.propertyName !== 'transform' || e.target !== track) return;
+                            track.removeEventListener('transitionend', onTransitionEnd);
+                            updateEffects();
+                        };
+                        track.addEventListener('transitionend', onTransitionEnd);
+
+                        // Fallback in case transitionend doesn't fire.
+                        setTimeout(() => {
+                            track.removeEventListener('transitionend', onTransitionEnd);
+                            updateEffects();
+                        }, duration + 500);
                     },
 
                     spinNeon(data) {
