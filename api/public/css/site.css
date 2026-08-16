@@ -4171,7 +4171,7 @@ button {
     width: 0;
     height: 0;
     transform-style: preserve-3d;
-    transform: rotateX(16deg) scale(0.9) translateX(-40px) rotateY(0deg);
+    transform: rotateX(70deg) scale(0.85) translateX(-40px) translateY(60px) rotateY(0deg);
     transition: transform 26s cubic-bezier(0.04, 0.58, 0.08, 1);
 }
 
@@ -4242,10 +4242,10 @@ button {
     left: -6px;
     top: 50%;
     transform: translateY(-50%);
-    width: 120px;
-    height: 120px;
+    width: 70px;
+    height: 70px;
     z-index: 10;
-    filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.8));
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
 }
 
 .pc-wheel-pointer svg {
@@ -4259,12 +4259,12 @@ button {
     }
 
     .pc-wheel-cylinder {
-        transform: rotateX(16deg) scale(0.72) translateX(-10px) rotateY(0deg);
+        transform: rotateX(70deg) scale(0.62) translateX(-20px) translateY(50px) rotateY(0deg);
     }
 
     .pc-wheel-pointer {
-        width: 85px;
-        height: 85px;
+        width: 55px;
+        height: 55px;
     }
 
     .pc-wheel-side {
@@ -4278,12 +4278,12 @@ button {
     }
 
     .pc-wheel-cylinder {
-        transform: rotateX(16deg) scale(0.58) translateX(-5px) rotateY(0deg);
+        transform: rotateX(70deg) scale(0.52) translateX(-15px) translateY(40px) rotateY(0deg);
     }
 
     .pc-wheel-pointer {
-        width: 70px;
-        height: 70px;
+        width: 45px;
+        height: 45px;
     }
 
     .pc-wheel-side {
