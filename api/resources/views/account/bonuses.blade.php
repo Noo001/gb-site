@@ -104,10 +104,11 @@
                         </div>
                     </div>
                     <div class="pc-wheel-pointer">
-                        <svg viewBox="0 0 40 40" fill="none">
-                            <path d="M2 20 L30 8 L30 32 Z" fill="#d90429"/>
-                            <path d="M2 20 L26 11 L26 29 Z" fill="#ef233c"/>
-                            <circle cx="30" cy="20" r="3" fill="#fff"/>
+                        <svg viewBox="0 0 60 30" fill="none">
+                            <path d="M0 15 L44 2 L44 28 Z" fill="#d90429"/>
+                            <path d="M2 15 L40 6 L40 24 Z" fill="#ef233c"/>
+                            <circle cx="46" cy="15" r="3" fill="#fff"/>
+                            <path d="M44 8 L58 15 L44 22 Z" fill="#d90429"/>
                         </svg>
                     </div>
                 </div>
@@ -464,8 +465,8 @@
                         cylinder.querySelectorAll('.pc-wheel-side').forEach(el => el.remove());
 
                         const count = this.sectors.length || 1;
-                        const R = 400;
-                        const H = 280;
+                        const R = 360;
+                        const H = 260;
                         const angle = 360 / count;
                         const sideW = 2 * R * Math.tan(Math.PI / count);
 
@@ -531,45 +532,6 @@
                             path.setAttribute('stroke', 'rgba(255,255,255,0.35)');
                             path.setAttribute('stroke-width', '3');
                             svg.appendChild(path);
-
-                            // Label on the top lid so the result is readable from above
-                            const mid = i * (Math.PI * 2) / count + (Math.PI / count) - Math.PI / 2;
-                            const tx = cx + Math.cos(mid) * (r * 0.62);
-                            const ty = cy + Math.sin(mid) * (r * 0.62);
-                            const g = document.createElementNS(ns, 'g');
-                            g.setAttribute('transform', `translate(${tx}, ${ty}) rotate(${mid * 180 / Math.PI + 90})`);
-
-                            const label = document.createElementNS(ns, 'text');
-                            label.setAttribute('text-anchor', 'middle');
-                            label.setAttribute('dominant-baseline', 'middle');
-                            label.setAttribute('fill', '#fff');
-                            label.setAttribute('font-size', '26');
-                            label.setAttribute('font-weight', '900');
-                            label.setAttribute('paint-order', 'stroke');
-                            label.setAttribute('stroke', 'rgba(0,0,0,0.55)');
-                            label.setAttribute('stroke-width', '4');
-                            label.setAttribute('stroke-linecap', 'round');
-                            label.setAttribute('stroke-linejoin', 'round');
-                            label.textContent = this.truncate(s.label || s.name || '', 14);
-                            g.appendChild(label);
-
-                            const sub = document.createElementNS(ns, 'text');
-                            sub.setAttribute('text-anchor', 'middle');
-                            sub.setAttribute('dominant-baseline', 'middle');
-                            sub.setAttribute('y', '28');
-                            sub.setAttribute('fill', '#fff');
-                            sub.setAttribute('font-size', '18');
-                            sub.setAttribute('font-weight', '700');
-                            sub.setAttribute('paint-order', 'stroke');
-                            sub.setAttribute('stroke', 'rgba(0,0,0,0.55)');
-                            sub.setAttribute('stroke-width', '3');
-                            sub.setAttribute('stroke-linecap', 'round');
-                            sub.setAttribute('stroke-linejoin', 'round');
-                            const subText = s.type === 'super' ? 'Суперприз' : (s.type === 'free_spin' ? '+спин' : (s.type === 'bonus' ? 'Бонус' : ''));
-                            sub.textContent = subText;
-                            g.appendChild(sub);
-
-                            svg.appendChild(g);
                         });
 
                         const ring = document.createElementNS(ns, 'circle');
