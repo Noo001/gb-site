@@ -1,9 +1,8 @@
 const { chromium } = require('playwright');
+const { execSync } = require('child_process');
 const path = require('path');
 
 const BASE = 'https://gbsale.ru';
-const EMAIL = 'e2e-wheel@gbsale.ru';
-const PASSWORD = 'e2e-test-password';
 const SCREENSHOTS = path.resolve(__dirname, 'screenshots', 'wheels-check');
 const fs = require('fs');
 if (!fs.existsSync(SCREENSHOTS)) fs.mkdirSync(SCREENSHOTS, { recursive: true });
@@ -11,6 +10,12 @@ if (!fs.existsSync(SCREENSHOTS)) fs.mkdirSync(SCREENSHOTS, { recursive: true });
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
 (async () => {
+  const signedUrl = execSync('python tests/generate-e2e-url.py', {
+    cwd: path.resolve(__dirname, '..'),
+    encoding: 'utf8',
+    timeout: 30000,
+  }).trim();
+
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -21,33 +26,23 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
   page.on('pageerror', err => console.log('JS ERROR:', err.message));
 
   try {
-    console.log('Logging in...');
-    await page.goto(`${BASE}/login`, { waitUntil: 'networkidle', timeout: 30000 });
-    await page.fill('input[name="email"]', EMAIL);
-    await page.fill('input[name="password"]', PASSWORD);
-    await Promise.all([
-      page.waitForURL(`${BASE}/account`, { timeout: 20000 }),
-      page.click('form button[type="submit"]')
-    ]);
-    console.log('Logged in');
-
-    await page.goto(`${BASE}/account/bonuses`, { waitUntil: 'networkidle', timeout: 30000 });
-    await page.waitForSelector('.bonus-page', { timeout: 15000 });
-    console.log('Bonus page loaded');
+    console.log('Opening signed URL...');
+    await page.goto(signedUrl, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.waitForURL(`${BASE}/account/bonuses`, { timeout: 20000 });
+    console.log('Authenticated on /account/bonuses');
 
     const shot = async (name) => {
       await page.screenshot({ path: path.join(SCREENSHOTS, `${name}.png`), fullPage: true });
       console.log('  Screenshot', name);
     };
 
-    // Top up balance if needed
     const balance = await page.$eval('.bonus-balance-value span', el => parseInt(el.textContent.replace(/\D/g, ''), 10));
     console.log('Balance:', balance);
 
     // Pole Chudes
     console.log('\nPole Chudes 3D');
     await page.click('.wheel-tab:has-text("Поле чудес 3D")');
-    await wait(800);
+    await wait(1000);
     await shot('pole-initial');
 
     if (balance >= 1) {
@@ -81,12 +76,12 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
     console.log('\nNeon Fusion');
     idx = tabTexts.findIndex(t => t.includes('Neon Fusion'));
     await tabs[idx].click();
-    await wait(800);
+    await wait(1000);
     await shot('neon-initial');
 
     await page.click('button.roulette-btn-paid');
     console.log('  Spinning...');
-    await wait(6500);
+    await wait(7000);
     await shot('neon-result');
     const neonMsg = await page.$eval('.roulette-message', el => el.textContent).catch(() => '');
     console.log('  Result:', neonMsg);

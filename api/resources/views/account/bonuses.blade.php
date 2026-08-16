@@ -457,8 +457,8 @@
                         cylinder.querySelectorAll('.pc-wheel-side').forEach(el => el.remove());
 
                         const count = this.sectors.length || 1;
-                        const R = 560;
-                        const H = 440;
+                        const R = 440;
+                        const H = 360;
                         const angle = 360 / count;
                         const sideW = 2 * R * Math.tan(Math.PI / count);
 
@@ -614,7 +614,7 @@
 
                         const cylinder = this.$refs.poleCylinder;
                         if (cylinder) {
-                            cylinder.style.transform = `rotateX(10deg) scale(2.05) translateX(220px) rotateY(${-newRotation}deg)`;
+                            cylinder.style.transform = `rotateX(10deg) scale(1.7) translateX(110px) rotateY(${-newRotation}deg)`;
                         }
 
                         setTimeout(() => this.finishSpin(data), 18000);
