@@ -104,10 +104,10 @@
                         </div>
                     </div>
                     <div class="pc-wheel-pointer">
-                        <svg viewBox="0 0 100 100" fill="none">
-                            <path d="M0 50L100 0V100L0 50Z" fill="#d90429"/>
-                            <path d="M15 50L85 20V80L15 50Z" fill="#ef233c"/>
-                            <circle cx="25" cy="50" r="6" fill="#fff"/>
+                        <svg viewBox="0 0 60 40" fill="none">
+                            <path d="M0 20 L48 4 L48 36 Z" fill="#d90429"/>
+                            <path d="M6 20 L44 10 L44 30 Z" fill="#ef233c"/>
+                            <circle cx="44" cy="20" r="4" fill="#fff"/>
                         </svg>
                     </div>
                 </div>
@@ -378,7 +378,12 @@
                         if (!cardWidth || !realWidth) return;
 
                         let activeIndex = this.marketActiveIndex;
-                        cards.forEach((card, i) => {
+                        const nearestIndex = Math.round((center - realWidth / 2 - this.marketOffset) / cardWidth);
+                        const start = Math.max(0, nearestIndex - 6);
+                        const end = Math.min(cards.length, nearestIndex + 7);
+
+                        for (let i = start; i < end; i++) {
+                            const card = cards[i];
                             const cardLeft = this.marketOffset + i * cardWidth;
                             const cardCenter = cardLeft + realWidth / 2;
                             const dist = (cardCenter - center) / cardWidth;
@@ -395,7 +400,7 @@
                             if (isActive) {
                                 activeIndex = i % count;
                             }
-                        });
+                        }
                         this.marketActiveIndex = activeIndex;
                     },
 
@@ -466,22 +471,33 @@
                             white: '#fffdf5', black: '#2a2a2a', red: '#ff1a3c', green: '#2ecc40', gold: '#ffcc00'
                         };
 
-                        const getClass = (i) => {
-                            const p = i % 12;
-                            if (p === 6) return 'red';
-                            if (p === 8) return 'green';
-                            if (p === 11) return 'gold';
-                            return p % 2 === 0 ? 'white' : 'black';
+                        const getClass = (i, s) => {
+                            if (s.type === 'super') return 'gold';
+                            if (s.type === 'free_spin') return 'green';
+                            if (s.type === 'service' || s.type === 'material') return 'red';
+                            return i % 2 === 0 ? 'white' : 'black';
+                        };
+
+                        const formatSideLabel = (text) => {
+                            if (!text) return '';
+                            if (text.length <= 12) return text;
+                            const words = text.split(/\s+/).filter(Boolean);
+                            if (words.length < 2) return this.truncate(text, 14);
+                            const mid = Math.floor(words.length / 2);
+                            const first = words.slice(0, mid).join(' ');
+                            const second = words.slice(mid).join(' ');
+                            if (first.length > 16 || second.length > 16) return this.truncate(text, 14);
+                            return first + '\n' + second;
                         };
 
                         this.sectors.forEach((s, i) => {
                             const div = document.createElement('div');
-                            div.className = 'pc-wheel-side ' + getClass(i);
+                            div.className = 'pc-wheel-side ' + getClass(i, s);
                             div.style.setProperty('--w', sideW + 'px');
                             div.style.setProperty('--h', H + 'px');
                             div.style.setProperty('--r', R + 'px');
                             div.style.setProperty('--a', (i * angle) + 'deg');
-                            div.textContent = this.truncate(s.label || s.name || '', 10);
+                            div.textContent = formatSideLabel(s.label || s.name || '');
                             cylinder.appendChild(div);
                         });
 
@@ -509,7 +525,7 @@
                         this.sectors.forEach((s, i) => {
                             const path = document.createElementNS(ns, 'path');
                             path.setAttribute('d', makePath(i));
-                            path.setAttribute('fill', palette[getClass(i)]);
+                            path.setAttribute('fill', palette[getClass(i, s)]);
                             path.setAttribute('stroke', 'rgba(255,255,255,0.2)');
                             path.setAttribute('stroke-width', '2');
                             svg.appendChild(path);
@@ -608,16 +624,16 @@
                         const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
                         const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
 
-                        const extraSpins = 4 * 360;
-                        const newRotation = this.rotation.pole + extraSpins + (targetAngle + 90 - (this.rotation.pole % 360));
+                        const extraSpins = 3 * 360;
+                        const newRotation = this.rotation.pole + extraSpins + (targetAngle + 90 - sectorAngle / 2 - (this.rotation.pole % 360));
                         this.rotation.pole = newRotation;
 
                         const cylinder = this.$refs.poleCylinder;
                         if (cylinder) {
-                            cylinder.style.transform = `rotateX(45deg) scale(0.85) translateX(-40px) translateY(60px) rotateY(${-newRotation}deg)`;
+                            cylinder.style.setProperty('--pole-rotation', `${-newRotation}deg`);
                         }
 
-                        setTimeout(() => this.finishSpin(data), 26000);
+                        setTimeout(() => this.finishSpin(data), 18000);
                     },
 
                     spinMarket(data) {
@@ -627,6 +643,11 @@
                         const cardWidth = this.marketCardWidth;
                         const realWidth = this.marketCardRealWidth;
                         const visibleCenter = this.marketVisibleCenter || (this.$refs.marketTrack?.parentElement?.clientWidth / 2) || 360;
+
+                        if (!cardWidth || !realWidth) {
+                            this.finishSpin(data);
+                            return;
+                        }
 
                         const finalCardIndex = count * loops + index;
                         const finalOffset = visibleCenter - (finalCardIndex * cardWidth + realWidth / 2);
@@ -640,43 +661,42 @@
                             return;
                         }
 
-                        // Reset per-card transforms to avoid mixed transforms during the spin.
+                        // Disable CSS transitions during the spin so we can drive every frame.
                         track.querySelectorAll('.rp-card').forEach(card => {
                             card.style.transition = 'none';
                             card.style.transform = 'scale(1)';
                             card.style.opacity = '1';
                             card.classList.remove('active');
                         });
-
                         track.style.transition = 'none';
-                        track.style.transform = `translate3d(${startOffset}px, 0, 0)`;
-                        track.offsetHeight; // force reflow
 
-                        track.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.9, 0.2, 1)`;
-                        track.style.transform = `translate3d(${finalOffset}px, 0, 0)`;
+                        const startTime = performance.now();
+                        const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
 
-                        const updateEffects = () => {
-                            this.marketOffset = finalOffset;
-                            track.querySelectorAll('.rp-card').forEach(card => {
-                                card.style.transition = '';
-                            });
-                            this.updateMarketCards(true);
-                            this.marketActiveIndex = index;
-                            setTimeout(() => this.finishSpin(data), 500);
+                        const animate = (now) => {
+                            const elapsed = now - startTime;
+                            const t = Math.min(1, elapsed / duration);
+                            const eased = easeOutQuart(t);
+                            const currentOffset = startOffset + distance * eased;
+                            this.marketOffset = currentOffset;
+                            track.style.transform = `translate3d(${currentOffset}px, 0, 0)`;
+                            this.updateMarketCards();
+
+                            if (t < 1) {
+                                requestAnimationFrame(animate);
+                            } else {
+                                this.marketOffset = finalOffset;
+                                track.style.transform = `translate3d(${finalOffset}px, 0, 0)`;
+                                track.querySelectorAll('.rp-card').forEach(card => {
+                                    card.style.transition = '';
+                                });
+                                this.updateMarketCards(true);
+                                this.marketActiveIndex = index;
+                                setTimeout(() => this.finishSpin(data), 500);
+                            }
                         };
 
-                        const onTransitionEnd = (e) => {
-                            if (e.propertyName !== 'transform' || e.target !== track) return;
-                            track.removeEventListener('transitionend', onTransitionEnd);
-                            updateEffects();
-                        };
-                        track.addEventListener('transitionend', onTransitionEnd);
-
-                        // Fallback in case transitionend doesn't fire.
-                        setTimeout(() => {
-                            track.removeEventListener('transitionend', onTransitionEnd);
-                            updateEffects();
-                        }, duration + 500);
+                        requestAnimationFrame(animate);
                     },
 
                     spinNeon(data) {
