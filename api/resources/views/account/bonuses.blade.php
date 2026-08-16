@@ -105,10 +105,10 @@
                     </div>
                     <div class="pc-wheel-pointer">
                         <svg viewBox="0 0 60 30" fill="none">
-                            <path d="M0 15 L44 2 L44 28 Z" fill="#d90429"/>
+                            <path d="M0 15 L44 2 L44 28 Z" fill="#d90429" stroke="#fff" stroke-width="2"/>
                             <path d="M2 15 L40 6 L40 24 Z" fill="#ef233c"/>
                             <circle cx="46" cy="15" r="3" fill="#fff"/>
-                            <path d="M44 8 L58 15 L44 22 Z" fill="#d90429"/>
+                            <path d="M44 8 L58 15 L44 22 Z" fill="#d90429" stroke="#fff" stroke-width="1.5"/>
                         </svg>
                     </div>
                 </div>
