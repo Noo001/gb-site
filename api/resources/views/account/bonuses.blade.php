@@ -457,8 +457,8 @@
                         cylinder.querySelectorAll('.pc-wheel-side').forEach(el => el.remove());
 
                         const count = this.sectors.length || 1;
-                        const R = 340;
-                        const H = 260;
+                        const R = 380;
+                        const H = 240;
                         const angle = 360 / count;
                         const sideW = 2 * R * Math.tan(Math.PI / count);
 
@@ -481,7 +481,7 @@
                             div.style.setProperty('--h', H + 'px');
                             div.style.setProperty('--r', R + 'px');
                             div.style.setProperty('--a', (i * angle) + 'deg');
-                            div.textContent = this.truncate(s.label || s.name || '', 8);
+                            div.textContent = this.truncate(s.label || s.name || '', 10);
                             cylinder.appendChild(div);
                         });
 
@@ -608,22 +608,22 @@
                         const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
                         const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
 
-                        const extraSpins = 3 * 360;
+                        const extraSpins = 4 * 360;
                         const newRotation = this.rotation.pole + extraSpins + (targetAngle + 90 - (this.rotation.pole % 360));
                         this.rotation.pole = newRotation;
 
                         const cylinder = this.$refs.poleCylinder;
                         if (cylinder) {
-                            cylinder.style.transform = `rotateX(16deg) scale(1.75) translateX(140px) rotateY(${-newRotation}deg)`;
+                            cylinder.style.transform = `rotateX(16deg) scale(1.05) translateX(50px) rotateY(${-newRotation}deg)`;
                         }
 
-                        setTimeout(() => this.finishSpin(data), 18000);
+                        setTimeout(() => this.finishSpin(data), 26000);
                     },
 
                     spinMarket(data) {
                         const index = this.sectors.findIndex(s => s.id === data.sector.id);
                         const count = this.sectors.length;
-                        const loops = 5 + Math.floor(Math.random() * 2);
+                        const loops = 7;
                         const cardWidth = this.marketCardWidth;
                         const realWidth = this.marketCardRealWidth;
                         const visibleCenter = this.marketVisibleCenter || (this.$refs.marketTrack?.parentElement?.clientWidth / 2) || 360;
@@ -632,7 +632,7 @@
                         const finalOffset = visibleCenter - (finalCardIndex * cardWidth + realWidth / 2);
                         const startOffset = this.marketOffset;
                         const distance = finalOffset - startOffset;
-                        const duration = 6800;
+                        const duration = 5200;
 
                         const track = this.$refs.marketTrack;
                         if (!track) {
@@ -652,7 +652,7 @@
                         track.style.transform = `translate3d(${startOffset}px, 0, 0)`;
                         track.offsetHeight; // force reflow
 
-                        track.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0.75, 0.18, 1)`;
+                        track.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.9, 0.2, 1)`;
                         track.style.transform = `translate3d(${finalOffset}px, 0, 0)`;
 
                         const updateEffects = () => {
