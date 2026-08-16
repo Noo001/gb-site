@@ -344,7 +344,7 @@
                         const card = track?.querySelector('.rp-card');
                         if (!track || !wrap || !card) return;
                         const gap = parseFloat(getComputedStyle(track).gap) || 24;
-                        const realWidth = card.getBoundingClientRect().width;
+                        const realWidth = card.offsetWidth;
                         this.marketCardRealWidth = realWidth;
                         this.marketCardWidth = realWidth + gap;
                         this.marketVisibleCenter = wrap.clientWidth / 2;
