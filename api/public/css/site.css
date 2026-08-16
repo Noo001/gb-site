@@ -4171,7 +4171,7 @@ button {
     width: 0;
     height: 0;
     transform-style: preserve-3d;
-    transform: rotateX(12deg) scale(1.65) translateX(70px) rotateY(0deg);
+    transform: rotateX(16deg) scale(1.75) translateX(140px) rotateY(0deg);
     transition: transform 18s cubic-bezier(0.04, 0.58, 0.08, 1);
 }
 
@@ -4197,7 +4197,7 @@ button {
     align-items: center;
     justify-content: center;
     font-weight: 900;
-    font-size: clamp(13px, 2.0vw, 24px);
+    font-size: clamp(12px, 1.8vw, 22px);
     color: var(--fg);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
     letter-spacing: 0.03em;
@@ -4259,7 +4259,7 @@ button {
     }
 
     .pc-wheel-cylinder {
-        transform: rotateX(12deg) scale(1.25) translateX(35px) rotateY(0deg);
+        transform: rotateX(16deg) scale(1.25) translateX(60px) rotateY(0deg);
     }
 
     .pc-wheel-pointer {
@@ -4268,7 +4268,7 @@ button {
     }
 
     .pc-wheel-side {
-        font-size: clamp(11px, 2.0vw, 18px);
+        font-size: clamp(10px, 1.6vw, 16px);
     }
 }
 
@@ -4278,7 +4278,7 @@ button {
     }
 
     .pc-wheel-cylinder {
-        transform: rotateX(12deg) scale(1.05) translateX(25px) rotateY(0deg);
+        transform: rotateX(16deg) scale(1.05) translateX(40px) rotateY(0deg);
     }
 
     .pc-wheel-pointer {
@@ -4287,7 +4287,7 @@ button {
     }
 
     .pc-wheel-side {
-        font-size: clamp(10px, 1.8vw, 15px);
+        font-size: clamp(9px, 1.4vw, 13px);
     }
 }
 
