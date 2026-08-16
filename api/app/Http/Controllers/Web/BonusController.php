@@ -38,6 +38,7 @@ class BonusController extends Controller
             'terms' => $terms,
             'needsAccept' => $needsAccept,
             'canCollectDaily' => $this->bonusService->canCollectDaily($user),
+            'weekCollectData' => $this->bonusService->weekCollectData($user),
             'freeSpins' => $user->free_spins_available,
             'freeSpinsEnabled' => $this->bonusService->freeSpinsEnabled(),
             'spinCost' => $this->bonusService->spinCost(),

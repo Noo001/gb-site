@@ -5,7 +5,7 @@
 @section('account_content')
     <div
         class="bonus-page"
-        x-data="bonusPage({{ $balance }}, {{ $freeSpins }}, {{ $canCollectDaily ? 'true' : 'false' }}, {{ $spinCost }}, {{ $freeSpinsEnabled ? 'true' : 'false' }}, @js($sectors), @js($needsAccept))"
+        x-data="bonusPage({{ $balance }}, {{ $freeSpins }}, {{ $canCollectDaily ? 'true' : 'false' }}, {{ $spinCost }}, {{ $freeSpinsEnabled ? 'true' : 'false' }}, @js($sectors), @js($needsAccept), @js($weekCollectData))"
         x-init="init()"
     >
         <h1 class="section-title">Бонусная программа</h1>
@@ -45,6 +45,25 @@
             <div class="bonus-action-card">
                 <h3 class="bonus-action-title">Ежедневный сбор</h3>
                 <p class="bonus-action-text">Заходите каждый день и получайте бонусы. Каждые 7 дней подряд — повышенная награда.</p>
+
+                <div class="daily-week">
+                    <template x-for="(day, index) in weekCollectData" :key="day.date">
+                        <div class="daily-day" :class="{
+                            'collected': day.is_collected,
+                            'today': day.is_today,
+                            'can-collect': day.can_collect,
+                            'future': !day.is_collected && !day.can_collect && !day.is_today
+                        }">
+                            <div class="daily-day-dot">
+                                <svg x-show="day.is_collected" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <span x-show="!day.is_collected" x-text="day.day"></span>
+                            </div>
+                            <div class="daily-day-label" x-text="day.weekday"></div>
+                            <div class="daily-day-badge" x-show="day.is_today">сегодня</div>
+                        </div>
+                    </template>
+                </div>
+
                 <template x-if="canCollectDaily">
                     <div>
                         <button
@@ -253,7 +272,7 @@
 
     @push('scripts')
         <script>
-            function bonusPage(initialBalance, initialFreeSpins, canCollectDaily, spinCost, freeSpinsEnabled, sectors, needsAccept) {
+            function bonusPage(initialBalance, initialFreeSpins, canCollectDaily, spinCost, freeSpinsEnabled, sectors, needsAccept, weekCollectData) {
                 return {
                     // general
                     balance: initialBalance,
@@ -266,6 +285,7 @@
                     dailyMessage: '',
                     dailyMessageType: '',
                     balancePulse: false,
+                    weekCollectData: weekCollectData,
                     get balanceFormatted() {
                         return this.balance.toLocaleString('ru-RU');
                     },
@@ -447,6 +467,11 @@
                             this.dailyMessage = data.message;
                             this.dailyMessageType = 'success';
                             this.balancePulse = true;
+                            const todayIndex = this.weekCollectData.findIndex(d => d.is_today);
+                            if (todayIndex !== -1) {
+                                this.weekCollectData[todayIndex].is_collected = true;
+                                this.weekCollectData[todayIndex].can_collect = false;
+                            }
                             setTimeout(() => this.balancePulse = false, 800);
                         } catch (e) {
                             this.dailyMessage = 'Не удалось связаться с сервером.';

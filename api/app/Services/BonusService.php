@@ -91,6 +91,40 @@ class BonusService
         return $user->last_daily_bonus_at->timezone(self::TIMEZONE)->startOfDay()->lt($this->today());
     }
 
+    public function weekCollectData(User $user): array
+    {
+        $today = $this->today();
+        $days = [];
+
+        $operations = BonusOperation::where('user_id', $user->id)
+            ->where('type', 'daily')
+            ->whereDate('created_at', '>=', $today->copy()->subDays(6)->toDateString())
+            ->whereDate('created_at', '<=', $today->toDateString())
+            ->get()
+            ->keyBy(fn ($op) => $op->created_at->timezone(self::TIMEZONE)->format('Y-m-d'));
+
+        $weekdayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = $today->copy()->subDays($i);
+            $dateKey = $date->format('Y-m-d');
+            $isToday = $i === 0;
+            $isCollected = $operations->has($dateKey);
+            $canCollect = $isToday && $this->canCollectDaily($user);
+
+            $days[] = [
+                'date' => $dateKey,
+                'day' => $date->day,
+                'weekday' => $weekdayNames[(int) $date->format('w')],
+                'is_today' => $isToday,
+                'is_collected' => $isCollected,
+                'can_collect' => $canCollect,
+            ];
+        }
+
+        return $days;
+    }
+
     public function freeSpinsEnabled(): bool
     {
         return (bool) $this->setting('bonus_free_spins_enabled', true);
