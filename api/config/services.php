@@ -65,4 +65,8 @@ return [
         'webhook_secret' => env('TELEGRAM_WEBHOOK_SECRET'),
     ],
 
+    'bitrix24' => [
+        'webhook_url' => env('BITRIX24_WEBHOOK_URL'),
+    ],
+
 ];
