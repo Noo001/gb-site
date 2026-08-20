@@ -181,16 +181,14 @@
     justify-content: center;
 }
 
-.fr-story-image .brand-mark {
-    font-size: clamp(40px, 7vw, 68px);
-    font-weight: 900;
-    color: var(--fr-accent);
-    letter-spacing: -2px;
-    white-space: nowrap;
-    text-align: center;
-    padding: 40px;
-    max-width: 100%;
-    line-height: 1;
+.fr-story-image .brand-logo {
+    width: auto;
+    height: auto;
+    max-width: 85%;
+    max-height: 180px;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
 }
 
 .fr-story-image::after {
@@ -541,7 +539,7 @@
         <div class="fr-container">
             <div class="fr-story-grid">
                 <div class="fr-story-image">
-                    <div class="brand-mark">GADGET·BAR</div>
+                    <img src="{{ asset('images/franchise/gadget-bar-logo.png') }}" alt="Gadget Bar" class="brand-logo">
                 </div>
                 <div class="fr-story-text">
                     <h2 class="fr-section-title">История бренда</h2>
