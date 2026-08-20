@@ -309,6 +309,11 @@
                         this.marketVisibleCenter = wrap.clientWidth / 2;
                     },
 
+                    cardIndexForSector(sectorIndex) {
+                        const count = this.sectors.length || 1;
+                        return this.marketLeadingCycles * count + sectorIndex;
+                    },
+
                     drawMarketWheel(animate = false) {
                         this.$nextTick(() => {
                             this.measureMarket();
@@ -317,7 +322,8 @@
                             const cardWidth = this.marketCardWidth;
                             const realWidth = this.marketCardRealWidth;
                             const visibleCenter = this.marketVisibleCenter || (track.parentElement?.clientWidth / 2) || 360;
-                            const activeCard = this.marketActiveIndex;
+                            const activeCard = this.cardIndexForSector(this.marketActiveIndex);
+                            this.marketActiveCard = activeCard;
                             this.marketOffset = visibleCenter - realWidth / 2 - activeCard * cardWidth;
                             track.style.transition = animate ? 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none';
                             track.style.transform = `translate3d(${this.marketOffset}px, 0, 0)`;
@@ -484,7 +490,7 @@
 
                         const currentSectorIndex = this.marketActiveIndex % count;
                         const sectorDelta = (index - currentSectorIndex + count) % count;
-                        const currentCard = this.marketActiveCard;
+                        const currentCard = this.marketActiveCard || this.cardIndexForSector(currentSectorIndex);
                         const finalCardIndex = currentCard + count * loops + sectorDelta;
                         const finalOffset = visibleCenter - (finalCardIndex * cardWidth + realWidth / 2);
                         const startOffset = this.marketOffset;
@@ -521,7 +527,7 @@
                                 // Бесшовный сброс к базовому циклу: карточки одного сектора
                                 // визуально одинаковы, поэтому прыжка не видно, а лента
                                 // остаётся «бесконечной» для следующих прокруток.
-                                const resetCard = index;
+                                const resetCard = this.cardIndexForSector(index);
                                 this.marketActiveCard = resetCard;
                                 this.marketOffset = visibleCenter - (resetCard * cardWidth + realWidth / 2);
                                 track.style.transition = 'none';
