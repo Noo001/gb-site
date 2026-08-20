@@ -182,10 +182,15 @@
 }
 
 .fr-story-image .brand-mark {
-    font-size: 96px;
+    font-size: clamp(40px, 7vw, 68px);
     font-weight: 900;
     color: var(--fr-accent);
-    letter-spacing: -3px;
+    letter-spacing: -2px;
+    white-space: nowrap;
+    text-align: center;
+    padding: 40px;
+    max-width: 100%;
+    line-height: 1;
 }
 
 .fr-story-image::after {
