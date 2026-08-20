@@ -545,7 +545,7 @@
         <div class="fr-container">
             <div class="fr-story-grid">
                 <div class="fr-story-image">
-                    <img src="{{ asset('images/franchise/gadget-bar-logo.png') }}" alt="Gadget Bar" class="brand-logo">
+                    <img src="/images/franchise/gadget-bar-logo.png" alt="Gadget Bar" class="brand-logo">
                 </div>
                 <div class="fr-story-text">
                     <h2 class="fr-section-title">История бренда</h2>
