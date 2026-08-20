@@ -40,8 +40,8 @@
 /* Hero */
 .fr-hero {
     position: relative;
-    background: var(--fr-black);
-    color: var(--fr-white);
+    background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+    color: var(--fr-black);
     padding: 120px 0 140px;
     overflow: hidden;
 }
@@ -49,22 +49,28 @@
 .fr-hero::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba(92, 231, 255, 0.25) 0%, transparent 70%);
+    top: -30%;
+    right: -10%;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(92, 231, 255, 0.22) 0%, transparent 65%);
     pointer-events: none;
 }
 
 .fr-hero-content {
     position: relative;
     z-index: 2;
-    max-width: 700px;
+    max-width: 720px;
+}
+
+.fr-hero-logo {
+    height: 40px;
+    width: auto;
+    margin-bottom: 36px;
 }
 
 .fr-hero h1 {
-    font-size: clamp(36px, 6vw, 68px);
+    font-size: clamp(38px, 6vw, 72px);
     font-weight: 800;
     line-height: 1.05;
     margin: 0 0 24px;
@@ -72,11 +78,12 @@
 
 .fr-hero h1 span {
     color: var(--fr-accent);
+    text-shadow: 0 2px 24px rgba(92, 231, 255, 0.25);
 }
 
 .fr-hero p {
     font-size: clamp(18px, 2.2vw, 22px);
-    color: rgba(255,255,255,0.85);
+    color: var(--fr-gray);
     margin: 0 0 40px;
     max-width: 560px;
 }
@@ -89,12 +96,19 @@
 }
 
 .fr-badge {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
+    background: var(--fr-white);
+    border: 1px solid var(--fr-border);
     border-radius: 999px;
-    padding: 10px 20px;
+    padding: 12px 22px;
     font-size: 15px;
     font-weight: 600;
+    color: var(--fr-black);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.fr-badge span {
+    color: var(--fr-accent);
+    font-weight: 800;
 }
 
 .fr-hero-buttons {
@@ -134,8 +148,8 @@
 
 .fr-btn-outline {
     background: transparent;
-    color: var(--fr-white);
-    border: 2px solid rgba(255,255,255,0.3);
+    color: var(--fr-black);
+    border: 2px solid var(--fr-black);
 }
 
 .fr-btn-outline:hover {
@@ -292,12 +306,12 @@
 
 /* Conditions */
 .fr-conditions {
-    background: var(--fr-black);
-    color: var(--fr-white);
+    background: var(--fr-white);
+    color: var(--fr-black);
 }
 
 .fr-conditions .fr-section-subtitle {
-    color: rgba(255,255,255,0.7);
+    color: var(--fr-gray);
 }
 
 .fr-conditions-grid {
@@ -307,8 +321,8 @@
 }
 
 .fr-condition-card {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--fr-light);
+    border: 1px solid var(--fr-border);
     border-radius: var(--fr-radius-sm);
     padding: 32px;
 }
@@ -317,19 +331,24 @@
     font-size: 22px;
     font-weight: 700;
     margin: 0 0 12px;
-    color: var(--fr-accent);
+    color: var(--fr-black);
 }
 
 .fr-condition-card .price {
     font-size: 32px;
     font-weight: 800;
     margin: 0 0 16px;
+    color: var(--fr-black);
+}
+
+.fr-condition-card .price span {
+    color: var(--fr-accent);
 }
 
 .fr-condition-card ul {
     margin: 0;
     padding-left: 20px;
-    color: rgba(255,255,255,0.85);
+    color: var(--fr-gray);
 }
 
 .fr-condition-card li {
@@ -385,6 +404,7 @@
     padding: 40px;
     position: sticky;
     top: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
 }
 
 .fr-calc-result h3 {
@@ -405,7 +425,7 @@
 .fr-result-row.total {
     border-bottom: none;
     padding-top: 24px;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 800;
 }
 
@@ -485,16 +505,18 @@
 }
 
 .fr-footer {
-    background: var(--fr-black);
-    color: rgba(255,255,255,0.6);
+    background: var(--fr-light);
+    color: var(--fr-gray);
     padding: 40px 0;
     text-align: center;
     font-size: 14px;
+    border-top: 1px solid var(--fr-border);
 }
 
 .fr-footer a {
-    color: var(--fr-accent);
+    color: var(--fr-black);
     text-decoration: none;
+    font-weight: 600;
 }
 
 /* Responsive */
@@ -526,9 +548,10 @@
     <section class="fr-hero">
         <div class="fr-container">
             <div class="fr-hero-content">
+                <img src="/images/franchise/gadget-bar-logo.png" alt="Gadget Bar" class="fr-hero-logo">
                 <div class="fr-hero-badges">
-                    <div class="fr-badge">Паушальный взнос 100 000 ₽</div>
-                    <div class="fr-badge">Роялти 1,6%</div>
+                    <div class="fr-badge">Прибыль <span>66–89 тыс. ₽/мес</span></div>
+                    <div class="fr-badge">Окупаемость <span>1–4 месяца</span></div>
                 </div>
                 <h1>Откройте свой <span>Gadget Bar</span></h1>
                 <p>Франшиза магазина техники и аксессуаров с готовой моделью, обучением и поддержкой на всех этапах запуска.</p>
