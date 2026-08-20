@@ -18,6 +18,11 @@ use App\Http\Controllers\Web\CaptchaController;
 use App\Http\Controllers\Web\BonusController;
 use App\Http\Controllers\Web\FranchiseController;
 
+Route::domain('fr.gbsale.ru')->group(function () {
+    Route::get('/', [FranchiseController::class, 'index'])->name('franchise.index');
+    Route::post('/submit', [FranchiseController::class, 'submit'])->name('franchise.submit');
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/captcha', [CaptchaController::class, 'show'])->name('captcha');
 
@@ -87,11 +92,6 @@ Route::get('/blog', [BlogController::class, 'index'])->name('page.blog');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('page.blog.article');
 Route::get('/sales', [SalesController::class, 'index'])->name('page.sales');
 Route::get('/sales/{slug}', [SalesController::class, 'show'])->name('page.sales.article');
-
-Route::domain('fr.gbsale.ru')->group(function () {
-    Route::get('/', [FranchiseController::class, 'index'])->name('franchise.index');
-    Route::post('/submit', [FranchiseController::class, 'submit'])->name('franchise.submit');
-});
 
 Route::get('/franchise', [FranchiseController::class, 'index'])->name('franchise.index.fallback');
 Route::post('/franchise/submit', [FranchiseController::class, 'submit'])->name('franchise.submit.fallback');
