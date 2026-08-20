@@ -92,51 +92,9 @@
         <div class="bonus-roulette-section">
             <h2 class="section-title" style="margin-top: 2rem; font-size: 1.25rem;">Колесо фортуны</h2>
 
-            <div class="wheel-tabs" role="tablist">
-                <button
-                    type="button"
-                    class="wheel-tab"
-                    :class="{ 'active': wheelVariant === 'pole' }"
-                    @click="switchVariant('pole')"
-                    :disabled="spinning"
-                >Поле чудес 3D</button>
-                <button
-                    type="button"
-                    class="wheel-tab"
-                    :class="{ 'active': wheelVariant === 'market' }"
-                    @click="switchVariant('market')"
-                    :disabled="spinning"
-                >Маркетплейс</button>
-                <button
-                    type="button"
-                    class="wheel-tab"
-                    :class="{ 'active': wheelVariant === 'neon' }"
-                    @click="switchVariant('neon')"
-                    :disabled="spinning"
-                >Neon Fusion</button>
-            </div>
-
             <div class="roulette-layout">
-                <!-- Pole Chudes 3D -->
-                <div class="pc-wheel-stage" x-show="wheelVariant === 'pole'" x-cloak>
-                    <div class="pc-wheel-scene">
-                        <div class="pc-wheel-cylinder" x-ref="poleCylinder">
-                            <div class="pc-wheel-top" x-ref="poleTop"></div>
-                            <div class="pc-wheel-bottom" x-ref="poleBottom"></div>
-                        </div>
-                    </div>
-                    <div class="pc-wheel-pointer">
-                        <svg viewBox="0 0 60 30" fill="none">
-                            <path d="M0 15 L44 2 L44 28 Z" fill="#d90429" stroke="#fff" stroke-width="2"/>
-                            <path d="M2 15 L40 6 L40 24 Z" fill="#ef233c"/>
-                            <circle cx="46" cy="15" r="3" fill="#fff"/>
-                            <path d="M44 8 L58 15 L44 22 Z" fill="#d90429" stroke="#fff" stroke-width="1.5"/>
-                        </svg>
-                    </div>
-                </div>
-
                 <!-- Marketplace / re:premium cards -->
-                <div class="rp-stage" x-show="wheelVariant === 'market'" x-cloak>
+                <div class="rp-stage">
                     <div class="rp-butterfly b1">🦋</div>
                     <div class="rp-butterfly b2">🦋</div>
                     <div class="rp-butterfly b3">🦋</div>
@@ -148,7 +106,7 @@
                         <div class="rp-pointer"></div>
                         <div class="rp-cards-track" x-ref="marketTrack">
                             <template x-for="(sector, index) in marketCards" :key="index">
-                                <div class="rp-card" :data-index="index % sectors.length" :class="{ 'active': marketActiveIndex === index % sectors.length }">
+                                <div class="rp-card" :data-index="sector.sectorIndex" :class="{ 'active': marketActiveIndex === sector.sectorIndex }">
                                     <div class="rp-card-visual" :style="`--card-light: ${sector.light}; --card-dark: ${sector.dark};`">
                                         <span x-text="sector.icon"></span>
                                     </div>
@@ -162,22 +120,6 @@
                         <template x-for="(sector, index) in sectors" :key="index">
                             <div class="rp-dot" :class="{ 'active': marketActiveIndex === index }"></div>
                         </template>
-                    </div>
-                </div>
-
-                <!-- Neon -->
-                <div class="neon-wheel-stage" x-show="wheelVariant === 'neon'" x-cloak>
-                    <div class="neon-bg-grid"></div>
-                    <div class="neon-glow-ring"></div>
-                    <div class="neon-outer-ring"></div>
-                    <div class="neon-wheel-bg"></div>
-                    <canvas x-ref="neonWheel" width="420" height="420" class="neon-wheel"></canvas>
-                    <div class="neon-center-hub">SPIN</div>
-                    <div class="neon-pointer">
-                        <svg viewBox="0 0 40 56" fill="none">
-                            <path d="M20 56L0 16H40L20 56Z" fill="#ff7b00"/>
-                            <path d="M20 0L0 16H40L20 0Z" fill="#fff"/>
-                        </svg>
                     </div>
                 </div>
 
@@ -299,18 +241,14 @@
                     spinning: false,
                     message: '',
                     messageType: '',
-                    wheelVariant: 'pole',
-                    rotation: { pole: 0, neon: 0 },
-                    neonColors: [
-                        '#0cc0df', '#ff7b00', '#10b981', '#ef4444',
-                        '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899'
-                    ],
                     marketActiveIndex: 0,
                     marketActiveCard: 0,
                     marketOffset: 0,
                     marketCardWidth: 240,
                     marketCardRealWidth: 220,
                     marketVisibleCenter: 0,
+                    marketLeadingCycles: 4,
+                    marketTrailingCycles: 50,
                     marketCardTemplates: [
                         { icon: '📱', light: '#e0f2fe', dark: '#38bdf8' },
                         { icon: '🎧', light: '#fef3c7', dark: '#fbbf24' },
@@ -326,9 +264,12 @@
                         const list = [];
                         const templates = this.marketCardTemplates;
                         const count = this.sectors.length || 1;
-                        for (let i = 0; i < 8 * count; i++) {
-                            const s = this.sectors[i % count];
-                            const t = templates[i % templates.length];
+                        const start = -this.marketLeadingCycles * count;
+                        const end = this.marketTrailingCycles * count;
+                        for (let i = start; i < end; i++) {
+                            const sectorIndex = ((i % count) + count) % count;
+                            const s = this.sectors[sectorIndex];
+                            const t = templates[sectorIndex % templates.length];
                             let sub = 'Приз';
                             if (s.type === 'free_spin') sub = 'Ещё попытка';
                             else if (s.type === 'bonus') sub = 'Бонус';
@@ -338,7 +279,7 @@
                                 light: t.light,
                                 dark: t.dark,
                                 icon: t.icon,
-                                index: i % count
+                                sectorIndex: sectorIndex
                             });
                         }
                         return list;
@@ -347,18 +288,12 @@
                     init() {
                         this.$nextTick(() => {
                             this.measureMarket();
-                            this.drawPoleWheel();
-                            this.drawNeonWheel();
-                            this.updateMarketCards();
+                            this.drawMarketWheel();
                         });
 
                         window.addEventListener('resize', () => {
                             this.measureMarket();
-                            this.drawPoleWheel();
-                            this.drawNeonWheel();
-                            if (this.wheelVariant === 'market') {
-                                this.updateMarketCards();
-                            }
+                            this.drawMarketWheel();
                         });
                     },
 
@@ -374,23 +309,23 @@
                         this.marketVisibleCenter = wrap.clientWidth / 2;
                     },
 
-                    drawMarketWheel() {
+                    drawMarketWheel(animate = false) {
                         this.$nextTick(() => {
                             this.measureMarket();
-                            this.marketActiveIndex = 0;
-                            this.marketActiveCard = 0;
                             const track = this.$refs.marketTrack;
                             if (!track) return;
                             const cardWidth = this.marketCardWidth;
                             const realWidth = this.marketCardRealWidth;
-                            const visibleCenter = this.marketVisibleCenter || track.parentElement.clientWidth / 2;
-                            this.marketOffset = visibleCenter - realWidth / 2;
-                            track.style.transform = `translateX(${this.marketOffset}px)`;
+                            const visibleCenter = this.marketVisibleCenter || (track.parentElement?.clientWidth / 2) || 360;
+                            const activeCard = this.marketActiveIndex;
+                            this.marketOffset = visibleCenter - realWidth / 2 - activeCard * cardWidth;
+                            track.style.transition = animate ? 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none';
+                            track.style.transform = `translate3d(${this.marketOffset}px, 0, 0)`;
                             this.updateMarketCards();
                         });
                     },
 
-                    updateMarketCards(animate = false) {
+                    updateMarketCards() {
                         const track = this.$refs.marketTrack;
                         if (!track) return;
                         const cards = track.querySelectorAll('.rp-card');
@@ -399,7 +334,7 @@
                         const realWidth = this.marketCardRealWidth;
                         const count = this.sectors.length || 1;
 
-                        if (!cardWidth || !realWidth) return;
+                        if (!cardWidth || !realWidth || !center) return;
 
                         let activeIndex = this.marketActiveIndex;
                         const nearestIndex = Math.round((center - realWidth / 2 - this.marketOffset) / cardWidth);
@@ -416,27 +351,17 @@
                             const isActive = absDist < 0.5;
                             const scale = isActive ? 1.16 : Math.max(0.78, 1 - absDist * 0.11);
                             const opacity = isActive ? 1 : Math.max(0.45, 1 - absDist * 0.28);
-                            const blur = isActive ? 0 : Math.min(2.5, absDist * 0.5);
 
                             card.style.transform = `scale(${scale})`;
                             card.style.opacity = opacity;
-                            card.style.filter = blur > 0.1 ? `blur(${blur}px)` : 'none';
+                            card.style.filter = 'none';
                             card.style.zIndex = isActive ? 2 : 1;
                             card.classList.toggle('active', isActive);
                             if (isActive) {
-                                activeIndex = i % count;
+                                activeIndex = parseInt(card.dataset.index || (i % count), 10);
                             }
                         }
                         this.marketActiveIndex = activeIndex;
-                    },
-
-                    switchVariant(variant) {
-                        if (this.spinning) return;
-                        this.wheelVariant = variant;
-                        this.message = '';
-                        if (variant === 'market') {
-                            this.drawMarketWheel();
-                        }
                     },
 
                     async collectDaily() {
@@ -482,108 +407,6 @@
                         }
                     },
 
-                    drawPoleWheel() {
-                        const cylinder = this.$refs.poleCylinder;
-                        const topEl = this.$refs.poleTop;
-                        const bottomEl = this.$refs.poleBottom;
-                        if (!cylinder || !topEl || !bottomEl) return;
-
-                        cylinder.querySelectorAll('.pc-wheel-side').forEach(el => el.remove());
-
-                        const count = this.sectors.length || 1;
-                        const R = 360;
-                        const H = 260;
-                        const angle = 360 / count;
-                        const sideW = 2 * R * Math.tan(Math.PI / count);
-
-                        const palette = {
-                            white: '#fffdf5', black: '#2a2a2a', red: '#ff1a3c', green: '#2ecc40', gold: '#ffcc00'
-                        };
-
-                        const getClass = (i, s) => {
-                            if (s.type === 'super') return 'gold';
-                            if (s.type === 'free_spin') return 'green';
-                            if (s.type === 'service' || s.type === 'material') return 'red';
-                            return i % 2 === 0 ? 'white' : 'black';
-                        };
-
-                        const formatSideLabel = (text) => {
-                            if (!text) return '';
-                            if (text.length <= 10) return text;
-                            const words = text.split(/\s+/).filter(Boolean);
-                            if (words.length < 2) return this.truncate(text, 12);
-                            const mid = Math.floor(words.length / 2);
-                            const first = words.slice(0, mid).join(' ');
-                            const second = words.slice(mid).join(' ');
-                            if (first.length > 14 || second.length > 14) return this.truncate(text, 12);
-                            return first + '\n' + second;
-                        };
-
-                        this.sectors.forEach((s, i) => {
-                            const div = document.createElement('div');
-                            div.className = 'pc-wheel-side ' + getClass(i, s);
-                            div.style.setProperty('--w', sideW + 'px');
-                            div.style.setProperty('--h', H + 'px');
-                            div.style.setProperty('--r', R + 'px');
-                            div.style.setProperty('--a', (i * angle) + 'deg');
-                            div.textContent = formatSideLabel(s.label || s.name || '');
-                            cylinder.appendChild(div);
-                        });
-
-                        topEl.style.setProperty('--d', (R * 2) + 'px');
-                        topEl.style.setProperty('--h', H + 'px');
-                        bottomEl.style.setProperty('--d', (R * 2) + 'px');
-                        bottomEl.style.setProperty('--h', H + 'px');
-
-                        const d = R * 2;
-                        const cx = d / 2, cy = d / 2, r = d / 2 - 2;
-                        const ns = 'http://www.w3.org/2000/svg';
-                        const svg = document.createElementNS(ns, 'svg');
-                        svg.setAttribute('width', '100%');
-                        svg.setAttribute('height', '100%');
-                        svg.setAttribute('viewBox', `0 0 ${d} ${d}`);
-
-                        const makePath = (i) => {
-                            const a1 = i * (Math.PI * 2) / count - Math.PI / 2;
-                            const a2 = a1 + (Math.PI * 2) / count;
-                            const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
-                            const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
-                            return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`;
-                        };
-
-                        this.sectors.forEach((s, i) => {
-                            const path = document.createElementNS(ns, 'path');
-                            path.setAttribute('d', makePath(i));
-                            path.setAttribute('fill', palette[getClass(i, s)]);
-                            path.setAttribute('stroke', 'rgba(255,255,255,0.35)');
-                            path.setAttribute('stroke-width', '3');
-                            svg.appendChild(path);
-                        });
-
-                        const ring = document.createElementNS(ns, 'circle');
-                        ring.setAttribute('cx', cx);
-                        ring.setAttribute('cy', cy);
-                        ring.setAttribute('r', r * 0.12);
-                        ring.setAttribute('fill', 'rgba(0,0,0,0.45)');
-                        ring.setAttribute('stroke', 'rgba(255,255,255,0.35)');
-                        ring.setAttribute('stroke-width', '4');
-                        svg.appendChild(ring);
-
-                        const center = document.createElementNS(ns, 'circle');
-                        center.setAttribute('cx', cx);
-                        center.setAttribute('cy', cy);
-                        center.setAttribute('r', r * 0.06);
-                        center.setAttribute('fill', '#ffcc00');
-                        center.setAttribute('stroke', 'rgba(0,0,0,0.5)');
-                        center.setAttribute('stroke-width', '3');
-                        svg.appendChild(center);
-
-                        topEl.innerHTML = '';
-                        bottomEl.innerHTML = '';
-                        topEl.appendChild(svg);
-                        bottomEl.appendChild(svg.cloneNode(true));
-                    },
-
                     truncate(text, max) {
                         if (!text) return '';
                         return text.length > max ? text.slice(0, max - 1) + '…' : text;
@@ -622,13 +445,7 @@
                             this.balancePulse = true;
                             setTimeout(() => this.balancePulse = false, 800);
 
-                            if (this.wheelVariant === 'pole') {
-                                this.spinPole(data);
-                            } else if (this.wheelVariant === 'market') {
-                                this.spinMarket(data);
-                            } else {
-                                this.spinNeon(data);
-                            }
+                            this.spinMarket(data);
                         } catch (e) {
                             this.message = 'Не удалось связаться с сервером.';
                             this.messageType = 'error';
@@ -646,43 +463,18 @@
                         }
                     },
 
-                    spinPole(data) {
-                        const index = this.sectors.findIndex(s => s.id === data.sector.id);
-                        const count = this.sectors.length;
-                        const sectorAngle = 360 / count;
-                        const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
-                        const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
-
-                        const extraSpins = 3 * 360;
-                        const newRotation = this.rotation.pole + extraSpins + (targetAngle + 90 - sectorAngle / 2 - (this.rotation.pole % 360));
-                        this.rotation.pole = newRotation;
-
-                        const cylinder = this.$refs.poleCylinder;
-                        if (cylinder) {
-                            cylinder.style.setProperty('--pole-rotation', `${-newRotation}deg`);
-                        }
-
-                        setTimeout(() => this.finishSpin(data), 12000);
-                    },
-
                     spinMarket(data) {
                         const index = this.sectors.findIndex(s => s.id === data.sector.id);
-                        const count = this.sectors.length;
-                        const loops = 7;
+                        const count = this.sectors.length || 1;
+                        const loops = 6;
                         const cardWidth = this.marketCardWidth;
                         const realWidth = this.marketCardRealWidth;
                         const visibleCenter = this.marketVisibleCenter || (this.$refs.marketTrack?.parentElement?.clientWidth / 2) || 360;
 
-                        if (!cardWidth || !realWidth) {
+                        if (!cardWidth || !realWidth || index < 0) {
                             this.finishSpin(data);
                             return;
                         }
-
-                        const finalCardIndex = count * loops + index;
-                        const finalOffset = visibleCenter - (finalCardIndex * cardWidth + realWidth / 2);
-                        const startOffset = this.marketOffset;
-                        const distance = finalOffset - startOffset;
-                        const duration = 4200;
 
                         const track = this.$refs.marketTrack;
                         if (!track) {
@@ -690,12 +482,17 @@
                             return;
                         }
 
-                        // Disable CSS transitions during the spin so we can drive every frame.
+                        const currentSectorIndex = this.marketActiveIndex % count;
+                        const sectorDelta = (index - currentSectorIndex + count) % count;
+                        const currentCard = this.marketActiveCard;
+                        const finalCardIndex = currentCard + count * loops + sectorDelta;
+                        const finalOffset = visibleCenter - (finalCardIndex * cardWidth + realWidth / 2);
+                        const startOffset = this.marketOffset;
+                        const distance = finalOffset - startOffset;
+                        const duration = 2800;
+
                         track.querySelectorAll('.rp-card').forEach(card => {
                             card.style.transition = 'none';
-                            card.style.transform = 'scale(1)';
-                            card.style.opacity = '1';
-                            card.style.filter = 'blur(0px)';
                             card.classList.remove('active');
                         });
                         track.style.transition = 'none';
@@ -710,115 +507,32 @@
                             const currentOffset = startOffset + distance * eased;
                             this.marketOffset = currentOffset;
                             track.style.transform = `translate3d(${currentOffset}px, 0, 0)`;
-
-                            // motion blur fades as the wheel slows
-                            const blur = Math.max(0, (1 - eased) * 2.5);
-                            track.querySelectorAll('.rp-card').forEach(card => {
-                                card.style.filter = blur > 0.1 ? `blur(${blur}px)` : 'none';
-                            });
                             this.updateMarketCards();
 
                             if (t < 1) {
                                 requestAnimationFrame(animate);
                             } else {
                                 this.marketOffset = finalOffset;
-                                track.style.transform = `translate3d(${finalOffset}px, 0, 0)`;
-                                track.querySelectorAll('.rp-card').forEach(card => {
-                                    card.style.transition = '';
-                                    card.style.filter = 'none';
-                                });
-                                this.updateMarketCards(true);
+                                this.marketActiveCard = finalCardIndex;
                                 this.marketActiveIndex = index;
-                                setTimeout(() => this.finishSpin(data), 500);
+                                track.style.transform = `translate3d(${finalOffset}px, 0, 0)`;
+                                this.updateMarketCards();
+
+                                // Бесшовный сброс к базовому циклу: карточки одного сектора
+                                // визуально одинаковы, поэтому прыжка не видно, а лента
+                                // остаётся «бесконечной» для следующих прокруток.
+                                const resetCard = index;
+                                this.marketActiveCard = resetCard;
+                                this.marketOffset = visibleCenter - (resetCard * cardWidth + realWidth / 2);
+                                track.style.transition = 'none';
+                                track.style.transform = `translate3d(${this.marketOffset}px, 0, 0)`;
+                                this.updateMarketCards();
+
+                                setTimeout(() => this.finishSpin(data), 400);
                             }
                         };
 
                         requestAnimationFrame(animate);
-                    },
-
-                    spinNeon(data) {
-                        const index = this.sectors.findIndex(s => s.id === data.sector.id);
-                        const count = this.sectors.length;
-                        const sectorAngle = 360 / count;
-                        const randomOffset = (Math.random() * (sectorAngle - 8)) - (sectorAngle - 8) / 2;
-                        const targetAngle = index * sectorAngle + sectorAngle / 2 + randomOffset;
-
-                        const extraSpins = 6 * 360;
-                        const newRotation = this.rotation.neon + extraSpins + (270 - targetAngle - (this.rotation.neon % 360));
-                        this.rotation.neon = newRotation;
-
-                        const canvas = this.$refs.neonWheel;
-                        canvas.style.transition = 'transform 5.5s cubic-bezier(0.12, 0.75, 0.18, 1)';
-                        canvas.style.transform = `rotate(${newRotation}deg)`;
-
-                        setTimeout(() => this.finishSpin(data), 5500);
-                    },
-
-                    drawNeonWheel() {
-                        const canvas = this.$refs.neonWheel;
-                        if (!canvas) return;
-                        const ctx = canvas.getContext('2d');
-                        const dpr = window.devicePixelRatio || 1;
-                        const cssSize = Math.min(420, canvas.clientWidth || 420);
-                        canvas.width = cssSize * dpr;
-                        canvas.height = cssSize * dpr;
-                        canvas.style.width = cssSize + 'px';
-                        canvas.style.height = cssSize + 'px';
-                        ctx.scale(dpr, dpr);
-
-                        const cx = cssSize / 2;
-                        const cy = cssSize / 2;
-                        const radius = cssSize / 2 - 16;
-
-                        ctx.clearRect(0, 0, cssSize, cssSize);
-
-                        const count = this.sectors.length || 1;
-                        const angle = (Math.PI * 2) / count;
-
-                        for (let i = 0; i < count; i++) {
-                            const start = i * angle;
-                            const end = start + angle;
-                            ctx.beginPath();
-                            ctx.moveTo(cx, cy);
-                            ctx.arc(cx, cy, radius, start, end);
-                            ctx.closePath();
-
-                            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-                            const base = this.neonColors[i % this.neonColors.length];
-                            grad.addColorStop(0, base + '55');
-                            grad.addColorStop(0.6, base + 'aa');
-                            grad.addColorStop(1, base);
-                            ctx.fillStyle = grad;
-                            ctx.fill();
-
-                            ctx.save();
-                            ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-                            ctx.lineWidth = 2;
-                            ctx.beginPath();
-                            ctx.moveTo(cx, cy);
-                            ctx.arc(cx, cy, radius, start, end);
-                            ctx.stroke();
-                            ctx.restore();
-
-                            ctx.save();
-                            ctx.translate(cx, cy);
-                            ctx.rotate(start + angle / 2);
-                            ctx.textAlign = 'right';
-                            ctx.fillStyle = '#fff';
-                            ctx.font = 'bold 15px Inter, sans-serif';
-                            ctx.shadowColor = base;
-                            ctx.shadowBlur = 12;
-                            ctx.fillText(this.truncate(this.sectors[i]?.label || '', 16), radius - 22, 5);
-                            ctx.restore();
-                        }
-                    },
-
-                    darken(hex, amount) {
-                        const num = parseInt(hex.slice(1), 16);
-                        let r = Math.max(0, (num >> 16) - amount);
-                        let g = Math.max(0, ((num >> 8) & 255) - amount);
-                        let b = Math.max(0, (num & 255) - amount);
-                        return `rgb(${r},${g},${b})`;
                     }
                 };
             }
