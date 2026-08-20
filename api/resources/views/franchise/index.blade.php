@@ -554,8 +554,8 @@
                     <p>Мы выстроили прозрачную логистику, обучение персонала, маркетинговую поддержку и IT-инфраструктуру — и делимся этим с партнёрами по франшизе.</p>
                     <div class="fr-stats">
                         <div class="fr-stat">
-                            <div class="fr-stat-number">30+</div>
-                            <div class="fr-stat-label">заказов в день в активной точке</div>
+                            <div class="fr-stat-number">18-70</div>
+                            <div class="fr-stat-label">заказов в месяц в активной точке</div>
                         </div>
                         <div class="fr-stat">
                             <div class="fr-stat-number">66-89 <span>тыс. ₽</span></div>
@@ -780,9 +780,9 @@
 function franchiseCalc() {
     return {
         orders: 30,
-        avgCheck: 15000,
-        margin: 25,
-        expenses: 50000,
+        avgCheck: 20000,
+        margin: 23,
+        expenses: 35000,
 
         get revenue() {
             return this.orders * this.avgCheck;
