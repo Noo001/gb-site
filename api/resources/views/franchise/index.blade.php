@@ -4,19 +4,23 @@
 @section('meta_description', 'Франшиза Gadget Bar: паушальный взнос 100 000 ₽, роялти 1,6%, прибыль до 89 000 ₽/мес. Оставьте заявку на франшизу или закажите обратный звонок.')
 
 @push('styles')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
     --fr-accent: #5ce7ff;
     --fr-black: #000000;
-    --fr-gray: #545454;
-    --fr-light: #f8f9fa;
+    --fr-gray: #545152;
+    --fr-light: #f5f5f5;
     --fr-white: #ffffff;
+    --fr-border: #d9d9d9;
     --fr-radius: 24px;
     --fr-radius-sm: 16px;
 }
 
 .franchise-page {
-    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     color: var(--fr-black);
     line-height: 1.6;
     overflow-x: hidden;
@@ -174,7 +178,8 @@
     position: relative;
     border-radius: var(--fr-radius);
     overflow: hidden;
-    background: var(--fr-black);
+    background: var(--fr-white);
+    border: 1px solid var(--fr-border);
     min-height: 420px;
     display: flex;
     align-items: center;
@@ -185,7 +190,7 @@
     width: auto;
     height: auto;
     max-width: 85%;
-    max-height: 180px;
+    max-height: 160px;
     object-fit: contain;
     position: relative;
     z-index: 2;
@@ -195,7 +200,8 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(92,231,255,0.1), transparent);
+    background: linear-gradient(135deg, rgba(92,231,255,0.06), transparent);
+    pointer-events: none;
 }
 
 .fr-story-text p {
