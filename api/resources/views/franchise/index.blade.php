@@ -119,14 +119,22 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 22px;
+    padding: 10px 16px;
     border-radius: 999px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     text-decoration: none;
     background: var(--fr-black);
     color: var(--fr-white);
     transition: transform 0.2s, background 0.2s;
+    white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+    .fr-header-btn {
+        padding: 12px 22px;
+        font-size: 14px;
+    }
 }
 
 .fr-header-btn:hover {
