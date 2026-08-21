@@ -87,8 +87,14 @@
 }
 
 .fr-header-logo {
-    height: 32px;
+    height: 28px;
     width: auto;
+}
+
+@media (min-width: 768px) {
+    .fr-header-logo {
+        height: 32px;
+    }
 }
 
 .fr-header-nav {
