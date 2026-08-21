@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 730 100" preserveAspectRatio="xMidYMid meet" aria-label="Gadget Bar" class="fr-hero-logo-svg">
+  <defs>
+    <style>
+      .logo-text {
+        font-family: 'Inter', Arial, sans-serif;
+        font-weight: 900;
+        font-size: 92px;
+        letter-spacing: -0.04em;
+        fill: currentColor;
+      }
+      .logo-pill {
+        fill: currentColor;
+      }
+      .logo-circle {
+        fill: #ffffff;
+        animation: toggleSwitch 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+      .logo-group {
+        animation: logoFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        opacity: 0;
+      }
+      @keyframes logoFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes toggleSwitch {
+        0% { transform: translateX(-32px); }
+        40% { transform: translateX(-32px); }
+        100% { transform: translateX(0); }
+      }
+    </style>
+  </defs>
+  <g class="logo-group">
+    <text x="0" y="78" class="logo-text">GADGET</text>
+    
+    <!-- Toggle separator -->
+    <g transform="translate(356, 18)">
+      <rect x="0" y="0" width="96" height="64" rx="32" class="logo-pill"/>
+      <circle cx="64" cy="32" r="22" class="logo-circle"/>
+    </g>
+    
+    <text x="462" y="78" class="logo-text">BAR</text>
+  </g>
+</svg>

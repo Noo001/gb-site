@@ -191,10 +191,9 @@
 /* Hero */
 .fr-hero {
     position: relative;
-    min-height: calc(100vh - 72px);
     display: flex;
     align-items: center;
-    padding: 80px 0 120px;
+    padding: 60px 0 80px;
     overflow: hidden;
     background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 50%, #ffffff 100%);
 }
@@ -293,37 +292,25 @@
     font-weight: 800;
 }
 
-.fr-hero h1 {
-    font-size: clamp(36px, 5.2vw, 64px);
-    font-weight: 900;
-    line-height: 1.05;
-    margin: 0 0 24px;
-    letter-spacing: -0.03em;
+.fr-hero-title {
+    margin: 0 0 20px;
 }
 
-.fr-hero h1 .accent {
-    color: var(--fr-accent);
+.fr-hero-title .pre {
     display: block;
-    position: relative;
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 600;
+    color: var(--fr-gray);
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
 }
 
-.fr-hero h1 .accent::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 4px;
+.fr-hero-logo-svg {
+    display: block;
     width: 100%;
-    height: 12px;
-    background: rgba(12, 192, 223, 0.15);
-    border-radius: 4px;
-    z-index: -1;
-}
-
-@media (max-width: 600px) {
-    .fr-hero h1 .accent::after {
-        height: 8px;
-        bottom: 2px;
-    }
+    max-width: 520px;
+    height: auto;
+    color: var(--fr-black);
 }
 
 .fr-hero p {
@@ -416,7 +403,7 @@
 
 /* Section base */
 .fr-section {
-    padding: 110px 0;
+    padding: 80px 0;
 }
 
 .fr-section-header {
@@ -1066,12 +1053,11 @@
 /* Responsive */
 @media (max-width: 900px) {
     .fr-section {
-        padding: 70px 0;
+        padding: 56px 0;
     }
 
     .fr-hero {
-        min-height: auto;
-        padding: 60px 0 80px;
+        padding: 40px 0 56px;
     }
 
     .fr-calc-result {
@@ -1088,8 +1074,21 @@
         width: 100%;
     }
 
+    .fr-hero-title .pre {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+
+    .fr-hero-logo-svg {
+        max-width: 100%;
+    }
+
     .fr-hero-card {
-        padding: 28px;
+        padding: 24px;
+    }
+
+    .fr-hero-card h3 {
+        font-size: 20px;
     }
 }
 </style>
@@ -1100,7 +1099,7 @@
     <!-- Header -->
     <header class="fr-header">
         <div class="fr-container fr-header-inner">
-            <img src="/images/franchise/gadget-bar-logo.png" alt="Gadget Bar" class="fr-header-logo">
+            <img src="/images/franchise/gadget-bar-logo.svg" alt="Gadget Bar" class="fr-header-logo">
             <nav class="fr-header-nav">
                 <a href="#about">О бренде</a>
                 <a href="#advantages">Преимущества</a>
@@ -1126,10 +1125,10 @@
                         <div class="fr-badge">Прибыль <span>66–89 тыс. ₽/мес</span></div>
                         <div class="fr-badge">Окупаемость <span>1–4 месяца</span></div>
                     </div>
-                    <h1 class="animate-fade-up delay-2">
-                        Откройте свой
-                        <span class="accent">Gadget Bar</span>
-                    </h1>
+                    <div class="fr-hero-title animate-fade-up delay-2">
+                        <span class="pre">Откройте свой</span>
+                        {!! file_get_contents(public_path('images/franchise/gadget-bar-logo.svg')) !!}
+                    </div>
                     <p class="animate-fade-up delay-3">Франшиза магазина техники и аксессуаров с готовой моделью, обучением и поддержкой на всех этапах запуска.</p>
                     <div class="fr-hero-buttons animate-fade-up delay-4">
                         <a href="#calculator" class="fr-btn fr-btn-primary">Рассчитать прибыль</a>
