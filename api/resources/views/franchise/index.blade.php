@@ -319,12 +319,11 @@
     letter-spacing: -0.02em;
 }
 
-.fr-hero-logo-svg {
+.fr-hero-logo-img {
     display: block;
     width: 100%;
     max-width: 520px;
     height: auto;
-    color: var(--fr-black);
 }
 
 .fr-hero p {
@@ -1093,7 +1092,7 @@
         margin-bottom: 4px;
     }
 
-    .fr-hero-logo-svg {
+    .fr-hero-logo-img {
         max-width: 100%;
     }
 
@@ -1113,7 +1112,7 @@
     <!-- Header -->
     <header class="fr-header">
         <div class="fr-container fr-header-inner">
-            <img src="/images/franchise/gadget-bar-logo.svg" alt="Gadget Bar" class="fr-header-logo">
+            <img src="/images/franchise/gadget-bar-logo.png" alt="Gadget Bar" class="fr-header-logo">
             <nav class="fr-header-nav">
                 <a href="#about">О бренде</a>
                 <a href="#advantages">Преимущества</a>
@@ -1141,7 +1140,7 @@
                     </div>
                     <div class="fr-hero-title animate-fade-up delay-2">
                         <span class="pre">Откройте свой</span>
-                        {!! file_get_contents(public_path('images/franchise/gadget-bar-logo.svg')) !!}
+                        <img src="/images/franchise/gadget-bar-logo.png" alt="Gadget Bar" class="fr-hero-logo-img">
                     </div>
                     <p class="animate-fade-up delay-3">Франшиза магазина техники и аксессуаров с готовой моделью, обучением и поддержкой на всех этапах запуска.</p>
                     <div class="fr-hero-buttons animate-fade-up delay-4">
