@@ -60,6 +60,14 @@
 .reveal-delay-3 { transition-delay: 0.24s; }
 .reveal-delay-4 { transition-delay: 0.32s; }
 
+/* No-JS / print fallback */
+@media (scripting: none), print {
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
 /* Header */
 .fr-header {
     position: sticky;
