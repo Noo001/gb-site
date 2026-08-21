@@ -180,7 +180,7 @@
 .fr-btn-primary {
     background: var(--gb-cyan);
     color: #081013;
-    box-shadow: 0 10px 30px rgba(82, 221, 248, 0.18);
+    box-shadow: 0 12px 32px rgba(82, 221, 248, 0.25);
 }
 
 .fr-btn-primary:hover {
@@ -212,7 +212,7 @@
 .fr-hero {
     position: relative;
     padding: 72px 0 88px;
-    background: var(--gb-white);
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FEFF 55%, #E9FBFF 100%);
     overflow: hidden;
 }
 
@@ -221,9 +221,20 @@
     position: absolute;
     top: -20%;
     right: -5%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(82, 221, 248, 0.14) 0%, rgba(82, 221, 248, 0.05) 35%, transparent 70%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.22) 0%, rgba(82, 221, 248, 0.08) 35%, transparent 70%);
+    pointer-events: none;
+}
+
+.fr-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -15%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.12) 0%, transparent 65%);
     pointer-events: none;
 }
 
@@ -323,26 +334,33 @@
     border: 1px solid var(--gb-border);
     border-radius: var(--gb-radius-lg);
     padding: 32px;
-    box-shadow: var(--gb-shadow);
+    box-shadow: 0 20px 50px rgba(82, 221, 248, 0.15), var(--gb-shadow);
     max-width: 400px;
     width: 100%;
+    animation: heroCardFloat 6s ease-in-out infinite;
+}
+
+@keyframes heroCardFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(0.8deg); }
 }
 
 .fr-hero-card-icon {
     width: 56px;
     height: 56px;
     border-radius: var(--gb-radius-md);
-    background: var(--gb-cyan-soft);
+    background: linear-gradient(135deg, var(--gb-cyan), var(--gb-cyan-hover));
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(82, 221, 248, 0.25);
 }
 
 .fr-hero-card-icon svg {
     width: 26px;
     height: 26px;
-    color: var(--gb-cyan);
+    color: var(--gb-white);
 }
 
 .fr-hero-card h3 {
@@ -444,12 +462,19 @@
     position: relative;
     border-radius: var(--gb-radius-lg);
     overflow: hidden;
-    background: var(--gb-white);
+    background: linear-gradient(135deg, #FFFFFF 0%, #F0FCFF 100%);
     border: 1px solid var(--gb-border);
     min-height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.fr-story-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(82, 221, 248, 0.08), transparent 60%);
 }
 
 .fr-story-image .brand-logo {
@@ -535,17 +560,23 @@
     width: 48px;
     height: 48px;
     border-radius: var(--gb-radius-sm);
-    background: var(--gb-cyan-soft);
+    background: linear-gradient(135deg, var(--gb-cyan), var(--gb-cyan-hover));
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 18px;
+    box-shadow: 0 6px 16px rgba(82, 221, 248, 0.22);
+    transition: transform 0.2s ease;
+}
+
+.fr-advantage:hover .fr-advantage-icon {
+    transform: scale(1.05);
 }
 
 .fr-advantage-icon svg {
     width: 22px;
     height: 22px;
-    color: var(--gb-cyan);
+    color: var(--gb-white);
 }
 
 .fr-advantage h3 {
@@ -586,6 +617,7 @@
 }
 
 .fr-format-card {
+    position: relative;
     background: var(--gb-white);
     border: 1px solid var(--gb-border);
     border-radius: var(--gb-radius-md);
@@ -593,19 +625,37 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+}
+
+.fr-format-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gb-cyan), var(--gb-cyan-hover));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
 }
 
 .fr-format-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
     box-shadow: var(--gb-shadow-lg);
     border-color: rgba(82, 221, 248, 0.65);
+}
+
+.fr-format-card:hover::before {
+    transform: scaleX(1);
 }
 
 .fr-format-badge {
     display: inline-flex;
     align-self: flex-start;
-    background: var(--gb-cyan-soft);
-    color: var(--gb-cyan);
+    background: linear-gradient(135deg, var(--gb-cyan), var(--gb-cyan-hover));
+    color: #081013;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -653,7 +703,8 @@
 }
 
 .fr-format-profit {
-    background: var(--gb-light);
+    background: linear-gradient(135deg, rgba(82, 221, 248, 0.10), rgba(82, 221, 248, 0.04));
+    border: 1px solid rgba(82, 221, 248, 0.25);
     border-radius: var(--gb-radius-sm);
     padding: 14px;
     text-align: center;
@@ -748,7 +799,18 @@
     right: -10%;
     width: 700px;
     height: 700px;
-    background: radial-gradient(circle, rgba(82, 221, 248, 0.10) 0%, transparent 60%);
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.14) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.fr-calculator::after {
+    content: '';
+    position: absolute;
+    bottom: -15%;
+    left: -5%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.08) 0%, transparent 65%);
     pointer-events: none;
 }
 
@@ -1102,16 +1164,16 @@
                     <p class="reveal reveal-delay-2">Мы выстроили прозрачную логистику, обучение персонала, маркетинговую поддержку и IT-инфраструктуру — и делимся этим с партнёрами по франшизе.</p>
                     <div class="fr-stats reveal reveal-delay-3">
                         <div class="fr-stat">
-                            <div class="fr-stat-number">30+</div>
+                            <div class="fr-stat-number"><span class="counter" data-target="30">0</span>+</div>
                             <div class="fr-stat-label">заказов в день в активной точке</div>
                         </div>
                         <div class="fr-stat">
-                            <div class="fr-stat-number">66-89 <span>тыс. ₽</span></div>
-                            <div class="fr-stat-label">прибыль в месяц</div>
+                            <div class="fr-stat-number"><span class="counter" data-target="89">0</span> <span>тыс. ₽</span></div>
+                            <div class="fr-stat-label">прибыль в месяц до</div>
                         </div>
                         <div class="fr-stat">
-                            <div class="fr-stat-number">1-4 <span>мес.</span></div>
-                            <div class="fr-stat-label">окупаемость</div>
+                            <div class="fr-stat-number"><span class="counter" data-target="4">0</span> <span>мес.</span></div>
+                            <div class="fr-stat-label">окупаемость до</div>
                         </div>
                     </div>
                 </div>
@@ -1486,6 +1548,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Animated counters
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target;
+                const target = parseInt(counter.dataset.target);
+                const duration = 1200;
+                const step = target / (duration / 16);
+                let current = 0;
+
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 16);
+
+                counterObserver.unobserve(counter);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
