@@ -484,6 +484,55 @@
     perspective: 1000px;
 }
 
+.fr-hero-floaters {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.fr-floater {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(82, 221, 248, 0.25);
+    border-radius: var(--gb-radius-md);
+    padding: 14px 18px;
+    box-shadow: 0 12px 30px rgba(82, 221, 248, 0.15), 0 4px 12px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    animation: floaterFloat 7s ease-in-out infinite;
+    backdrop-filter: blur(4px);
+}
+
+.fr-floater span {
+    font-size: 18px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gb-cyan), #2BC8EA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+}
+
+.fr-floater small {
+    font-size: 12px;
+    color: var(--gb-text-secondary);
+}
+
+.fr-floater-1 { top: 8%; right: -2%; animation-delay: 0s; }
+.fr-floater-2 { bottom: 20%; left: -4%; animation-delay: -2.5s; }
+.fr-floater-3 { bottom: 6%; right: 6%; animation-delay: -5s; }
+
+@media (max-width: 1100px) {
+    .fr-floater { display: none; }
+}
+
+@keyframes floaterFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
 .fr-hero-card-wrapper {
     transition: transform 0.12s ease-out;
     transform-style: preserve-3d;
@@ -1525,6 +1574,20 @@
                     </div>
                 </div>
                 <div class="fr-hero-visual" id="heroVisual">
+                    <div class="fr-hero-floaters" aria-hidden="true">
+                        <div class="fr-floater fr-floater-1">
+                            <span>30+</span>
+                            <small>заказов в день</small>
+                        </div>
+                        <div class="fr-floater fr-floater-2">
+                            <span>89 тыс. ₽</span>
+                            <small>прибыль в месяц</small>
+                        </div>
+                        <div class="fr-floater fr-floater-3">
+                            <span>24/7</span>
+                            <small>поддержка</small>
+                        </div>
+                    </div>
                     <div class="fr-hero-card-wrapper" id="heroCardWrapper">
                         <div class="fr-hero-card">
                             <div class="fr-hero-card-glow" aria-hidden="true"></div>
