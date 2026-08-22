@@ -846,18 +846,12 @@
     display: block;
 }
 
-.store-sign-swing { transform-origin: 200px 40px; animation: signSwing 6s ease-in-out infinite; }
 .store-phone { animation: storeFloat 5s ease-in-out infinite; }
 .store-watch { animation: storeFloat 5.5s ease-in-out infinite 0.5s; }
 .store-buds { animation: storeFloat 6s ease-in-out infinite 1s; }
 .store-plant { animation: storeSway 7s ease-in-out infinite; transform-origin: 330px 230px; }
 .store-sparkle { animation: sparkle 3.5s ease-in-out infinite; }
 .store-sparkle-2 { animation: sparkle 4.2s ease-in-out infinite 1.2s; }
-
-@keyframes signSwing {
-    0%, 100% { transform: rotate(-2deg); }
-    50% { transform: rotate(2deg); }
-}
 
 @keyframes storeFloat {
     0%, 100% { transform: translateY(0); }
@@ -1900,13 +1894,6 @@
 
                             <!-- Back wall / shelf -->
                             <rect x="45" y="55" width="310" height="200" rx="14" fill="url(#storeGradient)" stroke="#E2F6FA" stroke-width="2"/>
-
-                            <!-- Hanging sign -->
-                            <g class="store-sign-swing" filter="url(#storeShadow)">
-                                <line x1="200" y1="40" x2="200" y2="80" stroke="#333" stroke-width="2"/>
-                                <rect x="135" y="80" width="130" height="42" rx="6" fill="#111"/>
-                                <text x="200" y="107" text-anchor="middle" fill="#52DDF8" font-size="14" font-weight="800" font-family="Arial, sans-serif" letter-spacing="-0.02em">GADGET BAR</text>
-                            </g>
 
                             <!-- Shelf -->
                             <rect x="60" y="185" width="280" height="10" rx="3" fill="#D5F3FA"/>
