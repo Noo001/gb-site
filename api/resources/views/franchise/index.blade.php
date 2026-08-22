@@ -1798,8 +1798,8 @@
                                 <small>прибыль</small>
                             </div>
                             <div class="fr-hero-metric">
-                                <span>24/7</span>
-                                <small>поддержка</small>
+                                <span>1–4 мес.</span>
+                                <small>окупаемость</small>
                             </div>
                         </div>
                     </div>
