@@ -920,6 +920,37 @@
 /* Franchise formats */
 .fr-formats {
     background: var(--gb-light-2);
+    position: relative;
+    overflow: hidden;
+}
+
+.fr-formats::before {
+    content: '';
+    position: absolute;
+    top: -12%;
+    right: -8%;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.14), transparent 65%);
+    pointer-events: none;
+    animation: formatGlow 10s ease-in-out infinite;
+}
+
+.fr-formats::after {
+    content: '';
+    position: absolute;
+    bottom: -12%;
+    left: -8%;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.09), transparent 65%);
+    pointer-events: none;
+    animation: formatGlow 12s ease-in-out infinite reverse;
+}
+
+@keyframes formatGlow {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
 }
 
 .fr-formats-grid {
@@ -1000,7 +1031,31 @@
     letter-spacing: 0.06em;
     padding: 5px 10px;
     border-radius: 999px;
+    margin-bottom: 12px;
+}
+
+.fr-format-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: var(--gb-radius-sm);
+    background: linear-gradient(135deg, var(--gb-cyan), var(--gb-cyan-hover));
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 14px;
+    box-shadow: 0 6px 16px rgba(82, 221, 248, 0.22);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.fr-format-card:hover .fr-format-icon {
+    transform: scale(1.08) rotate(-4deg);
+    box-shadow: 0 10px 24px rgba(82, 221, 248, 0.35);
+}
+
+.fr-format-icon svg {
+    width: 22px;
+    height: 22px;
+    color: var(--gb-white);
 }
 
 .fr-format-card h3 {
@@ -1076,6 +1131,37 @@
 /* Conditions */
 .fr-conditions {
     background: var(--gb-white);
+    position: relative;
+    overflow: hidden;
+}
+
+.fr-conditions::before {
+    content: '';
+    position: absolute;
+    top: -8%;
+    left: -6%;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.1), transparent 65%);
+    pointer-events: none;
+    animation: conditionGlow 11s ease-in-out infinite;
+}
+
+.fr-conditions::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    right: -6%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.07), transparent 65%);
+    pointer-events: none;
+    animation: conditionGlow 13s ease-in-out infinite reverse;
+}
+
+@keyframes conditionGlow {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
 }
 
 .fr-conditions-grid {
@@ -1737,6 +1823,9 @@
             <div class="fr-formats-grid">
                 <div class="fr-format-card reveal reveal-delay-1">
                     <div class="fr-format-badge">Старт</div>
+                    <div class="fr-format-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18v-7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v7z"></path><path d="M4 14V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7"></path><line x1="12" y1="3" x2="12" y2="14"></line></svg>
+                    </div>
                     <h3>ПВЗ / островок до 6 м²</h3>
                     <ul class="fr-format-list">
                         <li><span>Площадь</span><span>до 6 м²</span></li>
@@ -1754,6 +1843,9 @@
 
                 <div class="fr-format-card reveal reveal-delay-2">
                     <div class="fr-format-badge">Стандарт</div>
+                    <div class="fr-format-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    </div>
                     <h3>Островок в ТЦ</h3>
                     <ul class="fr-format-list">
                         <li><span>Площадь</span><span>8–15 м²</span></li>
@@ -1771,6 +1863,9 @@
 
                 <div class="fr-format-card reveal reveal-delay-3">
                     <div class="fr-format-badge">Полноценный</div>
+                    <div class="fr-format-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M5 21V7l8-4 8 4v14"></path><path d="M10 9h4"></path><path d="M10 13h4"></path><path d="M10 17h4"></path></svg>
+                    </div>
                     <h3>Магазин в ТЦ</h3>
                     <ul class="fr-format-list">
                         <li><span>Площадь</span><span>20–40 м²</span></li>
@@ -1788,6 +1883,9 @@
 
                 <div class="fr-format-card reveal reveal-delay-4">
                     <div class="fr-format-badge">Флагман</div>
+                    <div class="fr-format-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10z"></path><path d="M6 10V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v4"></path><path d="M12 14v4"></path><path d="M8 14v4"></path><path d="M16 14v4"></path></svg>
+                    </div>
                     <h3>Флагманский магазин</h3>
                     <ul class="fr-format-list">
                         <li><span>Площадь</span><span>от 50 м²</span></li>
