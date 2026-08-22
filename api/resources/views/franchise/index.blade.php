@@ -214,8 +214,16 @@
 .fr-hero {
     position: relative;
     padding: 72px 0 88px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #F0FCFF 40%, #E0F8FF 100%);
+    background: linear-gradient(135deg, #FFFFFF 0%, #E8FBFF 35%, #D5F7FF 70%, #E8FBFF 100%);
+    background-size: 200% 200%;
+    animation: heroGradient 12s ease infinite;
     overflow: hidden;
+}
+
+@keyframes heroGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .fr-hero::before {
@@ -225,7 +233,7 @@
     right: -5%;
     width: 700px;
     height: 700px;
-    background: radial-gradient(circle, rgba(82, 221, 248, 0.28) 0%, rgba(82, 221, 248, 0.10) 35%, transparent 70%);
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.32) 0%, rgba(82, 221, 248, 0.12) 35%, transparent 70%);
     pointer-events: none;
     animation: heroGlow 8s ease-in-out infinite;
 }
@@ -237,14 +245,138 @@
     left: -10%;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(82, 221, 248, 0.16) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.22) 0%, transparent 65%);
     pointer-events: none;
     animation: heroGlow 10s ease-in-out infinite reverse;
 }
 
 @keyframes heroGlow {
     0%, 100% { opacity: 0.8; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.05); }
+    50% { opacity: 1; transform: scale(1.08); }
+}
+
+.fr-hero-blobs {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.fr-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.55;
+    animation: blobFloat 14s ease-in-out infinite;
+}
+
+.fr-blob-1 {
+    width: 460px;
+    height: 460px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.75), transparent 70%);
+    top: -12%;
+    right: -8%;
+}
+
+.fr-blob-2 {
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.5), transparent 70%);
+    bottom: 2%;
+    left: -10%;
+    animation-delay: -5s;
+}
+
+.fr-blob-3 {
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.4), transparent 70%);
+    top: 40%;
+    right: 28%;
+    animation-delay: -9s;
+}
+
+@keyframes blobFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(25px, -35px) scale(1.06); }
+    66% { transform: translate(-20px, 25px) scale(0.96); }
+}
+
+.fr-hero-rings {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.fr-hero-ring {
+    position: absolute;
+    border: 1px solid rgba(82, 221, 248, 0.14);
+    border-radius: 50%;
+    animation: ringPulse 7s ease-out infinite;
+}
+
+.fr-hero-ring:nth-child(1) {
+    width: 520px;
+    height: 520px;
+    top: 8%;
+    right: 3%;
+}
+
+.fr-hero-ring:nth-child(2) {
+    width: 380px;
+    height: 380px;
+    top: 16%;
+    right: 10%;
+    animation-delay: -2.5s;
+}
+
+.fr-hero-ring:nth-child(3) {
+    width: 240px;
+    height: 240px;
+    top: 24%;
+    right: 18%;
+    animation-delay: -5s;
+}
+
+@keyframes ringPulse {
+    0% { transform: scale(0.85); opacity: 0.55; }
+    60% { opacity: 0.15; }
+    100% { transform: scale(1.3); opacity: 0; }
+}
+
+.fr-hero-gadgets {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.fr-gadget {
+    position: absolute;
+    color: var(--gb-cyan);
+    opacity: 0.15;
+    animation: gadgetFloat 9s ease-in-out infinite;
+}
+
+.fr-gadget svg {
+    width: 42px;
+    height: 42px;
+}
+
+.fr-gadget-1 { top: 18%; right: 8%; animation-delay: 0s; }
+.fr-gadget-2 { top: 55%; right: 4%; animation-delay: -3s; }
+.fr-gadget-3 { bottom: 18%; right: 18%; animation-delay: -6s; }
+.fr-gadget-4 { top: 30%; right: 30%; animation-delay: -1.5s; }
+
+@media (max-width: 900px) {
+    .fr-gadget { display: none; }
+}
+
+@keyframes gadgetFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-18px) rotate(6deg); }
 }
 
 .fr-hero-grid {
@@ -348,29 +480,73 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    perspective: 1000px;
+}
+
+.fr-hero-card-wrapper {
+    transition: transform 0.12s ease-out;
+    transform-style: preserve-3d;
+    will-change: transform;
 }
 
 .fr-hero-card {
     position: relative;
     background: var(--gb-white);
-    border: 1px solid var(--gb-border);
+    border: 1px solid rgba(82, 221, 248, 0.25);
     border-radius: var(--gb-radius-lg);
     padding: 32px;
-    box-shadow: 0 24px 60px rgba(82, 221, 248, 0.18), var(--gb-shadow);
+    box-shadow: 0 24px 60px rgba(82, 221, 248, 0.22), 0 8px 24px rgba(0, 0, 0, 0.04);
     max-width: 400px;
     width: 100%;
-    animation: heroCardFloat 6s ease-in-out infinite;
+    animation: heroCardFloat 5s ease-in-out infinite;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    overflow: hidden;
+}
+
+.fr-hero-card::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    left: -60%;
+    width: 220%;
+    height: 220%;
+    background: linear-gradient(45deg, transparent 42%, rgba(255,255,255,0.45) 50%, transparent 58%);
+    transform: rotate(25deg) translateX(-130%);
+    transition: transform 1s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.fr-hero-card:hover::before {
+    transform: rotate(25deg) translateX(130%);
 }
 
 .fr-hero-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 32px 70px rgba(82, 221, 248, 0.25), var(--gb-shadow-lg);
+    transform: translateY(-6px) rotateX(2deg) rotateY(-2deg);
+    box-shadow: 0 36px 80px rgba(82, 221, 248, 0.32), 0 12px 30px rgba(0, 0, 0, 0.05);
+}
+
+.fr-hero-card-glow {
+    position: absolute;
+    inset: -30px;
+    background: radial-gradient(circle at 50% 50%, rgba(82, 221, 248, 0.38), transparent 65%);
+    filter: blur(24px);
+    z-index: -1;
+    animation: glowPulse 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
 }
 
 @keyframes heroCardFloat {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-12px) rotate(1deg); }
+    0%, 100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
+    25% { transform: translateY(-14px) rotateX(2deg) rotateY(1.5deg); }
+    50% { transform: translateY(-8px) rotateX(-1deg) rotateY(-1.5deg); }
+    75% { transform: translateY(-16px) rotateX(1deg) rotateY(1deg); }
 }
 
 .fr-hero-card-icon {
@@ -497,13 +673,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
 }
 
 .fr-story-image::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 30% 30%, rgba(82, 221, 248, 0.08), transparent 60%);
+    background: radial-gradient(circle at 30% 30%, rgba(82, 221, 248, 0.12), transparent 60%);
+}
+
+.fr-story-image::after {
+    content: '';
+    position: absolute;
+    inset: -40px;
+    background: radial-gradient(circle at 50% 50%, rgba(82, 221, 248, 0.2), transparent 60%);
+    filter: blur(30px);
+    z-index: -1;
+    animation: storyGlow 5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes storyGlow {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.06); }
+}
+
+.fr-story-image:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 24px 60px rgba(82, 221, 248, 0.12);
 }
 
 .fr-story-image .brand-logo {
@@ -533,6 +731,13 @@
     border: 1px solid var(--gb-border);
     border-radius: var(--gb-radius-md);
     padding: 24px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.fr-stat:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 34px rgba(82, 221, 248, 0.1);
+    border-color: rgba(82, 221, 248, 0.35);
 }
 
 .fr-stat-number {
@@ -576,7 +781,7 @@
     border: 1px solid var(--gb-border);
     border-radius: var(--gb-radius-md);
     padding: 28px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
     position: relative;
     overflow: hidden;
 }
@@ -587,21 +792,35 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 3px;
     background: linear-gradient(90deg, var(--gb-cyan), var(--gb-cyan-hover));
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.3s ease;
+    transition: transform 0.35s ease;
+}
+
+.fr-advantage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(82, 221, 248, 0.08), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .fr-advantage:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--gb-shadow-lg);
-    border-color: rgba(82, 221, 248, 0.65);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 45px rgba(82, 221, 248, 0.14), var(--gb-shadow-lg);
+    border-color: rgba(82, 221, 248, 0.55);
 }
 
 .fr-advantage:hover::before {
     transform: scaleX(1);
+}
+
+.fr-advantage:hover::after {
+    opacity: 1;
 }
 
 .fr-advantage-icon {
@@ -676,7 +895,7 @@
     border: 1px solid var(--gb-border);
     border-radius: var(--gb-radius-md);
     padding: 24px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -692,23 +911,23 @@
     background: linear-gradient(90deg, var(--gb-cyan), var(--gb-cyan-hover));
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.35s ease;
+    transition: transform 0.4s ease;
 }
 
 .fr-format-card::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 20% 20%, rgba(82, 221, 248, 0.06), transparent 60%);
+    background: radial-gradient(circle at 50% 0%, rgba(82, 221, 248, 0.1), transparent 65%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.35s ease;
     pointer-events: none;
 }
 
 .fr-format-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--gb-shadow-lg), 0 20px 40px rgba(82, 221, 248, 0.12);
-    border-color: rgba(82, 221, 248, 0.65);
+    transform: translateY(-8px) scale(1.015);
+    box-shadow: 0 28px 60px rgba(82, 221, 248, 0.16), 0 12px 30px rgba(0, 0, 0, 0.05);
+    border-color: rgba(82, 221, 248, 0.55);
 }
 
 .fr-format-card:hover::before {
@@ -771,18 +990,26 @@
 }
 
 .fr-format-profit {
-    background: linear-gradient(135deg, rgba(82, 221, 248, 0.10), rgba(82, 221, 248, 0.04));
-    border: 1px solid rgba(82, 221, 248, 0.25);
+    background: linear-gradient(135deg, rgba(82, 221, 248, 0.14), rgba(82, 221, 248, 0.05));
+    border: 1px solid rgba(82, 221, 248, 0.3);
     border-radius: var(--gb-radius-sm);
-    padding: 14px;
+    padding: 16px;
     text-align: center;
     margin-top: auto;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.fr-format-card:hover .fr-format-profit {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(82, 221, 248, 0.12);
 }
 
 .fr-format-profit-value {
     font-size: 22px;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--gb-cyan), var(--gb-cyan-hover));
+    background: linear-gradient(135deg, var(--gb-cyan), #2BC8EA);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -823,13 +1050,29 @@
     border: 1px solid var(--gb-border);
     border-radius: var(--gb-radius-md);
     padding: 24px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.fr-condition-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(82, 221, 248, 0.06), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .fr-condition-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--gb-shadow);
-    border-color: rgba(82, 221, 248, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px rgba(82, 221, 248, 0.1), var(--gb-shadow);
+    border-color: rgba(82, 221, 248, 0.45);
+}
+
+.fr-condition-card:hover::before {
+    opacity: 1;
 }
 
 .fr-condition-card h3 {
@@ -843,12 +1086,16 @@
     font-size: 32px;
     font-weight: 800;
     margin: 0 0 14px;
-    color: var(--gb-text);
+    background: linear-gradient(135deg, var(--gb-text), #3a3d44);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     letter-spacing: -0.02em;
 }
 
 .fr-condition-card .price span {
     color: var(--gb-cyan);
+    -webkit-text-fill-color: var(--gb-cyan);
 }
 
 .fr-condition-card ul {
@@ -877,8 +1124,9 @@
     right: -10%;
     width: 700px;
     height: 700px;
-    background: radial-gradient(circle, rgba(82, 221, 248, 0.14) 0%, transparent 60%);
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.16) 0%, transparent 60%);
     pointer-events: none;
+    animation: calcGlow 10s ease-in-out infinite;
 }
 
 .fr-calculator::after {
@@ -888,8 +1136,14 @@
     left: -5%;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(82, 221, 248, 0.08) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.1) 0%, transparent 65%);
     pointer-events: none;
+    animation: calcGlow 12s ease-in-out infinite reverse;
+}
+
+@keyframes calcGlow {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
 }
 
 .fr-calculator .fr-section-title {
@@ -982,7 +1236,26 @@
     padding: 32px;
     position: sticky;
     top: 88px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.04);
+    position: relative;
+    overflow: hidden;
+}
+
+.fr-calc-result::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -40%;
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(82, 221, 248, 0.12), transparent 60%);
+    pointer-events: none;
+    animation: calcResultGlow 6s ease-in-out infinite;
+}
+
+@keyframes calcResultGlow {
+    0%, 100% { opacity: 0.6; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(10px); }
 }
 
 .fr-calc-result h3 {
@@ -1011,10 +1284,12 @@
     padding-top: 20px;
     font-size: 22px;
     font-weight: 800;
+    text-shadow: 0 0 24px rgba(82, 221, 248, 0.25);
 }
 
 .fr-result-row.total span:last-child {
     color: var(--gb-cyan);
+    text-shadow: 0 0 18px rgba(82, 221, 248, 0.35);
 }
 
 .fr-calc-note {
@@ -1047,13 +1322,29 @@
     border-radius: var(--gb-radius-lg);
     padding: 36px;
     box-shadow: var(--gb-shadow);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.fr-form-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(82, 221, 248, 0.08), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .fr-form-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--gb-shadow-lg);
-    border-color: rgba(82, 221, 248, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 22px 50px rgba(82, 221, 248, 0.12), var(--gb-shadow-lg);
+    border-color: rgba(82, 221, 248, 0.45);
+}
+
+.fr-form-card:hover::before {
+    opacity: 1;
 }
 
 .fr-form-card h3 {
@@ -1190,6 +1481,30 @@
 
     <!-- Hero -->
     <section class="fr-hero">
+        <div class="fr-hero-blobs" aria-hidden="true">
+            <div class="fr-blob fr-blob-1"></div>
+            <div class="fr-blob fr-blob-2"></div>
+            <div class="fr-blob fr-blob-3"></div>
+        </div>
+        <div class="fr-hero-rings" aria-hidden="true">
+            <div class="fr-hero-ring"></div>
+            <div class="fr-hero-ring"></div>
+            <div class="fr-hero-ring"></div>
+        </div>
+        <div class="fr-hero-gadgets" aria-hidden="true">
+            <div class="fr-gadget fr-gadget-1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            </div>
+            <div class="fr-gadget fr-gadget-2">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+            </div>
+            <div class="fr-gadget fr-gadget-3">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            </div>
+            <div class="fr-gadget fr-gadget-4">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
+        </div>
         <div class="fr-container">
             <div class="fr-hero-grid">
                 <div class="fr-hero-content">
@@ -1207,9 +1522,11 @@
                         <a href="#forms" class="fr-btn fr-btn-secondary">Оставить заявку</a>
                     </div>
                 </div>
-                <div class="fr-hero-visual">
-                    <div class="fr-hero-card">
-                        <div class="fr-hero-card-icon">
+                <div class="fr-hero-visual" id="heroVisual">
+                    <div class="fr-hero-card-wrapper" id="heroCardWrapper">
+                        <div class="fr-hero-card">
+                            <div class="fr-hero-card-glow" aria-hidden="true"></div>
+                            <div class="fr-hero-card-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
                             </svg>
@@ -1229,6 +1546,7 @@
                             <span>24/7</span>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -1673,6 +1991,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // 3D tilt for hero card on mouse move
+    const heroVisual = document.getElementById('heroVisual');
+    const heroWrapper = document.getElementById('heroCardWrapper');
+    if (heroVisual && heroWrapper && window.matchMedia('(pointer: fine)').matches) {
+        heroVisual.addEventListener('mousemove', (e) => {
+            const rect = heroVisual.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            heroWrapper.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
+        });
+        heroVisual.addEventListener('mouseleave', () => {
+            heroWrapper.style.transform = '';
+        });
+    }
 });
 </script>
 @endpush

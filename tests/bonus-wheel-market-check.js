@@ -24,6 +24,7 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
     userAgent: USER_AGENT,
     viewport: { width: 1440, height: 900 },
     extraHTTPHeaders: { 'Cache-Control': 'no-cache' },
+    recordVideo: { dir: SCREENSHOTS, size: { width: 1092, height: 595 } },
   });
   const page = await context.newPage();
 
@@ -118,6 +119,13 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
     await page.screenshot({ path: path.join(SCREENSHOTS, 'error.png'), fullPage: false });
     process.exit(1);
   } finally {
+    const video = page.video();
+    await page.close();
+    if (video) {
+      const videoPath = await video.path().catch(() => null);
+      if (videoPath) console.log('Video saved:', videoPath);
+    }
+    await context.close();
     await browser.close();
   }
 })();
