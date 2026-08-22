@@ -484,55 +484,6 @@
     perspective: 1000px;
 }
 
-.fr-hero-floaters {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 3;
-}
-
-.fr-floater {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(82, 221, 248, 0.25);
-    border-radius: var(--gb-radius-md);
-    padding: 14px 18px;
-    box-shadow: 0 12px 30px rgba(82, 221, 248, 0.15), 0 4px 12px rgba(0, 0, 0, 0.04);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    animation: floaterFloat 7s ease-in-out infinite;
-    backdrop-filter: blur(4px);
-}
-
-.fr-floater span {
-    font-size: 18px;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--gb-cyan), #2BC8EA);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.02em;
-}
-
-.fr-floater small {
-    font-size: 12px;
-    color: var(--gb-text-secondary);
-}
-
-.fr-floater-1 { top: 8%; right: -2%; animation-delay: 0s; }
-.fr-floater-2 { bottom: 20%; left: -4%; animation-delay: -2.5s; }
-.fr-floater-3 { bottom: 6%; right: 6%; animation-delay: -5s; }
-
-@media (max-width: 1100px) {
-    .fr-floater { display: none; }
-}
-
-@keyframes floaterFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-}
-
 .fr-hero-card-wrapper {
     transition: transform 0.12s ease-out;
     transform-style: preserve-3d;
@@ -646,6 +597,60 @@
 .fr-hero-card-row span:last-child {
     font-weight: 700;
     color: var(--gb-cyan);
+}
+
+.fr-hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--gb-border);
+}
+
+.fr-hero-metric {
+    text-align: center;
+    padding: 12px 8px;
+    background: rgba(82, 221, 248, 0.06);
+    border: 1px solid rgba(82, 221, 248, 0.15);
+    border-radius: var(--gb-radius-md);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.fr-hero-metric:hover {
+    transform: translateY(-3px);
+    background: rgba(82, 221, 248, 0.10);
+}
+
+.fr-hero-metric span {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--gb-cyan);
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.fr-hero-metric small {
+    display: block;
+    font-size: 11px;
+    color: var(--gb-text-secondary);
+    line-height: 1.25;
+}
+
+@media (max-width: 420px) {
+    .fr-hero-metrics {
+        gap: 8px;
+    }
+    .fr-hero-metric {
+        padding: 10px 4px;
+    }
+    .fr-hero-metric span {
+        font-size: 15px;
+    }
+    .fr-hero-metric small {
+        font-size: 10px;
+    }
 }
 
 /* Section base */
@@ -1660,20 +1665,6 @@
                     </div>
                 </div>
                 <div class="fr-hero-visual" id="heroVisual">
-                    <div class="fr-hero-floaters" aria-hidden="true">
-                        <div class="fr-floater fr-floater-1">
-                            <span>30+</span>
-                            <small>заказов в день</small>
-                        </div>
-                        <div class="fr-floater fr-floater-2">
-                            <span>89 тыс. ₽</span>
-                            <small>прибыль в месяц</small>
-                        </div>
-                        <div class="fr-floater fr-floater-3">
-                            <span>24/7</span>
-                            <small>поддержка</small>
-                        </div>
-                    </div>
                     <div class="fr-hero-card-wrapper" id="heroCardWrapper">
                         <div class="fr-hero-card">
                             <div class="fr-hero-card-glow" aria-hidden="true"></div>
@@ -1695,6 +1686,20 @@
                         <div class="fr-hero-card-row">
                             <span>Поддержка</span>
                             <span>24/7</span>
+                        </div>
+                        <div class="fr-hero-metrics">
+                            <div class="fr-hero-metric">
+                                <span>30+</span>
+                                <small>заказов в день</small>
+                            </div>
+                            <div class="fr-hero-metric">
+                                <span>89 тыс. ₽</span>
+                                <small>прибыль</small>
+                            </div>
+                            <div class="fr-hero-metric">
+                                <span>24/7</span>
+                                <small>поддержка</small>
+                            </div>
                         </div>
                     </div>
                 </div>
