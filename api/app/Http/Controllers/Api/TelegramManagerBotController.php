@@ -226,9 +226,9 @@ class TelegramManagerBotController extends Controller
         try {
             Http::post($webhookUrl, [
                 'fields' => [
-                    'TITLE' => 'Запрос из Telegram-менеджер бота',
+                    'TITLE' => '[ТЕСТ] Запрос из Telegram-менеджер бота',
                     'NAME' => $name,
-                    'COMMENTS' => "Источник: Telegram-бот менеджера\nСсылка: {$link}\nChat ID: {$clientChatId}\nСообщение:\n{$text}",
+                    'COMMENTS' => "[ЭТО ТЕСТОВЫЙ ЛИД — можно удалить]\n\nИсточник: Telegram-бот менеджера\nСсылка: {$link}\nChat ID: {$clientChatId}\nСообщение:\n{$text}",
                     'SOURCE_ID' => 'TELEGRAM',
                 ],
                 'params' => ['REGISTER_SONET_EVENT' => 'Y'],
