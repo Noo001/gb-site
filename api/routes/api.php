@@ -114,3 +114,7 @@ Route::middleware('bot.api')->prefix('bot')->group(function () {
 // Telegram first-line bot webhook
 Route::post('/telegram/webhook', [TelegramBotController::class, 'webhook'])->name('telegram.webhook');
 Route::post('/telegram/set-webhook', [TelegramBotController::class, 'setWebhook'])->name('telegram.set-webhook');
+
+// Telegram manager/consultation bot webhook
+Route::post('/telegram/manager/webhook', [TelegramManagerBotController::class, 'webhook'])->name('telegram.manager.webhook');
+Route::post('/telegram/manager/set-webhook', [TelegramManagerBotController::class, 'setWebhook'])->name('telegram.manager.set-webhook');
