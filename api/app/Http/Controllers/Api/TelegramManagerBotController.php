@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BotActionLog;
-use App\Models\BotEmployee;
 use App\Models\Store;
+use App\Models\TelegramManagerEmployee;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -49,7 +49,7 @@ class TelegramManagerBotController extends Controller
         }
 
         // Не обрабатываем сообщения от менеджеров
-        if (BotEmployee::where('telegram_chat_id', (string) $chatId)->where('is_active', true)->exists()) {
+        if (TelegramManagerEmployee::where('telegram_chat_id', (string) $chatId)->where('is_active', true)->exists()) {
             return response('OK', 200);
         }
 
@@ -189,7 +189,7 @@ class TelegramManagerBotController extends Controller
 
     private function notifyManagers(int $clientChatId, ?string $username, ?string $firstName, ?string $lastName, string $text): void
     {
-        $managers = BotEmployee::query()
+        $managers = TelegramManagerEmployee::query()
             ->where('is_active', true)
             ->whereNotNull('telegram_chat_id')
             ->where('telegram_chat_id', '!=', '')
