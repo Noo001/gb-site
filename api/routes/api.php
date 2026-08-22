@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Api\PcConfiguratorController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\TelegramBotController;
+use App\Http\Controllers\Api\TelegramManagerBotController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\Api\SeoController;
 use App\Http\Controllers\Api\WishlistController;
