@@ -346,38 +346,68 @@
     100% { transform: scale(1.35); opacity: 0; }
 }
 
-.fr-hero-gadgets {
+.fr-hero-scene {
     position: absolute;
-    inset: 0;
+    right: -30px;
+    top: 50%;
+    width: 540px;
+    transform: translateY(-50%);
     pointer-events: none;
     z-index: 1;
+    opacity: 0.95;
+    animation: sceneFloat 10s ease-in-out infinite;
+    filter: drop-shadow(0 30px 60px rgba(82, 221, 248, 0.18));
 }
 
-.fr-gadget {
-    position: absolute;
-    color: var(--gb-cyan);
-    opacity: 0.22;
-    animation: gadgetFloat 9s ease-in-out infinite;
-    filter: drop-shadow(0 4px 8px rgba(82, 221, 248, 0.2));
+.fr-hero-scene svg {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
-.fr-gadget svg {
-    width: 48px;
-    height: 48px;
-}
+.scene-phone { animation: scenePhone 8s ease-in-out infinite; transform-origin: 260px 220px; }
+.scene-watch { animation: sceneWatch 7s ease-in-out infinite; transform-origin: 120px 280px; }
+.scene-buds { animation: sceneBuds 9s ease-in-out infinite; transform-origin: 380px 300px; }
+.scene-pad { animation: scenePad 11s ease-in-out infinite; transform-origin: 420px 160px; }
+.scene-sparkle { animation: sparkle 3s ease-in-out infinite; }
+.scene-sparkle-2 { animation: sparkle 4s ease-in-out infinite 1s; }
 
-.fr-gadget-1 { top: 16%; right: 7%; animation-delay: 0s; }
-.fr-gadget-2 { top: 52%; right: 3%; animation-delay: -3s; }
-.fr-gadget-3 { bottom: 16%; right: 17%; animation-delay: -6s; }
-.fr-gadget-4 { top: 28%; right: 28%; animation-delay: -1.5s; }
+@media (max-width: 1200px) {
+    .fr-hero-scene { width: 420px; right: -60px; }
+}
 
 @media (max-width: 900px) {
-    .fr-gadget { display: none; }
+    .fr-hero-scene { display: none; }
 }
 
-@keyframes gadgetFloat {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-22px) rotate(8deg); }
+@keyframes sceneFloat {
+    0%, 100% { transform: translateY(-50%) rotate(0deg); }
+    50% { transform: translateY(calc(-50% - 16px)) rotate(1deg); }
+}
+
+@keyframes scenePhone {
+    0%, 100% { transform: rotate(-8deg) translateY(0); }
+    50% { transform: rotate(-5deg) translateY(-12px); }
+}
+
+@keyframes sceneWatch {
+    0%, 100% { transform: rotate(10deg) translateY(0); }
+    50% { transform: rotate(14deg) translateY(-10px); }
+}
+
+@keyframes sceneBuds {
+    0%, 100% { transform: rotate(6deg) translateY(0); }
+    50% { transform: rotate(3deg) translateY(-14px); }
+}
+
+@keyframes scenePad {
+    0%, 100% { transform: rotate(-4deg) translateY(0); }
+    50% { transform: rotate(-7deg) translateY(-8px); }
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0.35; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.15); }
 }
 
 .fr-hero-grid {
@@ -1633,19 +1663,90 @@
             <div class="fr-hero-ring"></div>
             <div class="fr-hero-ring"></div>
         </div>
-        <div class="fr-hero-gadgets" aria-hidden="true">
-            <div class="fr-gadget fr-gadget-1">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-            </div>
-            <div class="fr-gadget fr-gadget-2">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
-            </div>
-            <div class="fr-gadget fr-gadget-3">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-            </div>
-            <div class="fr-gadget fr-gadget-4">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-            </div>
+        <div class="fr-hero-scene" aria-hidden="true">
+            <svg viewBox="0 0 500 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="phoneBody" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#2A2A2A"/>
+                        <stop offset="100%" stop-color="#0F0F0F"/>
+                    </linearGradient>
+                    <linearGradient id="phoneScreen" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#E6FBFF"/>
+                        <stop offset="50%" stop-color="#52DDF8"/>
+                        <stop offset="100%" stop-color="#0EA5C7"/>
+                    </linearGradient>
+                    <linearGradient id="watchFace" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#F2F2F2"/>
+                        <stop offset="100%" stop-color="#D9D9D9"/>
+                    </linearGradient>
+                    <linearGradient id="cyanRing" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#52DDF8"/>
+                        <stop offset="100%" stop-color="#0EA5C7"/>
+                    </linearGradient>
+                    <filter id="sceneShadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#52DDF8" flood-opacity="0.18"/>
+                        <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000" flood-opacity="0.18"/>
+                    </filter>
+                </defs>
+
+                <!-- Wireless charging pad -->
+                <g class="scene-pad" filter="url(#sceneShadow)">
+                    <ellipse cx="395" cy="145" rx="58" ry="14" fill="#1A1A1A"/>
+                    <ellipse cx="395" cy="140" rx="58" ry="14" fill="#2A2A2A"/>
+                    <circle cx="395" cy="140" r="22" fill="none" stroke="url(#cyanRing)" stroke-width="3"/>
+                    <circle cx="395" cy="140" r="14" fill="url(#cyanRing)" opacity="0.9"/>
+                    <path d="M388 140h14M395 133v14" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                </g>
+
+                <!-- Smartphone -->
+                <g class="scene-phone" filter="url(#sceneShadow)">
+                    <rect x="215" y="55" width="130" height="250" rx="22" fill="url(#phoneBody)"/>
+                    <rect x="223" y="63" width="114" height="234" rx="16" fill="url(#phoneScreen)"/>
+                    <rect x="253" y="71" width="54" height="6" rx="3" fill="#111"/>
+                    <circle cx="273" cy="74" r="2" fill="#333"/>
+                    <text x="280" y="170" text-anchor="middle" fill="#0F0F0F" font-size="22" font-weight="800" font-family="Arial, sans-serif" letter-spacing="-0.03em">GADGET</text>
+                    <text x="280" y="192" text-anchor="middle" fill="#0F0F0F" font-size="22" font-weight="800" font-family="Arial, sans-serif" letter-spacing="-0.03em">BAR</text>
+                    <circle cx="280" cy="205" r="4" fill="#0F0F0F"/>
+                    <rect x="245" y="225" width="70" height="28" rx="6" fill="#0F0F0F"/>
+                    <text x="280" y="244" text-anchor="middle" fill="#52DDF8" font-size="11" font-weight="700" font-family="Arial, sans-serif">ФРАНШИЗА</text>
+                    <!-- Side buttons -->
+                    <rect x="212" y="105" width="3" height="24" rx="1" fill="#444"/>
+                    <rect x="212" y="138" width="3" height="36" rx="1" fill="#444"/>
+                </g>
+
+                <!-- Smartwatch -->
+                <g class="scene-watch" filter="url(#sceneShadow)">
+                    <path d="M85 235h70v110H85z" fill="#1A1A1A"/>
+                    <rect x="82" y="260" width="76" height="80" rx="18" fill="#2A2A2A"/>
+                    <rect x="86" y="264" width="68" height="72" rx="14" fill="url(#watchFace)"/>
+                    <circle cx="120" cy="300" r="22" fill="none" stroke="url(#cyanRing)" stroke-width="4"/>
+                    <circle cx="120" cy="300" r="5" fill="#111"/>
+                    <path d="M120 286v14" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M128 295l-8 5" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="110" y="318" width="20" height="8" rx="4" fill="url(#cyanRing)"/>
+                </g>
+
+                <!-- Earbuds case -->
+                <g class="scene-buds" filter="url(#sceneShadow)">
+                    <rect x="330" y="260" width="90" height="65" rx="28" fill="url(#phoneBody)"/>
+                    <rect x="340" y="270" width="70" height="45" rx="20" fill="#3A3A3A" opacity="0.6"/>
+                    <line x1="375" y1="292" x2="375" y2="292" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="360" cy="330" r="6" fill="#fff"/>
+                    <circle cx="390" cy="330" r="6" fill="#fff"/>
+                    <path d="M348 330h54" stroke="#222" stroke-width="2"/>
+                </g>
+
+                <!-- Sparkles -->
+                <g class="scene-sparkle">
+                    <path d="M155 95l3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8z" fill="#52DDF8"/>
+                </g>
+                <g class="scene-sparkle-2">
+                    <path d="M445 245l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z" fill="#52DDF8"/>
+                </g>
+                <g class="scene-sparkle" style="animation-delay:1.5s">
+                    <circle cx="200" cy="330" r="4" fill="#52DDF8"/>
+                </g>
+            </svg>
         </div>
         <div class="fr-container">
             <div class="fr-hero-grid">
