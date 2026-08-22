@@ -354,8 +354,9 @@
     transform: translateY(-50%);
     pointer-events: none;
     z-index: 1;
-    opacity: 0.95;
-    animation: sceneFloat 10s ease-in-out infinite;
+    opacity: 0;
+    animation: sceneFloat 10s ease-in-out infinite, heroSceneIn 1.2s ease forwards;
+    animation-delay: 0s, 0.75s;
     filter: drop-shadow(0 30px 60px rgba(82, 221, 248, 0.18));
 }
 
@@ -408,6 +409,37 @@
 @keyframes sparkle {
     0%, 100% { opacity: 0.35; transform: scale(0.9); }
     50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Hero entrance animations */
+.fr-hero-content > * {
+    opacity: 0;
+    transform: translateY(22px);
+    animation: heroFadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.fr-hero-badges { animation-delay: 0.12s; }
+.fr-hero-title { animation-delay: 0.22s; }
+.fr-hero-content > p { animation-delay: 0.34s; }
+.fr-hero-buttons { animation-delay: 0.46s; }
+
+.fr-hero-visual {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+    animation: heroVisualIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 0.4s;
+}
+
+@keyframes heroFadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroVisualIn {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes heroSceneIn {
+    to { opacity: 0.95; }
 }
 
 .fr-hero-grid {
