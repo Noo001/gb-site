@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BotActionLog;
 use App\Models\Store;
 use App\Models\TelegramManagerEmployee;
+use App\Models\TelegramManagerSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -48,11 +49,6 @@ class TelegramManagerBotController extends Controller
             return response('OK', 200);
         }
 
-        // Не обрабатываем сообщения от менеджеров
-        if (TelegramManagerEmployee::where('telegram_chat_id', (string) $chatId)->where('is_active', true)->exists()) {
-            return response('OK', 200);
-        }
-
         $this->handleClientMessage($chatId, $text, $message);
 
         return response('OK', 200);
@@ -71,7 +67,14 @@ class TelegramManagerBotController extends Controller
         }
 
         if ($text === 'Связаться с менеджером') {
-            $this->sendMessage($chatId, "Опишите ваш вопрос одним сообщением. Менеджер получит уведомление в Bitrix24 и ответит вам здесь.", $this->mainMenu());
+            $this->sendMessage(
+                $chatId,
+                TelegramManagerSetting::value(
+                    'contact_manager_prompt',
+                    "Опишите ваш вопрос одним сообщением. Менеджер получит уведомление в Bitrix24 и ответит вам здесь."
+                ),
+                $this->mainMenu()
+            );
             return;
         }
 
@@ -85,12 +88,24 @@ class TelegramManagerBotController extends Controller
             return;
         }
 
+        // Кнопки обрабатываем для всех, включая менеджеров. Свободный текст от менеджеров — игнорируем.
+        if (TelegramManagerEmployee::where('telegram_chat_id', (string) $chatId)->where('is_active', true)->exists()) {
+            return;
+        }
+
         // Любое другое сообщение считаем вопросом/запросом к менеджеру
         $this->storeLead($chatId, $username, $firstName, $lastName, $text);
         $this->notifyManagers($chatId, $username, $firstName, $lastName, $text);
         $this->sendToBitrix24($chatId, $username, $firstName, $lastName, $text);
 
-        $this->sendMessage($chatId, "Спасибо! Ваш запрос передан менеджеру. Мы ответим вам в этом чате.", $this->mainMenu());
+        $this->sendMessage(
+            $chatId,
+            TelegramManagerSetting::value(
+                'final_thanks',
+                "Спасибо! Ваш запрос передан менеджеру. Мы ответим вам в этом чате."
+            ),
+            $this->mainMenu()
+        );
     }
 
     private function handleManagerReply(array $message): void
@@ -115,18 +130,24 @@ class TelegramManagerBotController extends Controller
 
     private function sendMainMenu(int $chatId): void
     {
-        $text = "Привет! Я бот Gadget Bar.\n\nЗдесь вы можете:\n• связаться с менеджером,\n• узнать условия франшизы,\n• посмотреть адреса магазинов.";
+        $text = TelegramManagerSetting::value(
+            'welcome_message',
+            "Привет! Я бот Gadget Bar.\n\nЗдесь вы можете:\n• связаться с менеджером,\n• узнать условия франшизы,\n• посмотреть адреса магазинов."
+        );
         $this->sendMessage($chatId, $text, $this->mainMenu());
     }
 
     private function franchiseConditionsText(): string
     {
-        return "Условия франшизы Gadget Bar:\n"
-            . "• Паушальный взнос — от 100 000 ₽\n"
-            . "• Роялти — 1,6%\n"
-            . "• Поддержка 24/7\n"
-            . "• Готовая концепция, обучение, IT и маркетинг\n\n"
-            . "Напишите менеджеру, и мы рассчитаем прибыль для вашего города.";
+        return TelegramManagerSetting::value(
+            'franchise_conditions',
+            "Условия франшизы Gadget Bar:\n"
+                . "• Паушальный взнос — от 100 000 ₽\n"
+                . "• Роялти — 1,6%\n"
+                . "• Поддержка 24/7\n"
+                . "• Готовая концепция, обучение, IT и маркетинг\n\n"
+                . "Напишите менеджеру, и мы рассчитаем прибыль для вашего города."
+        );
     }
 
     private function sendStores(int $chatId): void
@@ -139,11 +160,15 @@ class TelegramManagerBotController extends Controller
             ->get();
 
         if ($stores->isEmpty()) {
-            $this->sendMessage($chatId, "Магазинов не найдено.", $this->mainMenu());
+            $this->sendMessage(
+                $chatId,
+                TelegramManagerSetting::value('stores_empty', "Магазинов не найдено."),
+                $this->mainMenu()
+            );
             return;
         }
 
-        $lines = ["Наши магазины:"];
+        $lines = [TelegramManagerSetting::value('stores_header', "Наши магазины:")];
         foreach ($stores as $store) {
             $line = "• {$this->escapeHtml($store->name)}";
             if ($store->address) {
