@@ -823,11 +823,50 @@
 }
 
 .fr-story-image .brand-logo {
+    position: relative;
+    z-index: 2;
     width: auto;
     height: auto;
-    max-width: 75%;
-    max-height: 130px;
+    max-width: 62%;
+    max-height: 110px;
     object-fit: contain;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.08));
+}
+
+.fr-story-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.fr-story-scene svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.store-sign-swing { transform-origin: 200px 40px; animation: signSwing 6s ease-in-out infinite; }
+.store-phone { animation: storeFloat 5s ease-in-out infinite; }
+.store-watch { animation: storeFloat 5.5s ease-in-out infinite 0.5s; }
+.store-buds { animation: storeFloat 6s ease-in-out infinite 1s; }
+.store-plant { animation: storeSway 7s ease-in-out infinite; transform-origin: 330px 230px; }
+.store-sparkle { animation: sparkle 3.5s ease-in-out infinite; }
+.store-sparkle-2 { animation: sparkle 4.2s ease-in-out infinite 1.2s; }
+
+@keyframes signSwing {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+}
+
+@keyframes storeFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes storeSway {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
 }
 
 .fr-story-text p {
@@ -1846,6 +1885,69 @@
         <div class="fr-container">
             <div class="fr-story-grid">
                 <div class="fr-story-image reveal">
+                    <div class="fr-story-scene" aria-hidden="true">
+                        <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="storeGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#F8FDFF"/>
+                                    <stop offset="100%" stop-color="#EAFBFF"/>
+                                </linearGradient>
+                                <filter id="storeShadow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#52DDF8" flood-opacity="0.12"/>
+                                    <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.06"/>
+                                </filter>
+                            </defs>
+
+                            <!-- Back wall / shelf -->
+                            <rect x="45" y="55" width="310" height="200" rx="14" fill="url(#storeGradient)" stroke="#E2F6FA" stroke-width="2"/>
+
+                            <!-- Hanging sign -->
+                            <g class="store-sign-swing" filter="url(#storeShadow)">
+                                <line x1="200" y1="40" x2="200" y2="80" stroke="#333" stroke-width="2"/>
+                                <rect x="135" y="80" width="130" height="42" rx="6" fill="#111"/>
+                                <text x="200" y="107" text-anchor="middle" fill="#52DDF8" font-size="14" font-weight="800" font-family="Arial, sans-serif" letter-spacing="-0.02em">GADGET BAR</text>
+                            </g>
+
+                            <!-- Shelf -->
+                            <rect x="60" y="185" width="280" height="10" rx="3" fill="#D5F3FA"/>
+                            <rect x="60" y="195" width="280" height="40" rx="6" fill="#EAFBFF"/>
+
+                            <!-- Phone -->
+                            <g class="store-phone" filter="url(#storeShadow)">
+                                <rect x="95" y="115" width="50" height="90" rx="8" fill="#1A1A1A"/>
+                                <rect x="100" y="122" width="40" height="76" rx="5" fill="#52DDF8" opacity="0.9"/>
+                                <circle cx="120" cy="190" r="3" fill="#111"/>
+                            </g>
+
+                            <!-- Watch -->
+                            <g class="store-watch" filter="url(#storeShadow)">
+                                <rect x="170" y="140" width="34" height="50" rx="8" fill="#2A2A2A"/>
+                                <rect x="173" y="145" width="28" height="40" rx="6" fill="#F2F2F2"/>
+                                <circle cx="187" cy="165" r="10" fill="none" stroke="#52DDF8" stroke-width="2"/>
+                                <circle cx="187" cy="165" r="2" fill="#111"/>
+                            </g>
+
+                            <!-- Earbuds case -->
+                            <g class="store-buds" filter="url(#storeShadow)">
+                                <rect x="235" y="150" width="45" height="32" rx="14" fill="#1A1A1A"/>
+                                <line x1="257" y1="166" x2="257" y2="166" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+                            </g>
+
+                            <!-- Plant -->
+                            <g class="store-plant" filter="url(#storeShadow)">
+                                <ellipse cx="325" cy="220" rx="16" ry="6" fill="#C8E6C9"/>
+                                <path d="M325 220q-8-25-16-18M325 220q0-30-6-32M325 220q8-22 14-16" stroke="#4CAF50" stroke-width="3" fill="none" stroke-linecap="round"/>
+                            </g>
+
+                            <!-- Sparkles -->
+                            <g class="store-sparkle">
+                                <path d="M75 95l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z" fill="#52DDF8"/>
+                            </g>
+                            <g class="store-sparkle-2">
+                                <circle cx="340" cy="110" r="3" fill="#52DDF8"/>
+                            </g>
+                        </svg>
+                    </div>
                     <img src="/images/franchise/gadget-bar-logo.png" alt="Gadget Bar" class="brand-logo">
                 </div>
                 <div class="fr-story-text">
